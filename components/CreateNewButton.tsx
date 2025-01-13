@@ -19,7 +19,7 @@ export const CreateNewButton = ({ onPress, text }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    paddingVertical: 16,
   },
   button: {
     flexDirection: "row",
