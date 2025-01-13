@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Header from "@/components/Header";
 
 export default function TabsLayout() {
   return (
@@ -9,6 +10,7 @@ export default function TabsLayout() {
         headerStyle: {
           backgroundColor: "#25292e",
         },
+        header: () => <Header />,
         tabBarStyle: {
           backgroundColor: "#25292e",
         },
