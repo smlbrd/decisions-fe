@@ -1,9 +1,11 @@
-import { Text, View } from "react-native";
+import { CreateNewButton } from "@/components/CreateNewButton";
+import React from "react";
+import { View } from "react-native";
 
 export default function Groups() {
   return (
     <View>
-      <Text>Welcome to the groups page</Text>
+      <CreateNewButton text={"Create New Group"} onPress={() => {}} />
     </View>
   );
 }
