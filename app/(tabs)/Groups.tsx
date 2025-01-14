@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { groupData } from "../../dummy-data/groups";
 import UserCard from "@/components/UserCard";
 import Overlay from "@/components/Overlay";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function Groups() {
   const [isCreateGroupModalVisible, setIsCreateGroupModalVisible] =
@@ -20,6 +21,7 @@ export default function Groups() {
   const groupDataCollapsibles = groupData.map((group) => {
     return (
       <Collapsible key={group._id.$oid} title={group.group_name}>
+        <Text>{group.group_desc}</Text>
         {group.members.map((member) => {
           if (!usersById[member.$oid])
             usersById[member.$oid] = { username: "steve" }; // would be an axios get the user info
@@ -46,9 +48,13 @@ export default function Groups() {
           text={"Create New Group"}
           onPress={handleCreateNewGroupPress}
         />
-        <Text style={styles.headerText}>My Groups</Text>
-        {groupDataCollapsibles}
       </View>
+      <ScrollView>
+        <View style={styles.container}>
+          <Text style={styles.headerText}>My Groups</Text>
+          {groupDataCollapsibles}
+        </View>
+      </ScrollView>
     </>
   );
 }
@@ -57,6 +63,7 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     marginHorizontal: 15,
+    marginBottom: 10,
   },
   headerText: {
     fontSize: 32,
