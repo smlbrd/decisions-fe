@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { groupData } from "../../dummy-data/groups";
 import UserCard from "@/components/UserCard";
 import Overlay from "@/components/Overlay";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView } from "react-native";
 
 export default function Groups() {
   const [isCreateGroupModalVisible, setIsCreateGroupModalVisible] =
@@ -43,14 +43,14 @@ export default function Groups() {
       >
         <Text>This is the modal for creating a new group</Text>
       </Overlay>
-      <View style={styles.container}>
+      <View style={styles.createGroupButtonContainer}>
         <CreateNewButton
           text={"Create New Group"}
           onPress={handleCreateNewGroupPress}
         />
       </View>
       <ScrollView>
-        <View style={styles.container}>
+        <View style={styles.groupsContainer}>
           <Text style={styles.headerText}>My Groups</Text>
           {groupDataCollapsibles}
         </View>
@@ -60,10 +60,15 @@ export default function Groups() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  createGroupButtonContainer: {
     justifyContent: "center",
     marginHorizontal: 15,
-    marginBottom: 10,
+    marginBottom: 5,
+  },
+  groupsContainer: {
+    justifyContent: "center",
+    marginHorizontal: 15,
+    marginBottom: 15,
   },
   headerText: {
     fontSize: 32,
