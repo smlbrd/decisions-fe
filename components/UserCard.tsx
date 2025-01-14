@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 
@@ -9,16 +10,12 @@ const UserCard = ({ username }: Props) => {
   const onRemove = () => {};
   return (
     <View style={styles.card}>
-      {/* Profile Icon */}
-      <Image
+      <Ionicons
         style={styles.profileIcon}
-        source={{
-          uri: "https://via.placeholder.com/50", // Placeholder for the blank profile icon
-        }}
+        name="person-circle-outline"
+        size={24}
       />
-      {/* Username */}
       <Text style={styles.username}>{username}</Text>
-      {/* Remove Button */}
       <TouchableOpacity style={styles.removeButton} onPress={onRemove}>
         <Text style={styles.removeButtonText}>Remove</Text>
       </TouchableOpacity>
@@ -40,10 +37,10 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   profileIcon: {
-    width: 40,
-    height: 40,
+    width: 24,
+    height: 24,
     borderRadius: 20,
-    backgroundColor: "#ddd", // Fallback if image fails
+    backgroundColor: "#ddd",
     marginRight: 10,
   },
   username: {
@@ -52,7 +49,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   removeButton: {
-    backgroundColor: "#f44336", // Red color for remove button
+    backgroundColor: "#f44336",
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
