@@ -22,7 +22,7 @@ export const ThemeProvider = ({ children }: any) => {
   };
 
   // use Appearance API to listen out for system theme changes
-  // chrome devtools > burger button > more tools > rendering > emulation > toggle prefers-system-scheme settings to see
+  // chrome devtools > 3dots button > more tools > rendering > emulation > toggle prefers-system-scheme settings to see
   useEffect(() => {
     const themeTracker = Appearance.addChangeListener(({ colorScheme }) => {
       setTheme(colorScheme || "light");
