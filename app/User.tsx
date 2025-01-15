@@ -4,8 +4,8 @@ import UserInformation from '../components/UserInformation'
 import {apiClient} from '../utils/api-client'
 
 export default function User() {
-  const userId = 1 
-  const userIdInStorage = 1
+  const userId = "6784d64b844f23ac9810cf21"
+  const userIdInStorage = "6784d64b844f23ac9810cf21"
 
   const [userData, setUserData] = useState<any>(null)
   const [loading, setLoading] = useState<boolean>(true)
@@ -13,9 +13,11 @@ export default function User() {
 
   useEffect(() => {
     apiClient.get(`/users/${userId}`).then(({data}) => {
+      console.log(data)
       setUserData(data)
       setLoading(false)
-    }).catch((err) => {
+    }).catch((err) => { 
+      console.error("Error loading user data", err)
       setError("Error loading user data")
       setLoading(false)
     })
@@ -53,6 +55,63 @@ export default function User() {
 );
 } 
 
+
+
+
+
+
+
+// import React from 'react';
+// import { View, Text, Image, Button, StyleSheet } from 'react-native';
+// import { userData } from '../dummy-data/users';
+
+// const User = () => {
+//   const currentUser = userData[0]; 
+  
+//   const handleLogout = () => {
+//     console.log("Logging out...");
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       <Image source={require('../assets/images/sparkly_unicorn.png')} style={styles.profilePic} />
+//       <Text style={styles.username}>{currentUser.username}</Text>
+//       <Text style={styles.name}>{currentUser.name}</Text>
+//       {/* displays email and logout button */}
+//       <Text style={styles.email}>{currentUser.email}</Text>
+//       <Button title="Logout" onPress={handleLogout} />
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     padding: 20,
+//   },
+//   profilePic: {
+//     width: 100,
+//     height: 100,
+//     borderRadius: 50,
+//   },
+//   username: {
+//     fontSize: 24,
+//     fontWeight: 'bold',
+//     marginVertical: 10,
+//   },
+//   name: {
+//     fontSize: 18,
+//     marginVertical: 5,
+//   },
+//   email: {
+//     fontSize: 16,
+//     marginVertical: 5,
+//   },
+// });
+
+// export default User;
 
 
 
