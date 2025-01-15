@@ -4,6 +4,26 @@
  */
 
 export const Colours = {
-  light: {},
-  dark: {},
+  light: {
+    primary: "#252d2e",
+    background: "#f2f2f2",
+    surface: "#f2f2f2",
+    button: "pink",
+    text: {
+      primary: "#252d2e",
+      disabled: "#5a5e5e",
+    },
+    error: "#d44657",
+  },
+  dark: {
+    primary: "#f2f2f2",
+    background: "#252d2e",
+    surface: "#252d2e",
+    button: "purple",
+    text: {
+      primary: "#f2f2f2",
+      disabled: "#5a5e5e",
+    },
+    error: "#d44657",
+  },
 };
