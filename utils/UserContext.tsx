@@ -31,7 +31,7 @@ export const UserProvider = ({ children }: Props) => {
 
   const removeUser = async () => {
     setUser({ user_id: null });
-    await AsyncStorage.setItem("user", JSON.stringify({ user_id: null }));
+    await AsyncStorage.setItem("user", JSON.stringify(null));
   };
 
   return (
@@ -41,4 +41,20 @@ export const UserProvider = ({ children }: Props) => {
   );
 };
 
-export const useUser = () => useContext(UserContext);
+interface UseUserReturn {
+  saveUser: (userData: userDataProps) => Promise<void>;
+  loadUser: () => Promise<void>;
+  removeUser: () => Promise<void>;
+  user: userDataProps;
+}
+
+// Corrected useUser implementation
+export const useUser = (): UseUserReturn => {
+  const context = useContext(UserContext);
+
+  if (!context) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
+
+  return context;
+};

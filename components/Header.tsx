@@ -3,17 +3,28 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text, View, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DropdownMenu, MenuOption } from "./DropdownMenu";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
+import Overlay from "./Overlay";
+import LogInForm from "./LogInForm";
 
 export default function Header() {
-  const username = true;
+  const username = null;
   const [isProfileDropdownVisible, setIsProfileDropdownVisible] =
     useState(false);
   const [isNotificationDropdownVisible, setIsNotificationDropdownVisible] =
     useState(false);
+  const [isLoginFormVisible, setIsLoginFormVisible] = useState(false);
   const router = useRouter();
   return (
     <>
+      <Overlay
+        isVisible={isLoginFormVisible}
+        onClose={() => {
+          setIsLoginFormVisible(false);
+        }}
+      >
+        <LogInForm />
+      </Overlay>
       <StatusBar barStyle="light-content" backgroundColor="#25292e" />
       <SafeAreaView
         style={{ backgroundColor: "#25292e" }} // match the SafeArea background with header
@@ -87,7 +98,12 @@ export default function Header() {
                 </>
               ) : (
                 <>
-                  <MenuOption onSelect={() => {}}>
+                  <MenuOption
+                    onSelect={() => {
+                      setIsProfileDropdownVisible(false);
+                      setIsLoginFormVisible(true);
+                    }}
+                  >
                     <Text>Log In</Text>
                   </MenuOption>
                   <MenuOption onSelect={() => {}}>
