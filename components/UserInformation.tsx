@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, View, Image, Button } from "react-native";
-// import { userData } from "../dummy-data/users";
+import { userData } from "../dummy-data/users";
 
 type UserInformationProps = {
   userId: string;
