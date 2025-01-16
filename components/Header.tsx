@@ -10,6 +10,7 @@ import { useUser } from "@/utils/UserContext";
 
 export default function Header() {
   const username = useUser().user.username;
+  const removeUser = useUser().removeUser;
   const [isProfileDropdownVisible, setIsProfileDropdownVisible] =
     useState(false);
   const [isNotificationDropdownVisible, setIsNotificationDropdownVisible] =
@@ -93,7 +94,11 @@ export default function Header() {
                   >
                     <Text>View Profile</Text>
                   </MenuOption>
-                  <MenuOption onSelect={() => {}}>
+                  <MenuOption
+                    onSelect={() => {
+                      removeUser();
+                    }}
+                  >
                     <Text>Sign Out</Text>
                   </MenuOption>
                 </>
