@@ -7,7 +7,7 @@ import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
 const LogInForm = () => {
   const router = useRouter();
-  const { saveUser, user } = useUser();
+  const { saveUser } = useUser();
   const [inputText, setInputText] = useState("");
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -37,24 +37,28 @@ const LogInForm = () => {
   };
   return (
     <View>
-      <Text>Enter your username:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter text"
-        value={inputText}
-        onChangeText={setInputText}
-      />
-      {errMsg ? (
-        <View>
-          <Text>{errMsg}</Text>
-          <Button title="Log In" onPress={handleLogin} />
-        </View>
-      ) : loginSuccess ? (
-        <Text>Success! Logged in</Text>
-      ) : isLoading ? (
-        <Text>logging in...</Text>
+      {loginSuccess ? (
+        <Text>Success! Logged In</Text>
       ) : (
-        <Button title="Log In" onPress={handleLogin} />
+        <View>
+          <Text>Enter your username:</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter text"
+            value={inputText}
+            onChangeText={setInputText}
+          />
+          {errMsg ? (
+            <View>
+              <Text>{errMsg}</Text>
+              <Button title="Log In" onPress={handleLogin} />
+            </View>
+          ) : isLoading ? (
+            <Text>logging in...</Text>
+          ) : (
+            <Button title="Log In" onPress={handleLogin} />
+          )}
+        </View>
       )}
     </View>
   );
