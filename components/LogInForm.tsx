@@ -35,7 +35,6 @@ const LogInForm = () => {
       }
     }
   };
-  console.log(user);
   return (
     <View>
       <Text>Enter your username:</Text>

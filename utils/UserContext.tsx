@@ -5,7 +5,13 @@ type Props = {
   children: ReactNode;
 };
 
-type userDataProps = { user_id: string | null };
+type userDataProps = {
+  _id: string | null;
+  username: Array<string> | null;
+  name: string | null;
+  email: string | null;
+  savedLists: Array<string> | null;
+};
 
 type UserContextProps = {
   user: userDataProps;
@@ -17,7 +23,13 @@ type UserContextProps = {
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export const UserProvider = ({ children }: Props) => {
-  const [user, setUser] = useState<userDataProps>({ user_id: null });
+  const [user, setUser] = useState<userDataProps>({
+    _id: null,
+    username: null,
+    name: null,
+    email: null,
+    savedLists: null,
+  });
 
   const saveUser = async (userData: userDataProps) => {
     setUser(userData);
@@ -30,7 +42,13 @@ export const UserProvider = ({ children }: Props) => {
   };
 
   const removeUser = async () => {
-    setUser({ user_id: null });
+    setUser({
+      _id: null,
+      username: null,
+      name: null,
+      email: null,
+      savedLists: null,
+    });
     await AsyncStorage.setItem("user", JSON.stringify(null));
   };
 
