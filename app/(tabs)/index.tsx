@@ -4,7 +4,7 @@ import apiClient from "../../utils/api-client";
 
 export default function Index() {
   apiClient
-    .get("/")
+    .get("/api")
     .then(({ data }) => console.log(data))
     .catch(err => console.log(err));
   return (
