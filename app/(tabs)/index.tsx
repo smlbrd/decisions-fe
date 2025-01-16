@@ -4,9 +4,9 @@ import apiClient from "../../utils/api-client";
 
 export default function Index() {
   apiClient
-    .get("/api")
+    .get("/")
     .then(({ data }) => console.log(data))
-    .catch(err => console.log(err));
+    .catch(err => console.log('Server not online'));
   return (
     <View
       style={{
