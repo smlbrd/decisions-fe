@@ -6,9 +6,10 @@ import { DropdownMenu, MenuOption } from "./DropdownMenu";
 import { useRouter } from "expo-router";
 import Overlay from "./Overlay";
 import LogInForm from "./LogInForm";
+import { useUser } from "@/utils/UserContext";
 
 export default function Header() {
-  const username = null;
+  const username = useUser().user.username;
   const [isProfileDropdownVisible, setIsProfileDropdownVisible] =
     useState(false);
   const [isNotificationDropdownVisible, setIsNotificationDropdownVisible] =
