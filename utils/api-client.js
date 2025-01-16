@@ -1,8 +1,7 @@
 import axios from "axios";
+import ip from "../ip";
 
-export const apiClient = axios.create({
-  baseURL: "http://localhost:5175",
+export default apiClient = axios.create({
+  baseURL: `http://${ip}/api`,
   // timeout: 5000
 });
-
-apiClient.get('/').then(({ data }) => console.log(data));
