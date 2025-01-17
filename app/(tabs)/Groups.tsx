@@ -7,6 +7,7 @@ import Overlay from "@/components/Overlay";
 import { ScrollView } from "react-native";
 import apiClient from "@/utils/api-client";
 import { useUser } from "@/utils/UserContext";
+import { CreateGroupForm } from "@/components/CreateGroupForm";
 
 export default function Groups() {
   const { user } = useUser();
@@ -67,7 +68,7 @@ export default function Groups() {
         isVisible={isCreateGroupModalVisible}
         onClose={handleCreateGroupModalClose}
       >
-        <Text>This is the modal for creating a new group</Text>
+        <CreateGroupForm />
       </Overlay>
       <View style={styles.createGroupButtonContainer}>
         <CreateNewButton
