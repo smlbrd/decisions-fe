@@ -85,15 +85,15 @@ export default function Header() {
             >
               {user.username ? (
                 <>
+                  <MenuOption onSelect={() => {}}>
+                    <Text>Welcome {user.name}!</Text>
+                  </MenuOption>
                   <MenuOption
                     onSelect={() => {
                       setIsProfileDropdownVisible(false);
                       router.push("/User");
                     }}
                   >
-                    <Text>Welcome {user.name}!</Text>
-                  </MenuOption>
-                  <MenuOption onSelect={() => {}}>
                     <Text>View Profile</Text>
                   </MenuOption>
                   <MenuOption
