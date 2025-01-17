@@ -1,13 +1,16 @@
 import { Collapsible } from "@/components/Collapsible";
 import { CreateNewButton } from "@/components/CreateNewButton";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { groupData } from "../../dummy-data/groups";
 import UserCard from "@/components/UserCard";
 import Overlay from "@/components/Overlay";
 import { ScrollView } from "react-native";
+import apiClient from "@/utils/api-client";
+import { useUser } from "@/utils/UserContext";
 
 export default function Groups() {
+  const { user } = useUser();
   const [isCreateGroupModalVisible, setIsCreateGroupModalVisible] =
     useState(false);
   const handleCreateGroupModalClose = () => {
@@ -16,21 +19,35 @@ export default function Groups() {
   const handleCreateNewGroupPress = () => {
     setIsCreateGroupModalVisible(true);
   };
-  const usersById: { [key: string]: { username: string } } = {};
-  // keys are strings, and so are values
-  const groupDataCollapsibles = groupData.map((group) => {
+
+  interface Member {
+    _id: string;
+    name: string;
+    username: string;
+    savedLists: [string];
+    email: string;
+  }
+
+  interface Group {
+    _id: string;
+    name: string;
+    description: string;
+    members: Member[];
+  }
+
+  const [myGroups, setMyGroups] = useState<Group[]>([]);
+  useEffect(() => {
+    apiClient.get(`/users/${user._id}/groups`).then(({ data }) => {
+      setMyGroups(data);
+    });
+  }, [user]);
+
+  const groupDataCollapsibles = myGroups.map((group) => {
     return (
-      <Collapsible key={group._id.$oid} title={group.group_name}>
-        <Text>{group.group_desc}</Text>
+      <Collapsible key={group._id} title={group.name}>
+        <Text>{group.description}</Text>
         {group.members.map((member) => {
-          if (!usersById[member.$oid])
-            usersById[member.$oid] = { username: "steve" }; // would be an axios get the user info
-          return (
-            <UserCard
-              key={member.$oid}
-              username={usersById[member.$oid].username}
-            />
-          );
+          return <UserCard key={member._id} user={member} />;
         })}
       </Collapsible>
     );
