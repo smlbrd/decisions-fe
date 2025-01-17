@@ -9,8 +9,7 @@ import LogInForm from "./LogInForm";
 import { useUser } from "@/utils/UserContext";
 
 export default function Header() {
-  const username = useUser().user.username;
-  const removeUser = useUser().removeUser;
+  const { user, removeUser } = useUser();
   const [isProfileDropdownVisible, setIsProfileDropdownVisible] =
     useState(false);
   const [isNotificationDropdownVisible, setIsNotificationDropdownVisible] =
@@ -84,7 +83,7 @@ export default function Header() {
                 />
               }
             >
-              {username ? (
+              {user.username ? (
                 <>
                   <MenuOption
                     onSelect={() => {
@@ -92,6 +91,9 @@ export default function Header() {
                       router.push("/User");
                     }}
                   >
+                    <Text>Welcome {user.name}!</Text>
+                  </MenuOption>
+                  <MenuOption onSelect={() => {}}>
                     <Text>View Profile</Text>
                   </MenuOption>
                   <MenuOption

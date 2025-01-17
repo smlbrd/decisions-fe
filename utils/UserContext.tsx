@@ -1,5 +1,12 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
 
 type Props = {
   children: ReactNode;
@@ -23,32 +30,43 @@ type UserContextProps = {
 const UserContext = createContext<UserContextProps | undefined>(undefined);
 
 export const UserProvider = ({ children }: Props) => {
-  const [user, setUser] = useState<userDataProps>({
+  const isWeb = Platform.OS === "web";
+  const nullUser = {
     _id: null,
     username: null,
     name: null,
     email: null,
     savedLists: null,
-  });
+  };
+
+  const [user, setUser] = useState<userDataProps>(nullUser);
 
   const saveUser = async (userData: userDataProps) => {
     setUser(userData);
-    await AsyncStorage.setItem("user", JSON.stringify(userData));
+    if (isWeb) localStorage.setItem("user", JSON.stringify(userData));
+    else await AsyncStorage.setItem("user", JSON.stringify(userData));
   };
 
   const loadUser = async () => {
-    const storedUser = await AsyncStorage.getItem("user");
-    if (storedUser) setUser(JSON.parse(storedUser));
+    const storedUser = isWeb
+      ? localStorage.getItem("user")
+      : await AsyncStorage.getItem("user");
+
+    const parsedStoredUser =
+      storedUser && storedUser !== JSON.stringify(null)
+        ? JSON.parse(storedUser)
+        : nullUser;
+
+    if (parsedStoredUser?.username) setUser(parsedStoredUser);
+    else setUser(nullUser);
   };
 
+  useEffect(() => {
+    loadUser();
+  }, []);
+
   const removeUser = async () => {
-    setUser({
-      _id: null,
-      username: null,
-      name: null,
-      email: null,
-      savedLists: null,
-    });
+    setUser(nullUser);
     await AsyncStorage.setItem("user", JSON.stringify(null));
   };
 
@@ -66,7 +84,6 @@ interface UseUserReturn {
   user: userDataProps;
 }
 
-// Corrected useUser implementation
 export const useUser = (): UseUserReturn => {
   const context = useContext(UserContext);
 
