@@ -37,6 +37,3 @@ const UserInformation: React.FC<UserInformationProps> = ({
 };
 
 export default UserInformation;
-
-
-
