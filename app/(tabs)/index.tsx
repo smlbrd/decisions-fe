@@ -3,10 +3,7 @@ import { Text, View } from "react-native";
 import apiClient from "../../utils/api-client";
 
 export default function Index() {
-  apiClient
-    .get("/")
-    .then(({ data }) => console.log(data))
-    .catch(err => console.log('Server not online'));
+  apiClient.get("/api");
   return (
     <View
       style={{
