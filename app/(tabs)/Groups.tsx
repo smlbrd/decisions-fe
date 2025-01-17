@@ -2,7 +2,6 @@ import { Collapsible } from "@/components/Collapsible";
 import { CreateNewButton } from "@/components/CreateNewButton";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { groupData } from "../../dummy-data/groups";
 import UserCard from "@/components/UserCard";
 import Overlay from "@/components/Overlay";
 import { ScrollView } from "react-native";
@@ -11,6 +10,7 @@ import { useUser } from "@/utils/UserContext";
 
 export default function Groups() {
   const { user } = useUser();
+
   const [isCreateGroupModalVisible, setIsCreateGroupModalVisible] =
     useState(false);
   const handleCreateGroupModalClose = () => {
@@ -27,19 +27,28 @@ export default function Groups() {
     savedLists: [string];
     email: string;
   }
-
   interface Group {
     _id: string;
     name: string;
     description: string;
     members: Member[];
   }
-
   const [myGroups, setMyGroups] = useState<Group[]>([]);
+  const [isLoadingGroups, setIsLoadingGroups] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
   useEffect(() => {
-    apiClient.get(`/users/${user._id}/groups`).then(({ data }) => {
-      setMyGroups(data);
-    });
+    setErrMsg("");
+    setIsLoadingGroups(true);
+    apiClient
+      .get(`/users/${user._id}/groups`)
+      .then(({ data }) => {
+        setMyGroups(data);
+        setIsLoadingGroups(false);
+      })
+      .catch((err) => {
+        setIsLoadingGroups(false);
+        setErrMsg("Error loading groups");
+      });
   }, [user]);
 
   const groupDataCollapsibles = myGroups.map((group) => {
@@ -66,12 +75,18 @@ export default function Groups() {
           onPress={handleCreateNewGroupPress}
         />
       </View>
-      <ScrollView>
-        <View style={styles.groupsContainer}>
-          <Text style={styles.headerText}>My Groups</Text>
-          {groupDataCollapsibles}
-        </View>
-      </ScrollView>
+      {errMsg ? (
+        <Text>{errMsg}</Text>
+      ) : isLoadingGroups ? (
+        <Text>Loading groups...</Text>
+      ) : (
+        <ScrollView>
+          <View style={styles.groupsContainer}>
+            <Text style={styles.headerText}>My Groups</Text>
+            {groupDataCollapsibles}
+          </View>
+        </ScrollView>
+      )}
     </>
   );
 }
