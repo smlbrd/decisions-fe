@@ -40,16 +40,21 @@ export default function Groups() {
   useEffect(() => {
     setErrMsg("");
     setIsLoadingGroups(true);
-    apiClient
-      .get(`/users/${user._id}/groups`)
-      .then(({ data }) => {
-        setMyGroups(data);
-        setIsLoadingGroups(false);
-      })
-      .catch((err) => {
-        setIsLoadingGroups(false);
-        setErrMsg("Error loading groups");
-      });
+    if (user.username !== null)
+      apiClient
+        .get(`/users/${user._id}/groups`)
+        .then(({ data }) => {
+          setMyGroups(data);
+          setIsLoadingGroups(false);
+        })
+        .catch((err) => {
+          setIsLoadingGroups(false);
+          setErrMsg("Error loading groups");
+        });
+    else {
+      setIsLoadingGroups;
+      setErrMsg("Not logged in");
+    }
   }, [user]);
 
   const groupDataCollapsibles = myGroups.map((group) => {
