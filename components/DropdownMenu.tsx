@@ -28,8 +28,8 @@ interface DropdownMenuProps {
   trigger: React.ReactNode;
   children: React.ReactNode;
   dropdownWidth?: number;
-  xPos: number;
-  yPos: number;
+  xPos?: number;
+  yPos?: number;
 }
 
 export const DropdownMenu: React.FC<DropdownMenuProps> = ({

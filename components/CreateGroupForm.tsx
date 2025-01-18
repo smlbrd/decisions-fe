@@ -47,7 +47,7 @@ export const CreateGroupForm = () => {
         </MenuOption>
       </DropdownMenu>
 
-      <Button title="Create New Group" onPress={() => {}} />x
+      <Button title="Create New Group" onPress={() => {}} />
     </View>
   );
 };
