@@ -38,9 +38,11 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
   const [isPosting, setIsPosting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errMsg, setErrMsg] = useState("");
+  const [loadUsersErrMsg, setLoadUsersErrMsg] = useState("");
   const [users, setUsers] = useState([]);
   const { user } = useUser();
   useEffect(() => {
+    setLoadUsersErrMsg("");
     apiClient
       .get("/users")
       .then(({ data }) => {
@@ -48,6 +50,7 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
       })
       .catch((err) => {
         console.log(err);
+        setLoadUsersErrMsg("there was an error loading users");
       });
   }, []);
   type userDataProps = {
@@ -119,7 +122,6 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
         setMyGroups((myGroups) => {
           return [...myGroups, data];
         });
-        console.log(data);
       })
       .catch((err) => {
         setIsSuccess(false);
@@ -195,31 +197,34 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
               value={searchUsernameText}
               onChangeText={(text) => {
                 setSearchUsernameText(text);
-                console.log(filteredUsers);
               }}
             />
           </View>
           <ScrollView style={styles.scrollView}>
             <View>
-              {filteredUsers.map((user: userDataProps) => (
-                <UserCard key={user._id} user={user}>
-                  <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={() => {
-                      setGroupInfoText((groupInfoText) => {
-                        const members = groupInfoText.members;
-                        members.push(user);
-                        return {
-                          ...groupInfoText,
-                          members,
-                        };
-                      });
-                    }}
-                  >
-                    <Text style={styles.buttonText}>Add</Text>
-                  </TouchableOpacity>
-                </UserCard>
-              ))}
+              {loadUsersErrMsg ? (
+                <Text style={styles.errText}>{loadUsersErrMsg}</Text>
+              ) : (
+                filteredUsers.map((user: userDataProps) => (
+                  <UserCard key={user._id} user={user}>
+                    <TouchableOpacity
+                      style={styles.addButton}
+                      onPress={() => {
+                        setGroupInfoText((groupInfoText) => {
+                          const members = groupInfoText.members;
+                          members.push(user);
+                          return {
+                            ...groupInfoText,
+                            members,
+                          };
+                        });
+                      }}
+                    >
+                      <Text style={styles.buttonText}>Add</Text>
+                    </TouchableOpacity>
+                  </UserCard>
+                ))
+              )}
             </View>
           </ScrollView>
           <Button title="Create New Group" onPress={handlePostGroup} />
