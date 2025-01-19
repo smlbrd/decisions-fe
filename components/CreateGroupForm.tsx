@@ -4,6 +4,7 @@ import apiClient from "@/utils/api-client";
 import UserCard from "./UserCard";
 import { useUser } from "@/utils/UserContext";
 import { ScrollView } from "react-native-gesture-handler";
+import { Ionicons } from "@expo/vector-icons";
 
 export const CreateGroupForm = () => {
   const [users, setUsers] = useState([]);
@@ -34,8 +35,12 @@ export const CreateGroupForm = () => {
     members: [],
   });
   useEffect(() => {
-    const filtered = users.filter((user: userDataProps) =>
-      user.username?.toLowerCase().includes(searchUsernameText.toLowerCase())
+    const filtered = users.filter(
+      (user: userDataProps) =>
+        user.username
+          ?.toLowerCase()
+          .includes(searchUsernameText.toLowerCase()) ||
+        user.name?.toLowerCase().includes(searchUsernameText.toLowerCase())
     );
     setFilteredUsers(filtered);
   }, [searchUsernameText, users]);
@@ -69,15 +74,18 @@ export const CreateGroupForm = () => {
       <Text>MY NEW GROUP</Text>
       <UserCard user={user} />
       <Text>Add members to group</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Search by username"
-        value={searchUsernameText}
-        onChangeText={(text) => {
-          setSearchUsernameText(text);
-          console.log(filteredUsers);
-        }}
-      />
+      <View style={styles.rowAlign}>
+        <Ionicons name={"search"} color={"black"} size={24} />
+        <TextInput
+          style={styles.input}
+          placeholder="Search"
+          value={searchUsernameText}
+          onChangeText={(text) => {
+            setSearchUsernameText(text);
+            console.log(filteredUsers);
+          }}
+        />
+      </View>
       <ScrollView style={styles.scrollView}>
         <View>
           {filteredUsers.map((user: userDataProps) => (
@@ -118,5 +126,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
     padding: 10,
+  },
+  rowAlign: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
