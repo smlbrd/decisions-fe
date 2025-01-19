@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import apiClient from "@/utils/api-client";
 import UserCard from "./UserCard";
 import { useUser } from "@/utils/UserContext";
@@ -29,21 +36,33 @@ export const CreateGroupForm = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
 
   const [searchUsernameText, setSearchUsernameText] = useState("");
-  const [groupInfoText, setGroupInfoText] = useState({
+
+  type groupInfoProps = {
+    name: string;
+    description: string;
+    members: userDataProps[];
+  };
+  const [groupInfoText, setGroupInfoText] = useState<groupInfoProps>({
     name: "",
     description: "",
     members: [],
   });
   useEffect(() => {
     const filtered = users.filter(
-      (user: userDataProps) =>
-        user.username
+      (userInGroup: userDataProps) =>
+        (userInGroup.username
           ?.toLowerCase()
           .includes(searchUsernameText.toLowerCase()) ||
-        user.name?.toLowerCase().includes(searchUsernameText.toLowerCase())
+          userInGroup.name
+            ?.toLowerCase()
+            .includes(searchUsernameText.toLowerCase())) &&
+        !groupInfoText.members.some(
+          (member) => member._id === userInGroup._id
+        ) &&
+        userInGroup._id !== user._id
     );
     setFilteredUsers(filtered);
-  }, [searchUsernameText, users]);
+  }, [searchUsernameText, users, groupInfoText]);
   const handleGroupInfoTextInput = (text: string, name: string) => {
     setGroupInfoText((groupInfoText) => {
       return { ...groupInfoText, [name]: text };
@@ -72,7 +91,34 @@ export const CreateGroupForm = () => {
         }}
       />
       <Text>MY NEW GROUP</Text>
-      <UserCard user={user} />
+      <ScrollView style={styles.scrollView}>
+        <View>
+          <UserCard user={user}>
+            <Text>OWNER</Text>
+          </UserCard>
+          {groupInfoText.members.map((member) => {
+            return (
+              <UserCard key={member._id} user={member}>
+                <TouchableOpacity
+                  style={styles.removeButton}
+                  onPress={() => {
+                    setGroupInfoText((groupInfoText) => {
+                      const membersFilter = groupInfoText.members.filter(
+                        (memberAdded) => {
+                          return memberAdded._id !== member._id;
+                        }
+                      );
+                      return { ...groupInfoText, members: membersFilter };
+                    });
+                  }}
+                >
+                  <Text style={styles.buttonText}>Remove</Text>
+                </TouchableOpacity>
+              </UserCard>
+            );
+          })}
+        </View>
+      </ScrollView>
       <Text>Add members to group</Text>
       <View style={styles.rowAlign}>
         <Ionicons name={"search"} color={"black"} size={24} />
@@ -89,7 +135,23 @@ export const CreateGroupForm = () => {
       <ScrollView style={styles.scrollView}>
         <View>
           {filteredUsers.map((user: userDataProps) => (
-            <Text>{user.username}</Text>
+            <UserCard key={user._id} user={user}>
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => {
+                  setGroupInfoText((groupInfoText) => {
+                    const members = groupInfoText.members;
+                    members.push(user);
+                    return {
+                      ...groupInfoText,
+                      members,
+                    };
+                  });
+                }}
+              >
+                <Text style={styles.buttonText}>Add</Text>
+              </TouchableOpacity>
+            </UserCard>
           ))}
         </View>
       </ScrollView>
@@ -131,5 +193,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  removeButton: {
+    backgroundColor: "#f44336",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  addButton: {
+    backgroundColor: "#2DA042",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });

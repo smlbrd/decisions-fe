@@ -1,7 +1,7 @@
 import { Collapsible } from "@/components/Collapsible";
 import { CreateNewButton } from "@/components/CreateNewButton";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import UserCard from "@/components/UserCard";
 import Overlay from "@/components/Overlay";
 import { ScrollView } from "react-native";
@@ -62,7 +62,14 @@ export default function Groups() {
       <Collapsible key={group._id} title={group.name}>
         <Text>{group.description}</Text>
         {group.members.map((member) => {
-          return <UserCard key={member._id} user={member} />;
+          return (
+            <UserCard key={member._id} user={member}>
+              {" "}
+              <TouchableOpacity style={styles.removeButton} onPress={() => {}}>
+                <Text style={styles.removeButtonText}>Remove</Text>
+              </TouchableOpacity>
+            </UserCard>
+          );
         })}
       </Collapsible>
     );
@@ -113,5 +120,15 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     color: "#333",
+  },
+  removeButton: {
+    backgroundColor: "#f44336",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  removeButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });

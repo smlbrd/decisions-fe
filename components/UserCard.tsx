@@ -1,6 +1,7 @@
+import { useUser } from "@/utils/UserContext";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import React, { ReactNode } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 type userDataProps = {
   _id: string | null;
@@ -12,10 +13,11 @@ type userDataProps = {
 
 type Props = {
   user: userDataProps;
+  children: ReactNode | null;
 };
 
-const UserCard = ({ user }: Props) => {
-  const onRemove = () => {};
+const UserCard = ({ user, children }: Props) => {
+  const you = user._id === useUser().user._id ? " (you)" : "";
   return (
     <View style={styles.card}>
       <Ionicons
@@ -23,10 +25,8 @@ const UserCard = ({ user }: Props) => {
         name="person-circle-outline"
         size={24}
       />
-      <Text style={styles.username}>{user.name}</Text>
-      <TouchableOpacity style={styles.removeButton} onPress={onRemove}>
-        <Text style={styles.removeButtonText}>Remove</Text>
-      </TouchableOpacity>
+      <Text style={styles.username}>{user.name + you}</Text>
+      {children}
     </View>
   );
 };
@@ -55,16 +55,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: "#333",
-  },
-  removeButton: {
-    backgroundColor: "#f44336",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
-  removeButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
   },
 });
 
