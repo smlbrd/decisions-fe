@@ -6,7 +6,7 @@ import UserCard from "@/components/UserCard";
 import Overlay from "@/components/Overlay";
 import { ScrollView } from "react-native";
 import apiClient from "@/utils/api-client";
-import { useUser } from "@/utils/UserContext";
+import { useUser } from "@/contexts/UserContext";
 import { CreateGroupForm } from "@/components/CreateGroupForm";
 
 export default function Groups() {

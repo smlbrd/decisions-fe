@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import apiClient from "@/utils/api-client";
 import UserCard from "./UserCard";
-import { useUser } from "@/utils/UserContext";
+import { useUser } from "@/contexts/UserContext";
 import { ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";

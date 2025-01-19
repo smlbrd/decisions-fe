@@ -1,4 +1,4 @@
-import { useUser } from "@/utils/UserContext";
+import { useUser } from "@/contexts/UserContext";
 import { Ionicons } from "@expo/vector-icons";
 import React, { ReactNode } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
