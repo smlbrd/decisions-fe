@@ -28,7 +28,9 @@ const Overlay = ({ isVisible, onClose, children }: Props) => {
     >
       <TouchableWithoutFeedback
         onPress={() => {
-          Keyboard.dismiss();
+          if (!isWeb) {
+            Keyboard.dismiss();
+          }
           onClose();
         }}
       >
@@ -42,7 +44,7 @@ const Overlay = ({ isVisible, onClose, children }: Props) => {
             style={styles.avoidingView}
             behavior={Platform.OS === "ios" ? "padding" : undefined}
           >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
               <View style={styles.contentContainer}>{children}</View>
             </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
