@@ -14,9 +14,15 @@ type Props = {
   isVisible: boolean;
   onClose: () => void;
   children: ReactNode;
+  isKeyboardAvoiding?: boolean;
 };
 
-const Overlay = ({ isVisible, onClose, children }: Props) => {
+const Overlay = ({
+  isVisible,
+  onClose,
+  children,
+  isKeyboardAvoiding,
+}: Props) => {
   const isWeb = Platform.OS === "web";
 
   return (
@@ -42,7 +48,11 @@ const Overlay = ({ isVisible, onClose, children }: Props) => {
           )}
           <KeyboardAvoidingView
             style={styles.avoidingView}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            behavior={
+              Platform.OS === "ios" && isKeyboardAvoiding
+                ? "padding"
+                : undefined
+            }
           >
             <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
               <View style={styles.contentContainer}>{children}</View>
