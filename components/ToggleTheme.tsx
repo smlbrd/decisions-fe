@@ -7,12 +7,8 @@ const ToggleTheme = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: colours.background }]}>
-      <Text style={{ color: colours.text.primary }}>Vibe: {theme}</Text>
-      <Button
-        title="Theme"
-        onPress={toggleTheme}
-        color={colours.button}
-      ></Button>
+      <Text style={{ color: colours.text.primary }}>{theme}</Text>
+      <Button title="Theme" onPress={toggleTheme}></Button>
     </View>
   );
 };

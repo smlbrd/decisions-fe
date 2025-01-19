@@ -6,7 +6,7 @@ import { DropdownMenu, MenuOption } from "./DropdownMenu";
 import { useRouter } from "expo-router";
 import Overlay from "./Overlay";
 import LogInForm from "./LogInForm";
-import { useUser } from "@/utils/UserContext";
+import { useUser } from "@/contexts/UserContext";
 
 export default function Header() {
   const { user, removeUser } = useUser();

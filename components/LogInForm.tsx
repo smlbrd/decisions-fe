@@ -1,5 +1,5 @@
 import apiClient from "@/utils/api-client";
-import { useUser } from "@/utils/UserContext";
+import { useUser } from "@/contexts/UserContext";
 import { AxiosError } from "axios";
 import { useRouter } from "expo-router";
 import { useState } from "react";
