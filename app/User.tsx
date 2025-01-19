@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react"
 import { Text, View, Button, Image } from "react-native";
-import UserInformation from '../components/UserInformation'
+import UserInformation from "../components/UserInformation"
 import apiClient from '../utils/api-client'
 import {TouchableOpacity} from 'react-native' //instead of button for logging out
 import {ActivityIndicator} from 'react-native' // instead of text, spinner to show its loading

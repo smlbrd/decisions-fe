@@ -1,17 +1,20 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Stack } from "expo-router";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { UserProvider } from "@/contexts/UserContext";
 
 export default function RootLayout() {
   return (
-    <UserProvider>
-      <GestureHandlerRootView>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="User" />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </GestureHandlerRootView>
-    </UserProvider>
+    <GestureHandlerRootView>
+      <UserProvider>
+        <ThemeProvider>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="User" />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </ThemeProvider>
+      </UserProvider>
+    </GestureHandlerRootView>
   );
 }
