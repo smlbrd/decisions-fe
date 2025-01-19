@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text, View, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DropdownMenu, MenuOption } from "./DropdownMenu";
-import { useRouter } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import Overlay from "./Overlay";
 import LogInForm from "./LogInForm";
+import ToggleTheme from "./ToggleTheme";
+import { useRouter } from "expo-router";
 import { useUser } from "@/contexts/UserContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { StyleSheet } from "react-native";
 
 export default function Header() {
+  const { colours } = useTheme();
   const { user, removeUser } = useUser();
   const [isProfileDropdownVisible, setIsProfileDropdownVisible] =
     useState(false);
@@ -26,23 +30,26 @@ export default function Header() {
       >
         <LogInForm />
       </Overlay>
-      <StatusBar barStyle="light-content" backgroundColor="#25292e" />
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor={colours.background}
+      />
       <SafeAreaView
-        style={{ backgroundColor: "#25292e" }} // match the SafeArea background with header
-        edges={["top", "left", "right"]} // padding is only applied on top left and right
+        style={{ backgroundColor: colours.background }}
+        edges={["top", "left", "right"]}
       >
         <View
-          style={{
-            height: 60,
-            backgroundColor: "#25292e",
-            justifyContent: "space-between",
-            alignItems: "center",
-            paddingHorizontal: 15,
-            flexDirection: "row",
-          }}
+          style={[
+            styles.headerContainer,
+            { backgroundColor: colours.background },
+          ]}
         >
-          <Text style={{ color: "white", fontSize: 20 }}>Decisions</Text>
-          <View style={{ flexDirection: "row" }}>
+          <Text style={[styles.title, { color: colours.text.primary }]}>
+            Decisions
+          </Text>
+
+          <View style={styles.iconContainer}>
+            <ToggleTheme />
             <DropdownMenu
               isVisible={isNotificationDropdownVisible}
               handleOpen={() => {
@@ -54,7 +61,7 @@ export default function Header() {
               trigger={
                 <Ionicons
                   name={"notifications-outline"}
-                  color={"white"}
+                  color={colours.text.primary}
                   size={35}
                 />
               }
@@ -78,7 +85,7 @@ export default function Header() {
               trigger={
                 <Ionicons
                   name={"person-circle-outline"}
-                  color={"white"}
+                  color={colours.text.primary}
                   size={35}
                 />
               }
@@ -126,3 +133,19 @@ export default function Header() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    height: 60,
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 15,
+    flexDirection: "row",
+  },
+  title: {
+    fontSize: 20,
+  },
+  iconContainer: {
+    flexDirection: "row",
+  },
+});

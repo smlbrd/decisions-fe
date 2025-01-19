@@ -11,17 +11,13 @@ import { ActivityIndicator } from "react-native";
 
 type Option = {
   id: string;
-
   image_url: string;
 };
 
 type List = {
   _id: string;
-
   title: string;
-
   description: string;
-
   options: Option[];
 };
 
