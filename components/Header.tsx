@@ -8,7 +8,6 @@ import LogInForm from "./LogInForm";
 import { useUser } from "@/contexts/UserContext";
 import ToggleTheme from "./ToggleTheme";
 import { useRouter } from "expo-router";
-import { useUser } from "@/contexts/UserContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { StyleSheet } from "react-native";
 
