@@ -36,6 +36,8 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+.prettierrc
 
 #ip address
 ip.js
+
