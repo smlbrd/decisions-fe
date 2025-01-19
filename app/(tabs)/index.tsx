@@ -1,10 +1,13 @@
 import { Link } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import apiClient from "../../utils/api-client";
+import { useSocket } from "@/contexts/SocketContext";
 import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Index() {
   const { colours } = useTheme();
+  const socket = useSocket();
+  socket.emit("hi", "hi");
 
   apiClient
     .get("/")

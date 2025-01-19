@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, StatusBar } from "react-native";
+import { Text, View, StatusBar, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DropdownMenu, MenuOption } from "./DropdownMenu";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -9,7 +9,6 @@ import { useUser } from "@/contexts/UserContext";
 import ToggleTheme from "./ToggleTheme";
 import { useRouter } from "expo-router";
 import { useTheme } from "../contexts/ThemeContext";
-import { StyleSheet } from "react-native";
 
 export default function Header() {
   const { colours } = useTheme();
