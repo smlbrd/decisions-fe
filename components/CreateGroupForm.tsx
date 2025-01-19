@@ -10,7 +10,7 @@ import {
 import apiClient from "@/utils/api-client";
 import UserCard from "./UserCard";
 import { useUser } from "@/utils/UserContext";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 export const CreateGroupForm = () => {
@@ -67,6 +67,22 @@ export const CreateGroupForm = () => {
     setGroupInfoText((groupInfoText) => {
       return { ...groupInfoText, [name]: text };
     });
+  };
+
+  const handlePostGroup = () => {
+    const members = groupInfoText.members.map((member) => {
+      return { _id: member._id };
+    });
+    members.unshift({ _id: user._id });
+    const body = { ...groupInfoText, members, owner: [user._id] };
+    apiClient
+      .post("/groups", body)
+      .then(({ data }) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -155,7 +171,7 @@ export const CreateGroupForm = () => {
           ))}
         </View>
       </ScrollView>
-      <Button title="Create New Group" onPress={() => {}} />
+      <Button title="Create New Group" onPress={handlePostGroup} />
     </View>
   );
 };
