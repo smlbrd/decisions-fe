@@ -5,6 +5,7 @@ import { DropdownMenu, MenuOption } from "./DropdownMenu";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Overlay from "./Overlay";
 import LogInForm from "./LogInForm";
+import { useUser } from "@/contexts/UserContext";
 import ToggleTheme from "./ToggleTheme";
 import { useRouter } from "expo-router";
 import { useUser } from "@/contexts/UserContext";
