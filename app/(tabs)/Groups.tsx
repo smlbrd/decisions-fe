@@ -72,6 +72,7 @@ export default function Groups() {
       <Overlay
         isVisible={isCreateGroupModalVisible}
         onClose={handleCreateGroupModalClose}
+        isKeyboardAvoiding={true}
       >
         <CreateGroupForm />
       </Overlay>
