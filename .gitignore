@@ -37,3 +37,7 @@ yarn-error.*
 
 app-example
 .prettierrc
+
+#ip address
+ip.js
+
