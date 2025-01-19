@@ -1,9 +1,10 @@
 import { Link } from "expo-router";
 import { Text, View } from "react-native";
 import apiClient from "../../utils/api-client";
-import socket from "../../utils/socket";
+import { useSocket } from "@/contexts/SocketContext";
 
 export default function Index() {
+  const socket = useSocket();
   socket.emit("hi", "hi");
   apiClient
     .get("/")
