@@ -1,13 +1,19 @@
-import { StyleSheet, Text, View, ScrollView, Button } from "react-native";
 import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Button,
+  ActivityIndicator,
+} from "react-native";
+import { TextInput } from "react-native-gesture-handler";
 import { CreateNewButton } from "@/components/CreateNewButton";
 import Overlay from "@/components/Overlay";
 import ListCard from "@/components/ListCard";
 import { createList, getListsByUserId } from "../../api/api";
-import { TextInput } from "react-native-gesture-handler";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
-import { ActivityIndicator } from "react-native";
 
 type Option = {
   id: string;
@@ -21,32 +27,47 @@ type List = {
   options: Option[];
 };
 
-export default function Lists() {
+const Lists = () => {
   const { user, loadUser } = useUser();
-
   const { colours } = useTheme();
 
   const [isCreateListModalVisible, setIsCreateListModalVisible] =
     useState(false);
-
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState<string | undefined>(undefined);
-
   const [listData, setListData] = useState<List[]>([]);
-
   const [newListTitle, setNewListTitle] = useState("");
-
   const [newListDescription, setNewListDescription] = useState("");
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  useEffect(() => {
+    const fetchLists = async () => {
+      if (!user._id) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const lists = await getListsByUserId(user._id);
+        setListData(lists);
+      } catch (err) {
+        setError(`Error getting lists: ${err}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLists();
+  }, [user._id]);
 
   const handleCreateListModalClose = () => {
     setIsCreateListModalVisible(false);
     setNewListTitle("");
     setNewListDescription("");
-  };
-
-  const handleCreateNewListPress = () => {
-    setIsCreateListModalVisible(true);
   };
 
   const handleNewListSubmit = async () => {
@@ -61,48 +82,45 @@ export default function Lists() {
       setListData((prev) => [...prev, newlyCreatedList]);
       handleCreateListModalClose();
     } catch (err) {
-      console.log(err);
-      setError(`Something went wrong while we were making your list: ${err}`);
+      setError(`Something went wrong while creating your list: ${err}`);
     }
   };
 
-  useEffect(() => {
-    loadUser();
-  }, []);
+  const renderLists = () => {
+    if (loading) {
+      return <ActivityIndicator size="large" color={colours.text.primary} />;
+    }
 
-  useEffect(() => {
-    const getLists = async () => {
-      setLoading(true);
+    if (error) {
+      return <Text style={styles.errorText}>{error}</Text>;
+    }
 
-      if (!user._id) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const lists = await getListsByUserId(user._id);
-        setListData(lists);
-      } catch (err) {
-        setError(`Error getting lists: ${err}`);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getLists();
-  }, [user._id]);
+    return listData.map((list) => (
+      <ListCard
+        key={list._id}
+        id={list._id}
+        title={list.title}
+        description={list.description}
+        options={list.options}
+      />
+    ));
+  };
 
   return (
-    <>
+    <View style={[styles.container, { backgroundColor: colours.background }]}>
       <Overlay
         isVisible={isCreateListModalVisible}
         onClose={handleCreateListModalClose}
       >
-        <View style={styles.modalContainer}>
+        <View
+          style={[
+            styles.modalContainer,
+            { backgroundColor: colours.background },
+          ]}
+        >
           <Text style={[styles.modalTitle, { color: colours.surface.primary }]}>
             Create New List
           </Text>
-
           <TextInput
             style={styles.textInput}
             placeholder="Title"
@@ -110,7 +128,6 @@ export default function Lists() {
             value={newListTitle}
             onChangeText={setNewListTitle}
           />
-
           <TextInput
             style={styles.textInput}
             placeholder="Description"
@@ -118,48 +135,36 @@ export default function Lists() {
             value={newListDescription}
             onChangeText={setNewListDescription}
           />
-
           <Button title="Submit" onPress={handleNewListSubmit} />
         </View>
       </Overlay>
 
       <ScrollView>
         <View style={styles.listsContainer}>
-          <Text style={styles.headerText}>My Lists</Text>
-
-          {loading ? (
-            <ActivityIndicator size="large" color={colours.primary} />
-          ) : error ? (
-            <Text style={styles.errorText}>{error}</Text>
-          ) : (
-            listData.map((list) => (
-              <ListCard
-                key={list._id}
-                id={list._id}
-                title={list.title}
-                description={list.description}
-                options={list.options}
-              />
-            ))
-          )}
+          <Text style={[styles.headerText, { color: colours.text.primary }]}>
+            My Lists
+          </Text>
+          {renderLists()}
         </View>
-
         <View style={styles.listsContainer}>
           <CreateNewButton
-            text={"Create New"}
-            onPress={handleCreateNewListPress}
+            text="Create New"
+            onPress={() => setIsCreateListModalVisible(true)}
           />
         </View>
       </ScrollView>
-    </>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   listsContainer: {
     justifyContent: "center",
-    marginHorizontal: 15,
     marginBottom: 15,
+    marginHorizontal: 15,
   },
   headerText: {
     fontSize: 32,
@@ -169,7 +174,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   modalContainer: {
-    padding: 20,
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
   },
   modalTitle: {
     fontSize: 24,
@@ -178,10 +187,11 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 8,
     paddingHorizontal: 10,
     marginVertical: 10,
   },
 });
+
+export default Lists;
