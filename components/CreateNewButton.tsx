@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useTheme } from "../contexts/ThemeContext";
 
 type Props = {
   onPress: () => void;
@@ -7,11 +8,28 @@ type Props = {
 };
 
 export const CreateNewButton = ({ onPress, text }: Props) => {
+  const { colours } = useTheme();
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={onPress}>
-        <Ionicons name="add-circle-outline" size={24} color="#FFD700" />
-        <Text style={styles.text}>{text}</Text>
+      <TouchableOpacity
+        style={[
+          styles.button,
+          {
+            backgroundColor: colours.surface.disabled,
+            borderColor: colours.surface.primary,
+          },
+        ]}
+        onPress={onPress}
+      >
+        <Ionicons
+          name="add-circle-outline"
+          size={24}
+          color={colours.text.disabled}
+        />
+        <Text style={[styles.text, { color: colours.text.disabled }]}>
+          {text}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -19,20 +37,19 @@ export const CreateNewButton = ({ onPress, text }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
+    flexDirection: "column",
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#25292e",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    justifyContent: "center",
+    borderWidth: 2,
+    paddingHorizontal: 12,
+    paddingVertical: 36,
     borderRadius: 8,
-    borderColor: "#ffd33d",
-    borderWidth: 1,
+    marginVertical: 5,
   },
   text: {
-    color: "#ffd33d",
     fontSize: 16,
     fontWeight: "bold",
     marginLeft: 8,

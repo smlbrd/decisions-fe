@@ -5,6 +5,8 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Platform,
+  KeyboardAvoidingView,
+  Keyboard,
 } from "react-native";
 import { BlurView } from "expo-blur";
 
@@ -12,12 +14,17 @@ type Props = {
   isVisible: boolean;
   onClose: () => void;
   children: ReactNode;
+  isKeyboardAvoiding?: boolean;
 };
 
-const Overlay = ({ isVisible, onClose, children }: Props) => {
+const Overlay = ({
+  isVisible,
+  onClose,
+  children,
+  isKeyboardAvoiding,
+}: Props) => {
   const isWeb = Platform.OS === "web";
-  // a modal essentially brings up an overlay or dialogue on top of the current screen
-  // the on request close attribrute stems from the android back button - usually just set this to not visible when pressed
+
   return (
     <Modal
       visible={isVisible}
@@ -25,19 +32,32 @@ const Overlay = ({ isVisible, onClose, children }: Props) => {
       animationType="fade"
       onRequestClose={onClose}
     >
-      {/* The touchable without feedback below is the background which is blurred with expo-blur */}
-      <TouchableWithoutFeedback onPress={onClose}>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          if (!isWeb) {
+            Keyboard.dismiss();
+          }
+          onClose();
+        }}
+      >
         <View style={styles.overlayContainer}>
           {isWeb ? (
             <View style={styles.webFallbackBackground} />
           ) : (
             <BlurView intensity={50} style={styles.blurBackground} />
           )}
-          {/* The touchable without feedback below is the content which is styled by the content container */}
-          {/* It is in the centre of the content */}
-          <TouchableWithoutFeedback>
-            <View style={styles.contentContainer}>{children}</View>
-          </TouchableWithoutFeedback>
+          <KeyboardAvoidingView
+            style={styles.avoidingView}
+            behavior={
+              Platform.OS === "ios" && isKeyboardAvoiding
+                ? "padding"
+                : undefined
+            }
+          >
+            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+              <View style={styles.contentContainer}>{children}</View>
+            </TouchableWithoutFeedback>
+          </KeyboardAvoidingView>
         </View>
       </TouchableWithoutFeedback>
     </Modal>
@@ -58,8 +78,15 @@ const styles = StyleSheet.create({
   blurBackground: {
     ...StyleSheet.absoluteFillObject,
   },
+  avoidingView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
   contentContainer: {
     width: "80%",
+    maxWidth: 400,
     padding: 20,
     backgroundColor: "white",
     borderRadius: 10,
