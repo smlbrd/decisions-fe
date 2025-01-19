@@ -1,18 +1,28 @@
 import React from "react";
-import { View, Button, Text, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
 
 const ToggleTheme = () => {
   const { theme, toggleTheme, colours } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: colours.background }]}>
-      <Text style={{ color: colours.text.primary }}>Vibe: {theme}</Text>
-      <Button
-        title="Theme"
-        onPress={toggleTheme}
-        color={colours.button}
-      ></Button>
+      <TouchableOpacity onPress={toggleTheme}>
+        {theme === "light" ? (
+          <Ionicons
+            name={"sunny-outline"}
+            color={colours.text.primary}
+            size={35}
+          />
+        ) : (
+          <Ionicons
+            name={"moon-outline"}
+            color={colours.text.primary}
+            size={35}
+          />
+        )}
+      </TouchableOpacity>
     </View>
   );
 };

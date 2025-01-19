@@ -28,7 +28,7 @@ export const Colours = {
     background: "#292C3C",
     surface: {
       primary: "#303446",
-      disabled: "#2D2F41",
+      disabled: "#AEAEBC",
     },
     button: {
       primary: "#414559",

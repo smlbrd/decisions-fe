@@ -1,7 +1,7 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Stack } from "expo-router";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { UserProvider } from "@/utils/UserContext";
+import { UserProvider } from "@/contexts/UserContext";
 
 export default function RootLayout() {
   return (
