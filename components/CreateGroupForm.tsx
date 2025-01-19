@@ -12,8 +12,32 @@ import UserCard from "./UserCard";
 import { useUser } from "@/utils/UserContext";
 import { ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
-export const CreateGroupForm = () => {
+interface Member {
+  _id: string;
+  name: string;
+  username: string;
+  savedLists: [string];
+  email: string;
+}
+
+interface Group {
+  _id: string;
+  name: string;
+  description: string;
+  members: Member[];
+}
+
+type Props = {
+  setMyGroups: React.Dispatch<React.SetStateAction<Group[]>>;
+};
+
+export const CreateGroupForm = ({ setMyGroups }: Props) => {
+  const router = useRouter();
+  const [isPosting, setIsPosting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
   const [users, setUsers] = useState([]);
   const { user } = useUser();
   useEffect(() => {
@@ -70,6 +94,17 @@ export const CreateGroupForm = () => {
   };
 
   const handlePostGroup = () => {
+    setErrMsg("");
+    if (!groupInfoText.name) {
+      setErrMsg("Please enter a group name");
+      return null;
+    }
+    if (!groupInfoText.description) {
+      setErrMsg("Please enter a group description");
+      return null;
+    }
+    setIsSuccess(false);
+    setIsPosting(true);
     const members = groupInfoText.members.map((member) => {
       return { _id: member._id };
     });
@@ -78,100 +113,118 @@ export const CreateGroupForm = () => {
     apiClient
       .post("/groups", body)
       .then(({ data }) => {
+        setIsPosting(false);
+        setIsSuccess(true);
+        router.push("/Groups");
+        setMyGroups((myGroups) => {
+          return [...myGroups, data];
+        });
         console.log(data);
       })
       .catch((err) => {
+        setIsSuccess(false);
+        setIsPosting(false);
+        setErrMsg("there was an error creating this group: please try again");
         console.log(err);
       });
   };
 
   return (
     <View>
-      <Text style={styles.title}>CREATE NEW GROUP</Text>
-      <Text>Enter group name</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter group name"
-        value={groupInfoText.name}
-        onChangeText={(text) => {
-          handleGroupInfoTextInput(text, "name");
-        }}
-      />
-      <Text>Enter group description</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter group description"
-        value={groupInfoText.description}
-        onChangeText={(text) => {
-          handleGroupInfoTextInput(text, "description");
-        }}
-      />
-      <Text>MY NEW GROUP</Text>
-      <ScrollView style={styles.scrollView}>
+      {isPosting ? (
+        <Text>Creating group...</Text>
+      ) : isSuccess ? (
+        <Text>Success! New group created</Text>
+      ) : (
         <View>
-          <UserCard user={user}>
-            <Text>OWNER</Text>
-          </UserCard>
-          {groupInfoText.members.map((member) => {
-            return (
-              <UserCard key={member._id} user={member}>
-                <TouchableOpacity
-                  style={styles.removeButton}
-                  onPress={() => {
-                    setGroupInfoText((groupInfoText) => {
-                      const membersFilter = groupInfoText.members.filter(
-                        (memberAdded) => {
-                          return memberAdded._id !== member._id;
-                        }
-                      );
-                      return { ...groupInfoText, members: membersFilter };
-                    });
-                  }}
-                >
-                  <Text style={styles.buttonText}>Remove</Text>
-                </TouchableOpacity>
+          <Text style={styles.title}>CREATE NEW GROUP</Text>
+          {errMsg && <Text style={styles.errText}>{errMsg}</Text>}
+          <Text>Enter group name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter group name"
+            value={groupInfoText.name}
+            onChangeText={(text) => {
+              handleGroupInfoTextInput(text, "name");
+            }}
+          />
+          <Text>Enter group description</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter group description"
+            value={groupInfoText.description}
+            onChangeText={(text) => {
+              handleGroupInfoTextInput(text, "description");
+            }}
+          />
+          <Text>MY NEW GROUP</Text>
+          <ScrollView style={styles.scrollView}>
+            <View>
+              <UserCard user={user}>
+                <Text>OWNER</Text>
               </UserCard>
-            );
-          })}
+              {groupInfoText.members.map((member) => {
+                return (
+                  <UserCard key={member._id} user={member}>
+                    <TouchableOpacity
+                      style={styles.removeButton}
+                      onPress={() => {
+                        setGroupInfoText((groupInfoText) => {
+                          const membersFilter = groupInfoText.members.filter(
+                            (memberAdded) => {
+                              return memberAdded._id !== member._id;
+                            }
+                          );
+                          return { ...groupInfoText, members: membersFilter };
+                        });
+                      }}
+                    >
+                      <Text style={styles.buttonText}>Remove</Text>
+                    </TouchableOpacity>
+                  </UserCard>
+                );
+              })}
+            </View>
+          </ScrollView>
+          <Text>Add members to group</Text>
+          <View style={styles.rowAlign}>
+            <Ionicons name={"search"} color={"black"} size={24} />
+            <TextInput
+              style={styles.input}
+              placeholder="Search"
+              value={searchUsernameText}
+              onChangeText={(text) => {
+                setSearchUsernameText(text);
+                console.log(filteredUsers);
+              }}
+            />
+          </View>
+          <ScrollView style={styles.scrollView}>
+            <View>
+              {filteredUsers.map((user: userDataProps) => (
+                <UserCard key={user._id} user={user}>
+                  <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => {
+                      setGroupInfoText((groupInfoText) => {
+                        const members = groupInfoText.members;
+                        members.push(user);
+                        return {
+                          ...groupInfoText,
+                          members,
+                        };
+                      });
+                    }}
+                  >
+                    <Text style={styles.buttonText}>Add</Text>
+                  </TouchableOpacity>
+                </UserCard>
+              ))}
+            </View>
+          </ScrollView>
+          <Button title="Create New Group" onPress={handlePostGroup} />
         </View>
-      </ScrollView>
-      <Text>Add members to group</Text>
-      <View style={styles.rowAlign}>
-        <Ionicons name={"search"} color={"black"} size={24} />
-        <TextInput
-          style={styles.input}
-          placeholder="Search"
-          value={searchUsernameText}
-          onChangeText={(text) => {
-            setSearchUsernameText(text);
-            console.log(filteredUsers);
-          }}
-        />
-      </View>
-      <ScrollView style={styles.scrollView}>
-        <View>
-          {filteredUsers.map((user: userDataProps) => (
-            <UserCard key={user._id} user={user}>
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => {
-                  setGroupInfoText((groupInfoText) => {
-                    const members = groupInfoText.members;
-                    members.push(user);
-                    return {
-                      ...groupInfoText,
-                      members,
-                    };
-                  });
-                }}
-              >
-                <Text style={styles.buttonText}>Add</Text>
-              </TouchableOpacity>
-            </UserCard>
-          ))}
-        </View>
-      </ScrollView>
-      <Button title="Create New Group" onPress={handlePostGroup} />
+      )}
     </View>
   );
 };
@@ -224,6 +277,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
+    fontWeight: "bold",
+  },
+  errText: {
+    color: "#FE141D",
     fontWeight: "bold",
   },
 });

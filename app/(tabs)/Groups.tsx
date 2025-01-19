@@ -81,7 +81,7 @@ export default function Groups() {
         onClose={handleCreateGroupModalClose}
         isKeyboardAvoiding={true}
       >
-        <CreateGroupForm />
+        <CreateGroupForm setMyGroups={setMyGroups} />
       </Overlay>
       <View style={styles.createGroupButtonContainer}>
         <CreateNewButton
