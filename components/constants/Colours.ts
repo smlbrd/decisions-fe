@@ -5,25 +5,41 @@
 
 export const Colours = {
   light: {
-    primary: "#252d2e",
-    background: "#f2f2f2",
-    surface: "#f2f2f2",
-    button: "pink",
-    text: {
-      primary: "#252d2e",
-      disabled: "#5a5e5e",
+    primary: "#EFF1F5",
+    background: "#E6E9EF",
+    surface: {
+      primary: "#CCD0DA",
+      disabled: "#E9ECF1",
     },
+    button: {
+      primary: "#CCD0DA",
+      hover: "#BCC0CC",
+    },
+    border: "#CCD0DA",
+    text: {
+      primary: "#54517B",
+      disabled: "#BCC0CC",
+    },
+    success: "#40A02B",
     error: "#d44657",
   },
   dark: {
-    primary: "#f2f2f2",
-    background: "#252d2e",
-    surface: "#252d2e",
-    button: "purple",
-    text: {
-      primary: "#f2f2f2",
-      disabled: "#5a5e5e",
+    primary: "#303446",
+    background: "#292C3C",
+    surface: {
+      primary: "#303446",
+      disabled: "#2D2F41",
     },
-    error: "#d44657",
+    button: {
+      primary: "#414559",
+      hover: "#51576D",
+    },
+    border: "#414559",
+    text: {
+      primary: "#C6CCDB",
+      disabled: "#51576D",
+    },
+    success: "#94BA7F",
+    error: "#D20F39",
   },
 };
