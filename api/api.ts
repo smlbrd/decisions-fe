@@ -34,6 +34,16 @@ const getListsByUserId = async (userId: string) => {
   }
 };
 
+const getGroupsByUserId = async (userId: string) => {
+  try {
+    const response = await api.get(`/users/${userId}/groups`);
+
+    return response.data;
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+};
+
 const createList = async (listData: object) => {
   try {
     const response = await api.post("/lists", listData);
@@ -44,4 +54,4 @@ const createList = async (listData: object) => {
   }
 };
 
-export { getListbyListId, getListsByUserId, createList };
+export { getListbyListId, getListsByUserId, createList, getGroupsByUserId };
