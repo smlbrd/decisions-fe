@@ -152,4 +152,3 @@ const styles = StyleSheet.create({
     marginRight: Platform.OS === "web" ? -5 : 80,
   },
 });
-const isWeb = Platform.OS === "web";
