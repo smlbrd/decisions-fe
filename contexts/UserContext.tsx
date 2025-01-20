@@ -18,6 +18,7 @@ type userDataProps = {
   name: string | null;
   email: string | null;
   savedLists: Array<string> | null;
+  avatarImg?: string | null;
 };
 
 type UserContextProps = {
