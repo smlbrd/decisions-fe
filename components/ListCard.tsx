@@ -15,13 +15,22 @@ type List = {
   options: Option[];
 };
 
-const ListCard = ({ title, description, options = [], id }: List) => {
+type Props = {
+  id: string;
+  title: string;
+  description: string;
+  options: Option[];
+  onPress: (id: string) => void;
+};
+
+const ListCard = ({ title, description, options = [], id, onPress }: Props) => {
   const { colours } = useTheme();
 
   return (
     <TouchableOpacity
       accessibilityLabel={`View details for ${title}`}
       accessibilityRole="button"
+      onPress={() => onPress(id)}
     >
       <View style={[styles.card, { backgroundColor: colours.surface.primary }]}>
         <Text style={[styles.text, { color: colours.text.disabled }]}>
