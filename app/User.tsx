@@ -4,7 +4,7 @@ import UserInformation from "../components/UserInformation";
 import { TouchableOpacity } from "react-native"; //instead of button for logging out
 import { ActivityIndicator } from "react-native"; // instead of text, spinner to show its loading
 import { useRouter } from "expo-router";
-import { useUser } from "@/utils/UserContext";
+import { useUser } from "@/contexts/UserContext";
 
 export default function User() {
   const { user, removeUser } = useUser();
