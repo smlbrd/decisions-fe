@@ -1,18 +1,24 @@
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import apiClient from "../../utils/api-client";
 import { useSocket } from "@/contexts/SocketContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useEffect, useState } from "react";
 
 export default function Index() {
+  const router = useRouter();
   const { colours } = useTheme();
   const socket = useSocket();
   socket.emit("hi", "hi");
 
-  apiClient
-    .get("/")
-    .then(({ data }) => console.log(data))
-    .catch(() => console.log("Server not online!"));
+  useEffect(() => {
+    apiClient
+      .get("/")
+      .then(({ data }) => console.log(data))
+      .catch(() => {
+        router.push("/NotConnectedToServer");
+      });
+  }, []);
 
   return (
     <View style={[styles.container, { backgroundColor: colours.primary }]}>
