@@ -28,6 +28,8 @@ interface DropdownMenuProps {
   trigger: React.ReactNode;
   children: React.ReactNode;
   dropdownWidth?: number;
+  xPos?: number;
+  yPos?: number;
 }
 
 export const DropdownMenu: React.FC<DropdownMenuProps> = ({
@@ -37,6 +39,8 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   trigger,
   children,
   dropdownWidth = 150,
+  xPos = 60,
+  yPos = 5,
 }) => {
   const triggerRef = useRef<View>(null);
   const [position, setPosition] = useState({ x: 0, y: 0, width: 0 });
@@ -45,8 +49,8 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
     if (triggerRef.current && isVisible) {
       triggerRef.current.measure((fx, fy, width, height, px, py) => {
         setPosition({
-          x: px - 60,
-          y: py + height + 5,
+          x: px - xPos,
+          y: py + height + yPos,
           width: width,
         });
       });

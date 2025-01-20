@@ -14,7 +14,7 @@ type Props = {
 
 type userDataProps = {
   _id: string | null;
-  username: Array<string> | null;
+  username: string | null;
   name: string | null;
   email: string | null;
   savedLists: Array<string> | null;
