@@ -4,8 +4,12 @@ import { useTheme } from "../contexts/ThemeContext";
 import TileRow from "./TileRow";
 
 type Option = {
-  id: string;
+  _id: string;
+  name: string;
+  description: string;
   image_url: string;
+  customFields: [];
+  owner: string;
 };
 
 type List = {
