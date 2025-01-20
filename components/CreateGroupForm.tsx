@@ -134,7 +134,7 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
   };
 
   return (
-    <View style={{ backgroundColor: colours.background }}>
+    <View style={[styles.container, { backgroundColor: colours.background }]}>
       {isPosting ? (
         <Text style={{ color: colours.text.primary }}>Creating group...</Text>
       ) : isSuccess ? (
@@ -157,7 +157,7 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
                 borderColor: colours.border,
               },
             ]}
-            placeholder="Enter group name"
+            placeholder="Group name"
             value={groupInfoText.name}
             onChangeText={(text) => {
               handleGroupInfoTextInput(text, "name");
@@ -172,16 +172,16 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
                 borderColor: colours.border,
               },
             ]}
-            placeholder="Enter group description"
+            placeholder="Group description"
             value={groupInfoText.description}
             onChangeText={(text) => {
               handleGroupInfoTextInput(text, "description");
             }}
           />
-          <ScrollView style={styles.scrollView}>
+          <ScrollView>
             <View>
               {/* <UserCard user={user}>
-                <Text>OWNER</Text>
+                <Text style={{ color: colours.text.primary }}></Text>
               </UserCard> */}
               {groupInfoText.members.map((member) => {
                 return (
@@ -206,9 +206,7 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
               })}
             </View>
           </ScrollView>
-          <Text
-            style={[styles.modalContainer, { color: colours.text.primary }]}
-          >
+          <Text style={[styles.modalRow, { color: colours.text.primary }]}>
             Add members to group
           </Text>
           <View style={styles.modalRow}>
@@ -230,7 +228,7 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
             />
           </View>
           <ScrollView style={styles.scrollView}>
-            <View>
+            <View style={styles.modalMembersList}>
               {loadUsersErrMsg ? (
                 <Text style={styles.errText}>{loadUsersErrMsg}</Text>
               ) : (
@@ -278,7 +276,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
   },
   title: {
     fontSize: 18,
@@ -289,22 +286,21 @@ const styles = StyleSheet.create({
     height: 40,
     borderWidth: 2,
     borderRadius: 8,
+    paddingVertical: 10,
     paddingHorizontal: 10,
     marginVertical: 10,
-    marginHorizontal: 10,
+    marginHorizontal: 20,
   },
   scrollView: {
     maxHeight: 200,
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 20,
-    padding: 10,
+    paddingHorizontal: 10,
   },
   modalRow: {
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    marginHorizontal: 10,
+    marginHorizontal: 30,
+    marginVertical: 5,
   },
   removeButton: {
     paddingVertical: 5,
@@ -317,7 +313,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   buttonText: {
-    color: "#fff",
     fontWeight: "bold",
   },
   errText: {
@@ -329,5 +324,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
+  },
+  modalMembersList: {
+    marginLeft: 10,
   },
 });
