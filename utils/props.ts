@@ -28,7 +28,7 @@ export interface GroupProps {
 export interface DecisionProps {
   _id: string | null;
   votingStatus: string | null;
-  decisionsProcess_id: string | null;
+  decisionsProcess_id: string;
   completedAt: string | null;
   outcome: string | null;
   __v: number | null;
