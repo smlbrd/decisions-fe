@@ -6,18 +6,23 @@ import {
   ScrollView,
   Button,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { CreateNewButton } from "@/components/CreateNewButton";
 import Overlay from "@/components/Overlay";
 import ListCard from "@/components/ListCard";
-import { createList, getListsByUserId } from "../../api/api";
+import { createList, getListbyListId, getListsByUserId } from "../../api/api";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
 
 type Option = {
   id: string;
+  name: string;
+  description: string;
   image_url: string;
+  customFields: [];
+  owner: string;
 };
 
 type List = {
@@ -25,19 +30,28 @@ type List = {
   title: string;
   description: string;
   options: Option[];
+  owner: string;
+  members: [];
+  createdAt: string;
 };
 
 const Lists = () => {
   const { user, loadUser } = useUser();
   const { colours } = useTheme();
 
-  const [isCreateListModalVisible, setIsCreateListModalVisible] =
-    useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | undefined>(undefined);
+
   const [listData, setListData] = useState<List[]>([]);
+
+  const [isCreateListModalVisible, setIsCreateListModalVisible] =
+    useState(false);
   const [newListTitle, setNewListTitle] = useState("");
   const [newListDescription, setNewListDescription] = useState("");
+
+  const [isDetailListModalVisible, setIsDetailListModalVisible] =
+    useState(false);
+  const [selectedList, setSelectedList] = useState<List | null>(null);
 
   useEffect(() => {
     loadUser();
@@ -63,6 +77,21 @@ const Lists = () => {
 
     fetchLists();
   }, [user._id]);
+
+  const handleDetailListModalClose = () => {
+    setIsDetailListModalVisible(false);
+    setSelectedList(null);
+  };
+
+  const handleListCardPress = async (listId: string) => {
+    try {
+      const listDetails = await getListbyListId(listId);
+      setSelectedList(listDetails);
+      setIsDetailListModalVisible(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleCreateListModalClose = () => {
     setIsCreateListModalVisible(false);
@@ -102,12 +131,80 @@ const Lists = () => {
         title={list.title}
         description={list.description}
         options={list.options}
+        onPress={() => {
+          handleListCardPress(list._id);
+        }}
       />
     ));
   };
 
   return (
     <View style={[styles.container, { backgroundColor: colours.background }]}>
+      <Overlay
+        isVisible={isDetailListModalVisible}
+        onClose={handleDetailListModalClose}
+      >
+        <View
+          style={[
+            styles.modalContainer,
+            { backgroundColor: colours.background },
+          ]}
+        >
+          {selectedList ? (
+            <View>
+              <Text
+                style={[styles.modalTitle, { color: colours.text.primary }]}
+              >
+                {selectedList.title}
+              </Text>
+              <Text
+                style={[styles.modalField, { color: colours.text.primary }]}
+              >
+                {selectedList.description}
+              </Text>
+              <Text
+                style={[styles.modalField, { color: colours.text.primary }]}
+              >
+                <View style={styles.modalOptionsList}>
+                  {selectedList.options.map((option) => {
+                    return (
+                      <View>
+                        <Image
+                          key={option.id}
+                          source={{
+                            uri: option.image_url,
+                          }}
+                          style={styles.image}
+                        />
+                        <Text
+                          style={[
+                            styles.modalField,
+                            {
+                              color: colours.text.primary,
+                              backgroundColor: colours.surface.primary,
+                            },
+                          ]}
+                        >
+                          {option.name}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.modalField,
+                            { color: colours.text.primary },
+                          ]}
+                        >
+                          {option.description}
+                        </Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              </Text>
+            </View>
+          ) : null}
+        </View>
+      </Overlay>
+
       <Overlay
         isVisible={isCreateListModalVisible}
         onClose={handleCreateListModalClose}
@@ -184,6 +281,20 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 12,
+    marginHorizontal: 30,
+  },
+  modalField: {
+    marginVertical: 10,
+  },
+  modalOptionsList: {
+    flexDirection: "column",
+  },
+  image: {
+    marginTop: 10,
+    marginBottom: 0,
+    width: 100,
+    height: 100,
+    borderRadius: 10,
   },
   textInput: {
     height: 40,
