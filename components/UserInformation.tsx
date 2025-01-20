@@ -18,7 +18,6 @@ const UserInformation: React.FC<UserInformationProps> = ({
 
   return (
     <View>
-      {/* Profile picture */}
       {user._id && (
         <Image source={require('../assets/images/sparkly_unicorn.png')} style={{ width: 100, height: 100, borderRadius: 50 }} />
       )}
@@ -32,8 +31,6 @@ const UserInformation: React.FC<UserInformationProps> = ({
       )}
     </View>
   );
-  // }: UserInformationProps) {
-  //   const user = userData.find((user) => user._id === userId.toString());
 };
 
 export default UserInformation;
