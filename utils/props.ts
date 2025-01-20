@@ -5,6 +5,7 @@ export interface OptionProps {
   customFields: string[];
   owner: string | null;
   createdAt: string | null;
+  image_url?: string | null;
   __v: number | null;
 }
 export interface ListProps {

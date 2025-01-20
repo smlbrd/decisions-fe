@@ -3,9 +3,11 @@ import { useLocalSearchParams } from "expo-router";
 import { DecisionProps } from "../utils/props";
 import { useEffect, useState } from "react";
 import ThisOrThat from "@/components/decision-processes/ThisOrThat";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 
 export default function Decision() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [errMsg, setErrMsg] = useState("");
   const processIds: Record<string, string> = {
     ["6784d7a5844f23ac9810cf50"]: "ThisOrThat",
   };
@@ -16,15 +18,21 @@ export default function Decision() {
   );
 
   useEffect(() => {
+    setErrMsg("");
     if (decision_id) {
+      setIsLoading(true);
       apiClient
         .get(`/decisions/${decision_id}`)
         .then(({ data }) => {
           setDecisionData(data);
+          setIsLoading(false);
         })
         .catch((err) => {
-          console.log(err);
+          setErrMsg("error loading decision");
+          setIsLoading(false);
         });
+    } else {
+      setErrMsg("error loading decision");
     }
   }, [decision_id]);
 
@@ -32,7 +40,11 @@ export default function Decision() {
     return null;
   }
 
-  return processIds[decisionData.decisionsProcess_id] === "ThisOrThat" ? (
+  return isLoading ? (
+    <Text>"loading decision..."</Text>
+  ) : errMsg ? (
+    <Text>{errMsg}</Text>
+  ) : processIds[decisionData.decisionsProcess_id] === "ThisOrThat" ? (
     <ThisOrThat decisionData={decisionData} setDecisionData={setDecisionData} />
   ) : (
     <Text>
