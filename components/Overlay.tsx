@@ -25,7 +25,7 @@ const Overlay = ({
   onClose,
   children,
   isKeyboardAvoiding,
-  scrollable,
+  scrollable = false,
 }: Props) => {
   const isWeb = Platform.OS === "web";
   const styles = createStyles(useTheme().colours);
