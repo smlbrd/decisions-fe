@@ -33,7 +33,7 @@ export default function Decision() {
   }
 
   return processIds[decisionData.decisionsProcess_id] === "ThisOrThat" ? (
-    <ThisOrThat />
+    <ThisOrThat decisionData={decisionData} setDecisionData={setDecisionData} />
   ) : (
     <Text>
       Decision process does not exist yet! Come back for future updates
