@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, StatusBar, StyleSheet } from "react-native";
+import { Text, View, StatusBar, StyleSheet, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DropdownMenu, MenuOption } from "./DropdownMenu";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -11,7 +11,7 @@ import { useRouter } from "expo-router";
 import { useTheme } from "../contexts/ThemeContext";
 
 export default function Header() {
-  const { colours } = useTheme();
+  const { colours, theme } = useTheme();
   const { user, removeUser } = useUser();
   const [isProfileDropdownVisible, setIsProfileDropdownVisible] =
     useState(false);
@@ -29,14 +29,17 @@ export default function Header() {
       >
         <LogInForm />
       </Overlay>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={colours.background}
-      />
       <SafeAreaView
         style={{ backgroundColor: colours.background }}
         edges={["top", "left", "right"]}
       >
+        {theme === "dark" && (
+          <StatusBar
+            barStyle="light-content"
+            backgroundColor={colours.background}
+          />
+        )}
+
         <View
           style={[
             styles.headerContainer,
@@ -146,5 +149,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flexDirection: "row",
+    marginRight: Platform.OS === "web" ? -5 : 80,
   },
 });
+const isWeb = Platform.OS === "web";
