@@ -1,7 +1,8 @@
+import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
 import { Ionicons } from "@expo/vector-icons";
 import React, { ReactNode } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 type userDataProps = {
   _id: string | null;
@@ -17,15 +18,19 @@ type Props = {
 };
 
 const UserCard = ({ user, children }: Props) => {
+  const { colours } = useTheme();
   const you = user._id === useUser().user._id ? " (you)" : "";
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: colours.primary }]}>
       <Ionicons
         style={styles.profileIcon}
         name="person-circle-outline"
         size={24}
       />
-      <Text style={styles.username}>{user.name + you}</Text>
+      <Text style={[styles.username, { color: colours.text.primary }]}>
+        {user.name + you}
+      </Text>
       {children}
     </View>
   );
@@ -35,14 +40,11 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 10,
+    paddingHorizontal: 24,
+    paddingVertical: 24,
     borderRadius: 8,
     marginVertical: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    marginRight: 30,
   },
   profileIcon: {
     width: 24,

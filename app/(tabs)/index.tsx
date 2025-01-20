@@ -90,26 +90,32 @@ export default function Index() {
         onValueChange={(itemValue, itemIndex) => setSelectedList(itemValue)}
       >
         <Picker.Item label="Help me decide..." value={null} enabled={false} />
-        {listData.map((list: List) => {
-          return (
-            <Picker.Item label={list.title} value={list.title} key={list._id} />
-          );
-        })}
+        {listData &&
+          listData.map((list: List) => {
+            return (
+              <Picker.Item
+                label={list.title}
+                value={list.title}
+                key={list._id}
+              />
+            );
+          })}
       </Picker>
       <Picker
         selectedValue={selectedGroup}
         onValueChange={(itemValue, itemIndex) => setSelectedGroup(itemValue)}
       >
         <Picker.Item label="Wren & Abby's Group" value={null} enabled={false} />
-        {groupData.map((group: Group) => {
-          return (
-            <Picker.Item
-              label={group.name}
-              value={group.name}
-              key={group._id}
-            />
-          );
-        })}
+        {groupData &&
+          groupData.map((group: Group) => {
+            return (
+              <Picker.Item
+                label={group.name}
+                value={group.name}
+                key={group._id}
+              />
+            );
+          })}
       </Picker>
 
       <Text>

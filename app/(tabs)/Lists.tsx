@@ -215,18 +215,27 @@ const Lists = () => {
             { backgroundColor: colours.background },
           ]}
         >
-          <Text style={[styles.modalTitle, { color: colours.surface.primary }]}>
-            Create New List
-          </Text>
           <TextInput
-            style={styles.textInput}
+            style={[
+              styles.textInput,
+              {
+                backgroundColor: colours.surface.primary,
+                borderColor: colours.border,
+              },
+            ]}
             placeholder="Title"
             placeholderTextColor={colours.text.disabled}
             value={newListTitle}
             onChangeText={setNewListTitle}
           />
           <TextInput
-            style={styles.textInput}
+            style={[
+              styles.textInput,
+              {
+                backgroundColor: colours.surface.primary,
+                borderColor: colours.border,
+              },
+            ]}
             placeholder="Description"
             placeholderTextColor={colours.text.disabled}
             value={newListDescription}
@@ -243,13 +252,13 @@ const Lists = () => {
           </Text>
           {renderLists()}
         </View>
-        <View style={styles.listsContainer}>
-          <CreateNewButton
-            text="Create New"
-            onPress={() => setIsCreateListModalVisible(true)}
-          />
-        </View>
       </ScrollView>
+      <View style={styles.listsContainer}>
+        <CreateNewButton
+          text="Create New"
+          onPress={() => setIsCreateListModalVisible(true)}
+        />
+      </View>
     </View>
   );
 };

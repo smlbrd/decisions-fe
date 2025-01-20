@@ -1,46 +1,58 @@
-import { Collapsible } from "@/components/Collapsible";
-import { CreateNewButton } from "@/components/CreateNewButton";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import UserCard from "@/components/UserCard";
-import Overlay from "@/components/Overlay";
-import { ScrollView } from "react-native";
-import apiClient from "@/utils/api-client";
-import { useUser } from "@/contexts/UserContext";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Collapsible } from "@/components/Collapsible";
 import { CreateGroupForm } from "@/components/CreateGroupForm";
+import { CreateNewButton } from "@/components/CreateNewButton";
+import Overlay from "@/components/Overlay";
+import UserCard from "@/components/UserCard";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useUser } from "@/contexts/UserContext";
+import apiClient from "@/utils/api-client";
+
+type Member = {
+  _id: string;
+  name: string;
+  username: string;
+  savedLists: [string];
+  email: string;
+};
+
+type Group = {
+  _id: string;
+  name: string;
+  description: string;
+  members: Member[];
+};
 
 export default function Groups() {
   const { user } = useUser();
+  const { colours } = useTheme();
 
+  const [myGroups, setMyGroups] = useState<Group[]>([]);
+  const [isLoadingGroups, setIsLoadingGroups] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
   const [isCreateGroupModalVisible, setIsCreateGroupModalVisible] =
     useState(false);
+
   const handleCreateGroupModalClose = () => {
     setIsCreateGroupModalVisible(false);
   };
+
   const handleCreateNewGroupPress = () => {
     setIsCreateGroupModalVisible(true);
   };
 
-  interface Member {
-    _id: string;
-    name: string;
-    username: string;
-    savedLists: [string];
-    email: string;
-  }
-  interface Group {
-    _id: string;
-    name: string;
-    description: string;
-    members: Member[];
-  }
-  const [myGroups, setMyGroups] = useState<Group[]>([]);
-  const [isLoadingGroups, setIsLoadingGroups] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
   useEffect(() => {
     setErrMsg("");
     setIsLoadingGroups(true);
-    if (user.username !== null)
+
+    if (user.username !== null) {
       apiClient
         .get(`/users/${user._id}/groups`)
         .then(({ data }) => {
@@ -51,7 +63,7 @@ export default function Groups() {
           setIsLoadingGroups(false);
           setErrMsg("Error loading groups");
         });
-    else {
+    } else {
       setIsLoadingGroups;
       setErrMsg("Not logged in");
     }
@@ -60,13 +72,25 @@ export default function Groups() {
   const groupDataCollapsibles = myGroups.map((group) => {
     return (
       <Collapsible key={group._id} title={group.name}>
-        <Text>{group.description}</Text>
+        <Text style={{ color: colours.text.primary }}>{group.description}</Text>
         {group.members.map((member) => {
           return (
             <UserCard key={member._id} user={member}>
-              {" "}
-              <TouchableOpacity style={styles.removeButton} onPress={() => {}}>
-                <Text style={styles.removeButtonText}>Remove</Text>
+              <TouchableOpacity
+                style={[
+                  styles.removeButton,
+                  { backgroundColor: colours.error },
+                ]}
+                onPress={() => {}}
+              >
+                <Text
+                  style={[
+                    styles.removeButtonText,
+                    { color: colours.text.primary },
+                  ]}
+                >
+                  Remove
+                </Text>
               </TouchableOpacity>
             </UserCard>
           );
@@ -74,8 +98,11 @@ export default function Groups() {
       </Collapsible>
     );
   });
+
   return (
-    <>
+    <View
+      style={(styles.groupsContainer, { backgroundColor: colours.background })}
+    >
       <Overlay
         isVisible={isCreateGroupModalVisible}
         onClose={handleCreateGroupModalClose}
@@ -83,29 +110,33 @@ export default function Groups() {
       >
         <CreateGroupForm setMyGroups={setMyGroups} />
       </Overlay>
+
+      {errMsg ? (
+        <Text style={{ color: colours.error }}>{errMsg}</Text>
+      ) : isLoadingGroups ? (
+        <Text style={{ color: colours.text.primary }}>Loading groups...</Text>
+      ) : (
+        <ScrollView>
+          <Text style={[styles.headerText, { color: colours.text.primary }]}>
+            My Groups
+          </Text>
+          {groupDataCollapsibles}
+        </ScrollView>
+      )}
       <View style={styles.createGroupButtonContainer}>
         <CreateNewButton
           text={"Create New Group"}
           onPress={handleCreateNewGroupPress}
         />
       </View>
-      {errMsg ? (
-        <Text>{errMsg}</Text>
-      ) : isLoadingGroups ? (
-        <Text>Loading groups...</Text>
-      ) : (
-        <ScrollView>
-          <View style={styles.groupsContainer}>
-            <Text style={styles.headerText}>My Groups</Text>
-            {groupDataCollapsibles}
-          </View>
-        </ScrollView>
-      )}
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   createGroupButtonContainer: {
     justifyContent: "center",
     marginHorizontal: 15,
@@ -119,13 +150,12 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#333",
   },
   removeButton: {
-    backgroundColor: "#f44336",
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
+    marginRight: 15,
   },
   removeButtonText: {
     color: "#fff",

@@ -73,10 +73,6 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     borderRadius: 8,
     marginVertical: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
   },
   title: {
     fontSize: 16,
