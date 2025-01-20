@@ -2,6 +2,9 @@ import { DecisionProps } from "@/utils/props";
 import { StyleSheet, Text, View } from "react-native";
 import { StartDecisionButton } from "../StartDecisionButton";
 import apiClient from "@/utils/api-client";
+import { useState } from "react";
+import shuffleArray from "../../utils/shuffleArray";
+import getTwoRandomElements from "../../utils/getTwoRandomElements";
 
 type Props = {
   decisionData: DecisionProps;
@@ -11,22 +14,46 @@ type Props = {
 };
 
 export default function ThisOrThat({ decisionData, setDecisionData }: Props) {
+  const [isStartingDecision, setIsStartingDecision] = useState(false);
+  const [startDecisionErrMsg, setStartDecisionErrMsg] = useState("");
   const handleStartDecision = () => {
+    setIsStartingDecision(true);
+    setStartDecisionErrMsg("");
+    const remainingOptions =
+      decisionData.list === null ? null : decisionData.list.options;
+    const playerOrder =
+      decisionData.group === null
+        ? null
+        : shuffleArray(decisionData.group.members);
+    const currentOptions = getTwoRandomElements(remainingOptions);
     apiClient
       .put(`decisions/${decisionData._id}`, {
         votingStatus: "in progress",
+        saveData: {
+          turnNumber: 1,
+          playerOrder,
+          remainingOptions,
+          currentOptions,
+          voteHistory: [],
+        },
       })
       .then(({ data }) => {
+        setIsStartingDecision(false);
         setDecisionData((decisionData) => {
-          if (decisionData)
-            return { ...decisionData, votingStatus: "in progress" };
+          if (decisionData) return data;
         });
       })
       .catch((err) => {
+        setStartDecisionErrMsg("there was an error starting the decision");
+        setIsStartingDecision(false);
         console.log(err);
       });
   };
-  return (
+  return isStartingDecision ? (
+    <Text>starting decision...</Text>
+  ) : startDecisionErrMsg ? (
+    <Text>{startDecisionErrMsg}</Text>
+  ) : (
     <View style={styles.container}>
       {decisionData.votingStatus === "not started" ? (
         <View style={styles.startDecisionContainer}>

@@ -35,6 +35,8 @@ export interface DecisionProps {
   __v: number | null;
   createdAt: string | null;
   updatedAt: string | null;
+  group: GroupProps | null;
+  list: ListProps | null;
 }
 export interface UserProps {
   _id: string | null;
