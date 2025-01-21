@@ -29,24 +29,24 @@ type Option = {
   owner: string;
 };
 
-interface Member {
+type Member = {
   _id: string;
   name: string;
   username: string;
   savedLists: [string];
   email: string;
-}
+};
 
-interface Group {
+type Group = {
   _id: string;
   name: string;
   description: string;
   members: Member[];
-}
+};
 
 const decisionProcesses = [
   {
-    id: "1",
+    id: "6784d7a5844f23ac9810cf50",
     name: "This or That",
     description: "Choose your favourite, winner stays on!",
   },
@@ -65,14 +65,20 @@ const decisionProcesses = [
 export default function Index() {
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
+
   const [listData, setListData] = useState<List[]>([]);
   const [groupData, setGroupData] = useState<Group[]>([]);
-  const [selectedList, setSelectedList] = useState<number | undefined>(
+
+  const [selectedList, setSelectedList] = useState<string | undefined>(
     undefined
   );
-  const [selectedGroup, setSelectedGroup] = useState<number | undefined>(
+  const [selectedGroup, setSelectedGroup] = useState<string | undefined>(
     undefined
   );
+  const [selectedDecisionProcess, setSelectedDecisionProcess] = useState<
+    string | undefined
+  >(undefined);
+
   const [isDecisionProcessModalVisible, setIsDecisionProcessModalVisible] =
     useState(false);
 
@@ -85,9 +91,44 @@ export default function Index() {
     setIsDecisionProcessModalVisible(false);
   };
 
-  const handleDecisionProcessSelect = () => {
+  const handleDecisionProcessSelect = (decisionProcessId: string) => {
+    setSelectedDecisionProcess(decisionProcessId);
     setIsDecisionProcessModalVisible(false);
-    // POST decision
+    postNewDecision();
+  };
+
+  console.log("List ID: ", selectedList);
+  console.log("Group ID: ", selectedGroup);
+  console.log("Decision Process ID: ", selectedDecisionProcess);
+
+  const postNewDecision = async () => {
+    if (!selectedList || !selectedDecisionProcess) {
+      setErrMsg(
+        "Please select a list, and choose your decision-making process!"
+      );
+      return;
+    }
+
+    const newDecisionBody = {
+      list: selectedList,
+      group: selectedGroup,
+      votingStatus: "in progress",
+      decisionsProcess_id: selectedDecisionProcess,
+      saveData: {},
+      completedAt: null,
+      outcome: null,
+    };
+
+    try {
+      setIsLoading(true);
+      await apiClient.post("/decisions", newDecisionBody).then(() => {
+        setIsLoading(false);
+      });
+      // expo router push here to decision
+    } catch (error) {
+      console.log(error);
+      setErrMsg("Error creating decision. Please try again!");
+    }
   };
 
   useEffect(() => {
@@ -153,7 +194,9 @@ export default function Index() {
             data={decisionProcesses}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleDecisionProcessSelect()}>
+              <TouchableOpacity
+                onPress={() => handleDecisionProcessSelect(item.id)}
+              >
                 <Text style={{ color: colours.text.primary }}>{item.name}</Text>
                 <Text style={{ color: colours.text.primary }}>
                   {item.description}
@@ -176,30 +219,29 @@ export default function Index() {
           />
           {listData?.map((list: List) => {
             return (
-              <Picker.Item
-                label={list.title}
-                value={list.title}
-                key={list._id}
-              />
+              <Picker.Item label={list.title} value={list._id} key={list._id} />
             );
           })}
         </Picker>
       </View>
-      <View style={styles.pickerContainer}>
+      <View
+        style={[styles.pickerContainer, { backgroundColor: colours.primary }]}
+      >
         <Picker
           selectedValue={selectedGroup}
-          onValueChange={(itemValue, itemIndex) => setSelectedGroup(itemValue)}
+          onValueChange={(itemValue) => setSelectedGroup(itemValue)}
         >
           <Picker.Item
             label="Choose with..."
             value={"Choose with..."}
             enabled={false}
           />
+          <Picker.Item label="...myself!" value={""} />
           {groupData?.map((group: Group) => {
             return (
               <Picker.Item
                 label={group.name}
-                value={group.name}
+                value={group._id}
                 key={group._id}
               />
             );

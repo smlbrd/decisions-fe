@@ -93,6 +93,7 @@ const Lists = () => {
     setListCardErrMsg("");
     setIsLoadingListCard(true);
     setIsDetailListModalVisible(true);
+    
     apiClient
       .get(`lists/${listId}`)
       .then(({ data }) => {
