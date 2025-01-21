@@ -124,7 +124,7 @@ export default function Index() {
       await apiClient.post("/decisions", newDecisionBody).then(() => {
         setIsLoading(false);
       });
-      // expo router push here to decision
+      // TODO: expo router push here to decision
     } catch (error) {
       console.log(error);
       setErrMsg("Error creating decision. Please try again!");
