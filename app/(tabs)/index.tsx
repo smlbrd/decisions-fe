@@ -96,7 +96,6 @@ export default function Index() {
   const socket = useSocket();
   socket.emit("hi", "hi");
 
-
   useEffect(() => {
     apiClient
       .get("/")
@@ -140,7 +139,7 @@ export default function Index() {
         const newDecisionId = data._id;
         router.push({
           pathname: "/Decision",
-          decision_id: newDecisionId,
+          params: { decision_id: newDecisionId },
         });
       })
       .catch((err) => {
