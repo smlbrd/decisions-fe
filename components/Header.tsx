@@ -68,8 +68,18 @@ export default function Header() {
                 />
               }
             >
-              <MenuOption onSelect={() => {}}>
-                <Text>Sparkle Unicorn invited you to make a decision</Text>
+              <MenuOption
+                onSelect={() => {
+                  setIsNotificationDropdownVisible(false);
+                  router.push({
+                    pathname: "/Decision",
+                    params: { decision_id: "678940615a51bf4a2ed681c0" },
+                  });
+                }}
+              >
+                <Text>
+                  You have a pending decision - click here to continue
+                </Text>
               </MenuOption>
               <MenuOption onSelect={() => {}}>
                 <Text>Decision completed: view decision history</Text>

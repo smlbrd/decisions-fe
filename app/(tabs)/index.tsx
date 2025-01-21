@@ -1,3 +1,4 @@
+import { Link, useRouter } from "expo-router";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import apiClient from "../../utils/api-client";
 import { useSocket } from "@/contexts/SocketContext";
@@ -43,6 +44,7 @@ interface Group {
 }
 
 export default function Index() {
+  const router = useRouter();
   const [selectedList, setSelectedList] = useState<number | undefined>(
     undefined
   );
@@ -60,6 +62,16 @@ export default function Index() {
   const { user } = useUser();
   const socket = useSocket();
   socket.emit("hi", "hi");
+
+
+  useEffect(() => {
+    apiClient
+      .get("/")
+      .then(({ data }) => console.log(data))
+      .catch(() => {
+        router.push("/NotConnectedToServer");
+      });
+  }, []);
 
   const handleDecisionProcessModalClose = () => {
     setIsDecisionProcessModalVisible(false);
