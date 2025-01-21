@@ -40,6 +40,7 @@ export default function ThisOrThat({
       .put(`decisions/${decisionData._id}`, {
         votingStatus: "in progress",
         saveData: {
+          currentPlayer: playerOrder[0]._id,
           turnNumber: 1,
           playerOrder,
           remainingOptions,
@@ -109,6 +110,11 @@ export default function ThisOrThat({
         .put(`decisions/${decisionData._id}`, {
           saveData: {
             ...decisionData.saveData,
+            currentPlayer:
+              decisionData.saveData.playerOrder[
+                (decisionData.saveData.turnNumber - 1) %
+                  decisionData.saveData.playerOrder.length
+              ]._id,
             turnNumber: newTurnNumber,
             remainingOptions: newRemainingOptions,
             currentOptions: newCurrentOptions,
@@ -195,6 +201,7 @@ export default function ThisOrThat({
             </View>
           )}
           <Text>{decisionMsg}</Text>
+          {console.log(decisionData.saveData)}
         </View>
       ) : decisionData.votingStatus === "completed" ? (
         <View>
