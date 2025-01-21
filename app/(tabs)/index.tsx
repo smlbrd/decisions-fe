@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Picker } from "@react-native-picker/picker";
+import { useRouter } from "expo-router";
 import apiClient from "../../utils/api-client";
 import { useSocket } from "@/contexts/SocketContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -90,6 +91,8 @@ export default function Index() {
 
   const { colours } = useTheme();
   const { user } = useUser();
+  const router = useRouter();
+
   const socket = useSocket();
   socket.emit("hi", "hi");
 
@@ -123,8 +126,9 @@ export default function Index() {
     setIsLoading(true);
     apiClient
       .post("/decisions", newDecisionBody)
-      .then(() => {
+      .then(({ data }) => {
         setIsLoading(false);
+        const newDecisionId = data._id;
         // TODO: expo router /decisions/:decisionId
       })
       .catch((err) => {
