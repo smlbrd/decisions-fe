@@ -20,7 +20,7 @@ export interface ListProps {
 }
 export interface GroupProps {
   _id: string | null;
-  title: string | null;
+  name: string | null;
   description: string | null;
   options: OptionProps[];
   owner: string[];
@@ -32,6 +32,7 @@ export interface SaveDataThisOrThatProps {
   remainingOptions: OptionProps[];
   currentOptions: [OptionProps, OptionProps];
   voteHistory: OptionProps[];
+  currentPlayer: string;
 }
 export interface DecisionProps {
   _id: string | null;
