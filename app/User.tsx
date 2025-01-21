@@ -24,7 +24,9 @@ export default function User() {
     const router = useRouter()
 
   useEffect(() => {
-     setLoading(!user._id)
+     if (user._id) {
+      setLoading(false)
+     }
     }, [user])
 
     const handleLogout = () => {
@@ -37,6 +39,9 @@ export default function User() {
   }
 
   const handleSaveChanges = async () => {
+    await saveUser({
+      ...user, ...editableUser
+    })
     setEditUser(false)
   }
 
@@ -53,31 +58,24 @@ export default function User() {
     <Text style={{fontSize: 30, marginBottom: 20}}>My Profile</Text>
 
     {!isEditUser ? (
+      <UserInformation
+      user={user}
+      />
+    ) : (
       <EditProfileForm
       user={editableUser}
       onChange={handleEditChange}
       onSave={handleSaveChanges}
       />
-    ):(
-
-    <UserInformation user={user}/>
     )}
 
-    {isEditUser ? (
       <TouchableOpacity
-      onPress={() => setEditUser(false)}
-      style={{backgroundColor: '#FFFFFF', padding: 10, borderRadius: 5, marginTop: 20}}
+      onPress={() => setEditUser(!isEditUser)}
+      style={{backgroundColor: '#a9a9a9', padding: 10, borderRadius: 5, marginTop: 20}}
       >
-        <Text style={{color: '#E4E4E4', textAlign: 'center'}}>Cancel</Text>
+        <Text style={{color: '#E4E4E4', textAlign: 'center'}}>
+          { isEditUser ? "Cancel" : "Edit Profile"} </Text>
         </TouchableOpacity>
-    ) : (
-      <TouchableOpacity
-      onPress={() => setEditUser(true)}
-      style={{backgroundColor: '#dcdcdc', padding: 10, borderRadius: 5, marginTop: 20}}
-      >
-        <Text style={{ color: '#000000', textAlign: 'center'}}>Edit Profile</Text>
-      </TouchableOpacity>
-    )}
 
       <TouchableOpacity onPress={handleLogout}
       style={{backgroundColor: '#ff4d4d',
