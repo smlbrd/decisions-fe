@@ -1,14 +1,20 @@
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  Button,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { FlatList } from "react-native-gesture-handler";
+import { Picker } from "@react-native-picker/picker";
 import apiClient from "../../utils/api-client";
 import { useSocket } from "@/contexts/SocketContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Picker } from "@react-native-picker/picker";
-import { useEffect, useState } from "react";
 import { useUser } from "@/contexts/UserContext";
-import { CreateNewButton } from "@/components/CreateNewButton";
+import { BigButton } from "@/components/BigButton";
 import Overlay from "@/components/Overlay";
-import { FlatList } from "react-native-gesture-handler";
-import { TouchableOpacity } from "react-native";
 
 type List = {
   _id: string;
@@ -70,10 +76,10 @@ export default function Index() {
   const [groupData, setGroupData] = useState<Group[]>([]);
 
   const [selectedList, setSelectedList] = useState<string | undefined>(
-    undefined
+    "List Select"
   );
   const [selectedGroup, setSelectedGroup] = useState<string | undefined>(
-    undefined
+    "Group Select"
   );
   const [selectedDecisionProcess, setSelectedDecisionProcess] = useState<
     string | undefined
@@ -93,15 +99,10 @@ export default function Index() {
 
   const handleDecisionProcessSelect = (decisionProcessId: string) => {
     setSelectedDecisionProcess(decisionProcessId);
-    setIsDecisionProcessModalVisible(false);
-    postNewDecision();
+    // state: set button to highlighted?
   };
 
-  console.log("List ID: ", selectedList);
-  console.log("Group ID: ", selectedGroup);
-  console.log("Decision Process ID: ", selectedDecisionProcess);
-
-  function postNewDecision() {
+  const postNewDecision = () => {
     if (!selectedList || !selectedDecisionProcess) {
       setErrMsg(
         "Please select a list, and choose your decision-making process!"
@@ -131,7 +132,12 @@ export default function Index() {
         setIsLoading(false);
         setErrMsg("there was an error loading users");
       });
-  }
+  };
+
+  const handleStartDeciding = () => {
+    setIsDecisionProcessModalVisible(false);
+    postNewDecision();
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -198,14 +204,31 @@ export default function Index() {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => handleDecisionProcessSelect(item.id)}
+                style={[
+                  styles.itemContainer,
+                  selectedDecisionProcess === item.id && styles.selectedItem,
+                  { borderColor: colours.primary },
+                ]}
               >
-                <Text style={{ color: colours.text.primary }}>{item.name}</Text>
+                <Text
+                  style={[styles.modalTitle, { color: colours.text.primary }]}
+                >
+                  {item.name}
+                </Text>
                 <Text style={{ color: colours.text.primary }}>
                   {item.description}
                 </Text>
               </TouchableOpacity>
             )}
           />
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: colours.button.primary }]}
+            onPress={handleStartDeciding}
+          >
+            <Text style={[styles.buttonText, { color: colours.text.primary }]}>
+              Submit
+            </Text>
+          </TouchableOpacity>
         </View>
       </Overlay>
 
@@ -216,7 +239,7 @@ export default function Index() {
         >
           <Picker.Item
             label="Help me decide..."
-            value={"Help me decide..."}
+            value="List Select"
             enabled={false}
           />
           {listData?.map((list: List) => {
@@ -238,7 +261,7 @@ export default function Index() {
             value={"Choose with..."}
             enabled={false}
           />
-          <Picker.Item label="...myself!" value={""} />
+          <Picker.Item label="...myself!" value="Group Select" />
           {groupData?.map((group: Group) => {
             return (
               <Picker.Item
@@ -250,8 +273,8 @@ export default function Index() {
           })}
         </Picker>
       </View>
-      <View>
-        <CreateNewButton
+      <View style={styles.buttonContainer}>
+        <BigButton
           text="Get Started"
           onPress={() => setIsDecisionProcessModalVisible(true)}
         />
@@ -271,6 +294,7 @@ const styles = StyleSheet.create({
   pickerContainer: {
     ...(Platform.OS === "web" && {
       flex: 1,
+      maxWidth: "80%",
       justifyContent: "space-around",
       alignItems: "center",
     }),
@@ -284,8 +308,40 @@ const styles = StyleSheet.create({
       padding: 10,
     }),
   },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 6,
+  },
+  itemContainer: {
+    flexDirection: "column",
+    padding: 20,
+    borderWidth: 2,
+    borderRadius: 8,
+    marginVertical: 5,
+    marginHorizontal: 10,
+  },
+  buttonContainer: {
+    justifyContent: "center",
+    marginBottom: 15,
+    marginHorizontal: 15,
+  },
+  button: {
+    alignItems: "center",
+    marginTop: 10,
+    padding: 15,
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 16,
+  },
+  selectedItem: {
+    shadowRadius: 5,
+    shadowColor: "black",
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 2, height: 5 },
+  },
   errText: {
-    color: "#FE141D",
     fontWeight: "bold",
   },
 });

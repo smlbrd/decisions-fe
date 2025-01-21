@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Image,
   Platform,
+  TouchableOpacity,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { CreateNewButton } from "@/components/CreateNewButton";
@@ -93,7 +94,7 @@ const Lists = () => {
     setListCardErrMsg("");
     setIsLoadingListCard(true);
     setIsDetailListModalVisible(true);
-    
+
     apiClient
       .get(`lists/${listId}`)
       .then(({ data }) => {
@@ -256,7 +257,14 @@ const Lists = () => {
             value={newListDescription}
             onChangeText={setNewListDescription}
           />
-          <Button title="Submit" onPress={handleNewListSubmit} />
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: colours.button.primary }]}
+            onPress={handleNewListSubmit}
+          >
+            <Text style={[styles.buttonText, { color: colours.text.primary }]}>
+              Submit
+            </Text>
+          </TouchableOpacity>
         </View>
       </Overlay>
 
@@ -328,6 +336,13 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 10,
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 16,
   },
   textInput: {
     height: 40,
