@@ -124,7 +124,7 @@ export default function Index() {
     const newDecisionBody = {
       list: selectedList,
       group: selectedGroup,
-      votingStatus: "in progress",
+      votingStatus: "not started",
       decisionsProcess_id: selectedDecisionProcess,
       saveData: {},
       completedAt: null,
