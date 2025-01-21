@@ -7,6 +7,7 @@ import {
   Button,
   ActivityIndicator,
   Image,
+  Platform,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { CreateNewButton } from "@/components/CreateNewButton";
@@ -222,7 +223,6 @@ const Lists = () => {
         isVisible={isCreateListModalVisible}
         onClose={handleCreateListModalClose}
       >
-
         <View
           style={[
             styles.modalContainer,
