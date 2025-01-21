@@ -1,1 +1,1 @@
-module.exports = "why.doesn't.gitignore.work";
+module.exports = "192.168.0.18";

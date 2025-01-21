@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Picker } from "@react-native-picker/picker";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import apiClient from "../../utils/api-client";
 import { useSocket } from "@/contexts/SocketContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -95,6 +95,16 @@ export default function Index() {
 
   const socket = useSocket();
   socket.emit("hi", "hi");
+
+
+  useEffect(() => {
+    apiClient
+      .get("/")
+      .then(({ data }) => console.log(data))
+      .catch(() => {
+        router.push("/NotConnectedToServer");
+      });
+  }, []);
 
   const handleDecisionProcessModalClose = () => {
     setIsDecisionProcessModalVisible(false);
