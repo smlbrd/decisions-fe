@@ -4,8 +4,12 @@ import { useTheme } from "../contexts/ThemeContext";
 import TileRow from "./TileRow";
 
 type Option = {
-  id: string;
+  _id: string;
+  name: string;
+  description: string;
   image_url: string;
+  customFields: [];
+  owner: string;
 };
 
 type List = {
@@ -15,13 +19,22 @@ type List = {
   options: Option[];
 };
 
-const ListCard = ({ title, description, options = [], id }: List) => {
+type Props = {
+  id: string;
+  title: string;
+  description: string;
+  options: Option[];
+  onPress: (id: string) => void;
+};
+
+const ListCard = ({ title, description, options = [], id, onPress }: Props) => {
   const { colours } = useTheme();
 
   return (
     <TouchableOpacity
       accessibilityLabel={`View details for ${title}`}
       accessibilityRole="button"
+      onPress={() => onPress(id)}
     >
       <View style={[styles.card, { backgroundColor: colours.surface.primary }]}>
         <Text style={[styles.text, { color: colours.text.disabled }]}>
@@ -64,10 +77,6 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     borderRadius: 8,
     marginVertical: 5,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
   },
   title: {
     fontSize: 16,

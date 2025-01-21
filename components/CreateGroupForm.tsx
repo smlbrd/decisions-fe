@@ -13,6 +13,7 @@ import { useUser } from "@/contexts/UserContext";
 import { ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface Member {
   _id: string;
@@ -41,6 +42,7 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
   const [loadUsersErrMsg, setLoadUsersErrMsg] = useState("");
   const [users, setUsers] = useState([]);
   const { user } = useUser();
+  const { colours } = useTheme();
   useEffect(() => {
     setLoadUsersErrMsg("");
     apiClient
@@ -132,39 +134,55 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
   };
 
   return (
-    <View>
+    <View style={[styles.container, { backgroundColor: colours.background }]}>
       {isPosting ? (
-        <Text>Creating group...</Text>
+        <Text style={{ color: colours.text.primary }}>Creating group...</Text>
       ) : isSuccess ? (
-        <Text>Success! New group created</Text>
+        <Text style={{ color: colours.text.primary }}>
+          Success! New group created
+        </Text>
       ) : (
         <View>
-          <Text style={styles.title}>CREATE NEW GROUP</Text>
-          {errMsg && <Text style={styles.errText}>{errMsg}</Text>}
-          <Text>Enter group name</Text>
+          {errMsg && (
+            <Text style={[styles.errText, { color: colours.text.error }]}>
+              {errMsg}
+            </Text>
+          )}
           <TextInput
-            style={styles.input}
-            placeholder="Enter group name"
+            style={[
+              styles.textInput,
+              {
+                color: colours.text.primary,
+                backgroundColor: colours.surface.primary,
+                borderColor: colours.border,
+              },
+            ]}
+            placeholder="Group name"
             value={groupInfoText.name}
             onChangeText={(text) => {
               handleGroupInfoTextInput(text, "name");
             }}
           />
-          <Text>Enter group description</Text>
           <TextInput
-            style={styles.input}
-            placeholder="Enter group description"
+            style={[
+              styles.textInput,
+              {
+                color: colours.text.primary,
+                backgroundColor: colours.surface.primary,
+                borderColor: colours.border,
+              },
+            ]}
+            placeholder="Group description"
             value={groupInfoText.description}
             onChangeText={(text) => {
               handleGroupInfoTextInput(text, "description");
             }}
           />
-          <Text>MY NEW GROUP</Text>
-          <ScrollView style={styles.scrollView}>
+          <ScrollView>
             <View>
-              <UserCard user={user}>
-                <Text>OWNER</Text>
-              </UserCard>
+              {/* <UserCard user={user}>
+                <Text style={{ color: colours.text.primary }}></Text>
+              </UserCard> */}
               {groupInfoText.members.map((member) => {
                 return (
                   <UserCard key={member._id} user={member}>
@@ -188,11 +206,20 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
               })}
             </View>
           </ScrollView>
-          <Text>Add members to group</Text>
-          <View style={styles.rowAlign}>
-            <Ionicons name={"search"} color={"black"} size={24} />
+          <Text style={[styles.modalRow, { color: colours.text.primary }]}>
+            Add members to group
+          </Text>
+          <View style={styles.modalRow}>
+            <Ionicons name={"search"} color={colours.text.primary} size={24} />
             <TextInput
-              style={styles.input}
+              style={[
+                styles.textInput,
+                {
+                  color: colours.text.primary,
+                  backgroundColor: colours.surface.primary,
+                  borderColor: colours.border,
+                },
+              ]}
               placeholder="Search"
               value={searchUsernameText}
               onChangeText={(text) => {
@@ -201,14 +228,17 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
             />
           </View>
           <ScrollView style={styles.scrollView}>
-            <View>
+            <View style={styles.modalMembersList}>
               {loadUsersErrMsg ? (
                 <Text style={styles.errText}>{loadUsersErrMsg}</Text>
               ) : (
                 filteredUsers.map((user: userDataProps) => (
                   <UserCard key={user._id} user={user}>
                     <TouchableOpacity
-                      style={styles.addButton}
+                      style={[
+                        styles.addButton,
+                        { backgroundColor: colours.success },
+                      ]}
                       onPress={() => {
                         setGroupInfoText((groupInfoText) => {
                           const members = groupInfoText.members;
@@ -220,7 +250,14 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
                         });
                       }}
                     >
-                      <Text style={styles.buttonText}>Add</Text>
+                      <Text
+                        style={[
+                          styles.buttonText,
+                          { color: colours.text.success },
+                        ]}
+                      >
+                        Add
+                      </Text>
                     </TouchableOpacity>
                   </UserCard>
                 ))
@@ -239,53 +276,56 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
   },
-  input: {
-    width: "100%",
-    height: 30,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 5,
+  textInput: {
+    height: 40,
+    borderWidth: 2,
+    borderRadius: 8,
+    paddingVertical: 10,
     paddingHorizontal: 10,
+    marginVertical: 10,
+    marginHorizontal: 20,
   },
   scrollView: {
     maxHeight: 200,
-    borderColor: "lightgray",
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 20,
-    padding: 10,
+    paddingHorizontal: 10,
   },
-  rowAlign: {
+  modalRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignItems: "center",
+    marginHorizontal: 30,
+    marginVertical: 5,
   },
   removeButton: {
-    backgroundColor: "#f44336",
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
   },
   addButton: {
-    backgroundColor: "#2DA042",
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
   },
   buttonText: {
-    color: "#fff",
     fontWeight: "bold",
   },
   errText: {
-    color: "#FE141D",
     fontWeight: "bold",
+  },
+  modalContainer: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+  },
+  modalMembersList: {
+    marginLeft: 10,
   },
 });

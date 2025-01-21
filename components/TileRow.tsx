@@ -2,27 +2,30 @@ import React from "react";
 import { StyleSheet, View, Image } from "react-native";
 
 type Option = {
-  id: string;
+  _id: string;
+  name: string;
+  description: string;
   image_url: string;
+  customFields: [];
+  owner: string;
 };
 
 type Props = {
   options: Option[];
 };
 
-const TileRow: React.FC<Props> = ({ options }) => {
+const TileRow = ({ options }: Props) => {
   return (
     <View style={styles.tileContainer}>
-      {options.map((option) => (
-        <>
+      {options.map((option, index) => (
+        <View key={index}>
           <Image
-            key={option.id}
             source={{
               uri: "https://images.pexels.com/photos/539451/pexels-photo-539451.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
             }}
             style={styles.tileImage}
           />
-        </>
+        </View>
       ))}
     </View>
   );
