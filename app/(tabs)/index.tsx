@@ -5,6 +5,8 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
 import { useUser } from "@/contexts/UserContext";
+import { CreateNewButton } from "@/components/CreateNewButton";
+import Overlay from "@/components/Overlay";
 
 type List = {
   _id: string;
@@ -51,11 +53,21 @@ export default function Index() {
   const [selectedGroup, setSelectedGroup] = useState<number | undefined>(
     undefined
   );
+  const [isDecisionProcessModalVisible, setIsDecisionProcessModalVisible] =
+    useState(false);
 
   const { colours } = useTheme();
   const { user } = useUser();
   const socket = useSocket();
   socket.emit("hi", "hi");
+
+  const handleDecisionProcessModalClose = () => {
+    setIsDecisionProcessModalVisible(false);
+  };
+
+  const handleGetStarted = () => {
+    setIsDecisionProcessModalVisible(true);
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -105,11 +117,18 @@ export default function Index() {
         <Text style={styles.errText}>{errMsg}</Text>
       ) : null}
 
+      <Overlay
+        isVisible={isDecisionProcessModalVisible}
+        onClose={handleDecisionProcessModalClose}
+        scrollable={true}
+      >
+        <Text>This or That</Text>
+      </Overlay>
+
       <Picker
         selectedValue={selectedList}
         onValueChange={(itemValue, itemIndex) => setSelectedList(itemValue)}
       >
-
         <Picker.Item
           label="Help me decide..."
           value={"Help me decide..."}
@@ -140,6 +159,12 @@ export default function Index() {
           );
         })}
       </Picker>
+      <View>
+        <CreateNewButton
+          text="Get Started"
+          onPress={() => setIsDecisionProcessModalVisible(true)}
+        />
+      </View>
     </View>
   );
 }
