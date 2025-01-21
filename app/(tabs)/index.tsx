@@ -101,7 +101,7 @@ export default function Index() {
   console.log("Group ID: ", selectedGroup);
   console.log("Decision Process ID: ", selectedDecisionProcess);
 
-  const postNewDecision = async () => {
+  function postNewDecision() {
     if (!selectedList || !selectedDecisionProcess) {
       setErrMsg(
         "Please select a list, and choose your decision-making process!"
@@ -119,17 +119,19 @@ export default function Index() {
       outcome: null,
     };
 
-    try {
-      setIsLoading(true);
-      await apiClient.post("/decisions", newDecisionBody).then(() => {
+    setIsLoading(true);
+    apiClient
+      .post("/decisions", newDecisionBody)
+      .then(() => {
         setIsLoading(false);
+        // TODO: expo router /decisions/:decisionId
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+        setErrMsg("there was an error loading users");
       });
-      // TODO: expo router push here to decision
-    } catch (error) {
-      console.log(error);
-      setErrMsg("Error creating decision. Please try again!");
-    }
-  };
+  }
 
   useEffect(() => {
     setIsLoading(true);
