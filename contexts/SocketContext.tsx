@@ -1,8 +1,7 @@
 import React, { createContext, ReactNode, useContext, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
-import ip from "../ip";
 
-const socket = io(`http://${ip}:9090`, {
+const socket = io(`https://decisions-api-vlyb.onrender.com`, {
   transports: ["websocket"],
 });
 
