@@ -109,6 +109,7 @@ export default function Index() {
         selectedValue={selectedList}
         onValueChange={(itemValue, itemIndex) => setSelectedList(itemValue)}
       >
+
         <Picker.Item
           label="Help me decide..."
           value={"Help me decide..."}

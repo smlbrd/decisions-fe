@@ -222,19 +222,34 @@ const Lists = () => {
         isVisible={isCreateListModalVisible}
         onClose={handleCreateListModalClose}
       >
-        <View>
-          <Text style={[styles.modalTitle, { color: colours.text.primary }]}>
-            Create New List
-          </Text>
+
+        <View
+          style={[
+            styles.modalContainer,
+            { backgroundColor: colours.background },
+          ]}
+        >
           <TextInput
-            style={styles.textInput}
+            style={[
+              styles.textInput,
+              {
+                backgroundColor: colours.surface.primary,
+                borderColor: colours.border,
+              },
+            ]}
             placeholder="Title"
             placeholderTextColor={colours.text.disabled}
             value={newListTitle}
             onChangeText={setNewListTitle}
           />
           <TextInput
-            style={styles.textInput}
+            style={[
+              styles.textInput,
+              {
+                backgroundColor: colours.surface.primary,
+                borderColor: colours.border,
+              },
+            ]}
             placeholder="Description"
             placeholderTextColor={colours.text.disabled}
             value={newListDescription}
@@ -256,13 +271,14 @@ const Lists = () => {
           </Text>
           {renderLists()}
         </View>
-        <View style={styles.listsContainer}>
-          <CreateNewButton
-            text="Create New"
-            onPress={() => setIsCreateListModalVisible(true)}
-          />
-        </View>
       </ScrollView>
+
+      <View style={styles.listsContainer}>
+        <CreateNewButton
+          text="New List"
+          onPress={() => setIsCreateListModalVisible(true)}
+        />
+      </View>
     </View>
   );
 };
@@ -285,11 +301,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   modalContainer: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
+    ...(Platform.OS === "web" && {
+      flex: 1,
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 10,
+    }),
   },
   modalTitle: {
     fontSize: 24,
@@ -316,6 +334,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginVertical: 10,
+  },
+  removeButton: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginRight: 15,
+  },
+  removeButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
 

@@ -1,134 +1,188 @@
-import { Collapsible } from "@/components/Collapsible";
-import { CreateNewButton } from "@/components/CreateNewButton";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import UserCard from "@/components/UserCard";
-import Overlay from "@/components/Overlay";
-import { ScrollView } from "react-native";
-import apiClient from "@/utils/api-client";
-import { useUser } from "@/contexts/UserContext";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Collapsible } from "@/components/Collapsible";
 import { CreateGroupForm } from "@/components/CreateGroupForm";
+import { CreateNewButton } from "@/components/CreateNewButton";
+import Overlay from "@/components/Overlay";
+import UserCard from "@/components/UserCard";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useUser } from "@/contexts/UserContext";
+import apiClient from "@/utils/api-client";
+
+type Member = {
+  _id: string;
+  name: string;
+  username: string;
+  savedLists: [string];
+  email: string;
+};
+
+type Group = {
+  _id: string;
+  name: string;
+  description: string;
+  members: Member[];
+};
 
 export default function Groups() {
   const { user } = useUser();
+  const { colours } = useTheme();
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [isCreateGroupModalVisible, setIsCreateGroupModalVisible] =
     useState(false);
+  const [myGroups, setMyGroups] = useState<Group[]>([]);
+
   const handleCreateGroupModalClose = () => {
     setIsCreateGroupModalVisible(false);
   };
+
   const handleCreateNewGroupPress = () => {
     setIsCreateGroupModalVisible(true);
   };
 
-  interface Member {
-    _id: string;
-    name: string;
-    username: string;
-    savedLists: [string];
-    email: string;
-  }
-  interface Group {
-    _id: string;
-    name: string;
-    description: string;
-    members: Member[];
-  }
-  const [myGroups, setMyGroups] = useState<Group[]>([]);
-  const [isLoadingGroups, setIsLoadingGroups] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
   useEffect(() => {
-    setErrMsg("");
-    setIsLoadingGroups(true);
-    if (user.username !== null)
+    setError("");
+    setLoading(true);
+
+    if (user.username !== null) {
       apiClient
         .get(`/users/${user._id}/groups`)
         .then(({ data }) => {
           setMyGroups(data);
-          setIsLoadingGroups(false);
+          setLoading(false);
         })
         .catch((err) => {
-          setIsLoadingGroups(false);
-          setErrMsg("Error loading groups");
+          setLoading(false);
+          setError("Error loading groups");
         });
-    else {
-      setIsLoadingGroups;
-      setErrMsg("Not logged in");
+    } else {
+      setLoading;
+      setError("Not logged in");
     }
   }, [user]);
 
   const groupDataCollapsibles = myGroups.map((group) => {
+    if (loading) {
+      return <ActivityIndicator size="large" color={colours.text.primary} />;
+    }
+
+    if (error) {
+      return <Text style={styles.errorText}>{error}</Text>;
+    }
+
     return (
-      <Collapsible key={group._id} title={group.name}>
-        <Text>{group.description}</Text>
-        {group.members.map((member) => {
-          return (
-            <UserCard key={member._id} user={member}>
-              {" "}
-              <TouchableOpacity style={styles.removeButton} onPress={() => {}}>
-                <Text style={styles.removeButtonText}>Remove</Text>
-              </TouchableOpacity>
-            </UserCard>
-          );
-        })}
-      </Collapsible>
+      <View style={styles.contentContainer}>
+        <Collapsible key={group._id} title={group.name}>
+          <Text style={{ color: colours.text.primary }}>
+            {group.description}
+          </Text>
+          {group.members.map((member) => {
+            return (
+              <UserCard key={member._id} user={member}>
+                <TouchableOpacity
+                  style={[
+                    styles.removeButton,
+                    { backgroundColor: colours.error },
+                  ]}
+                  onPress={() => {}}
+                >
+                  <Text
+                    style={[
+                      styles.removeButtonText,
+                      { color: colours.text.primary },
+                    ]}
+                  >
+                    Remove
+                  </Text>
+                </TouchableOpacity>
+              </UserCard>
+            );
+          })}
+        </Collapsible>
+      </View>
     );
   });
+
   return (
-    <>
-      <Overlay
-        isVisible={isCreateGroupModalVisible}
-        onClose={handleCreateGroupModalClose}
-        isKeyboardAvoiding={true}
+    <View style={[styles.container, { backgroundColor: colours.background }]}>
+      <View style={styles.modalContainer}>
+        <Overlay
+          isVisible={isCreateGroupModalVisible}
+          onClose={handleCreateGroupModalClose}
+          isKeyboardAvoiding={true}
+        >
+          <CreateGroupForm setMyGroups={setMyGroups} />
+        </Overlay>
+      </View>
+
+      <ScrollView
+        style={[
+          styles.contentContainer,
+          { backgroundColor: colours.background },
+        ]}
       >
-        <CreateGroupForm setMyGroups={setMyGroups} />
-      </Overlay>
-      <View style={styles.createGroupButtonContainer}>
+        <Text style={[styles.headerText, { color: colours.text.primary }]}>
+          My Groups
+        </Text>
+        {groupDataCollapsibles}
+      </ScrollView>
+
+      <View
+        style={[
+          styles.buttonContainer,
+          { backgroundColor: colours.background },
+        ]}
+      >
         <CreateNewButton
-          text={"Create New Group"}
+          text={"New Group"}
           onPress={handleCreateNewGroupPress}
         />
       </View>
-      {errMsg ? (
-        <Text>{errMsg}</Text>
-      ) : isLoadingGroups ? (
-        <Text>Loading groups...</Text>
-      ) : (
-        <ScrollView>
-          <View style={styles.groupsContainer}>
-            <Text style={styles.headerText}>My Groups</Text>
-            {groupDataCollapsibles}
-          </View>
-        </ScrollView>
-      )}
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  createGroupButtonContainer: {
-    justifyContent: "center",
-    marginHorizontal: 15,
-    marginBottom: 5,
+  container: {
+    flex: 1,
   },
-  groupsContainer: {
-    justifyContent: "center",
-    marginHorizontal: 15,
+  contentContainer: {
     marginBottom: 15,
+    marginHorizontal: 15,
+  },
+  buttonContainer: {
+    justifyContent: "center",
+    marginBottom: 15,
+    marginHorizontal: 15,
+  },
+  modalContainer: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerText: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#333",
+  },
+  removeButtonText: {
+    fontWeight: "bold",
+  },
+  errorText: {
+    textAlign: "center",
   },
   removeButton: {
-    backgroundColor: "#f44336",
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
-  },
-  removeButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    marginRight: 15,
   },
 });
