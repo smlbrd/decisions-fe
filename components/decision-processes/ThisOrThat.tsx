@@ -112,7 +112,7 @@ export default function ThisOrThat({
             ...decisionData.saveData,
             currentPlayer:
               decisionData.saveData.playerOrder[
-                (decisionData.saveData.turnNumber - 1) %
+                (decisionData.saveData.turnNumber) %
                   decisionData.saveData.playerOrder.length
               ]._id,
             turnNumber: newTurnNumber,
@@ -201,7 +201,6 @@ export default function ThisOrThat({
             </View>
           )}
           <Text>{decisionMsg}</Text>
-          {console.log(decisionData.saveData)}
         </View>
       ) : decisionData.votingStatus === "completed" ? (
         <View>
