@@ -7,15 +7,22 @@ import shuffleArray from "../../utils/shuffleArray";
 import getTwoRandomElements from "../../utils/getTwoRandomElements";
 import { ThisOrThatButton } from "../ThisOrThatButton";
 import { useUser } from "@/contexts/UserContext";
+import { useSocket } from "@/contexts/SocketContext";
 
 type Props = {
   decisionData: DecisionProps;
   setDecisionData: React.Dispatch<
     React.SetStateAction<DecisionProps | undefined>
   >;
+  decisionMsg: string;
 };
 
-export default function ThisOrThat({ decisionData, setDecisionData }: Props) {
+export default function ThisOrThat({
+  decisionData,
+  setDecisionData,
+  decisionMsg,
+}: Props) {
+  const socket = useSocket();
   const [isStartingDecision, setIsStartingDecision] = useState(false);
   const [startDecisionErrMsg, setStartDecisionErrMsg] = useState("");
   const { user } = useUser();
@@ -42,6 +49,10 @@ export default function ThisOrThat({ decisionData, setDecisionData }: Props) {
       })
       .then(({ data }) => {
         setIsStartingDecision(false);
+        socket.emit("refresh", {
+          room: decisionData._id,
+          msg: `${user.name} started the decision`,
+        });
         setDecisionData((decisionData) => {
           if (decisionData) return data;
         });
@@ -82,6 +93,11 @@ export default function ThisOrThat({ decisionData, setDecisionData }: Props) {
         })
         .then(({ data }) => {
           console.log(data);
+          // Emit to the server with the room ID and message
+          socket.emit("refresh", {
+            room: decisionData._id,
+            msg: `${user.name} made the final decision`,
+          });
           setDecisionData({ ...data, outcome: newRemainingOptions[0] });
         })
         .catch((err) => {
@@ -100,6 +116,10 @@ export default function ThisOrThat({ decisionData, setDecisionData }: Props) {
           },
         })
         .then(({ data }) => {
+          socket.emit("refresh", {
+            room: decisionData._id,
+            msg: `${user.name} made a decision`,
+          });
           setDecisionData({ ...data });
         })
         .catch((err) => {
@@ -174,6 +194,7 @@ export default function ThisOrThat({ decisionData, setDecisionData }: Props) {
               />
             </View>
           )}
+          <Text>{decisionMsg}</Text>
         </View>
       ) : decisionData.votingStatus === "completed" ? (
         <View>
