@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import apiClient from "../../utils/api-client";
 import { useSocket } from "@/contexts/SocketContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -41,12 +41,16 @@ interface Group {
 }
 
 export default function Index() {
-  const [selectedList, setSelectedList] = useState();
+  const [selectedList, setSelectedList] = useState<number | undefined>(
+    undefined
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [listData, setListData] = useState<List[]>([]);
   const [groupData, setGroupData] = useState<Group[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState();
+  const [selectedGroup, setSelectedGroup] = useState<number | undefined>(
+    undefined
+  );
 
   const { colours } = useTheme();
   const { user } = useUser();
@@ -100,6 +104,7 @@ export default function Index() {
       ) : errMsg ? (
         <Text style={styles.errText}>{errMsg}</Text>
       ) : null}
+
       <Picker
         selectedValue={selectedList}
         onValueChange={(itemValue, itemIndex) => setSelectedList(itemValue)}
@@ -140,9 +145,11 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    ...(Platform.OS === "web" && {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    }),
   },
   errText: {
     color: "#FE141D",
