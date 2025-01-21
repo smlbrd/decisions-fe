@@ -9,6 +9,7 @@ import { useUser } from "@/contexts/UserContext";
 import ToggleTheme from "./ToggleTheme";
 import { useRouter } from "expo-router";
 import { useTheme } from "../contexts/ThemeContext";
+import Notifications from "./Notifications";
 
 export default function Header() {
   const { colours, theme } = useTheme();
@@ -68,22 +69,11 @@ export default function Header() {
                 />
               }
             >
-              <MenuOption
-                onSelect={() => {
-                  setIsNotificationDropdownVisible(false);
-                  router.push({
-                    pathname: "/Decision",
-                    params: { decision_id: "678940615a51bf4a2ed681c0" },
-                  });
-                }}
-              >
-                <Text>
-                  You have a pending decision - click here to continue
-                </Text>
-              </MenuOption>
-              <MenuOption onSelect={() => {}}>
-                <Text>Decision completed: view decision history</Text>
-              </MenuOption>
+              <Notifications
+                setIsNotificationDropdownVisible={
+                  setIsNotificationDropdownVisible
+                }
+              />
             </DropdownMenu>
 
             <DropdownMenu
