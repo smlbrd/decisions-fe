@@ -155,43 +155,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
   contentContainer: {
-    // flexGrow: 1,
-    marginBottom: 5,
+    marginBottom: 15,
     marginHorizontal: 15,
   },
-
   buttonContainer: {
     justifyContent: "center",
     marginBottom: 15,
     marginHorizontal: 15,
   },
-
   modalContainer: {
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
   },
-
   headerText: {
     fontSize: 32,
     fontWeight: "bold",
   },
-
+  removeButtonText: {
+    fontWeight: "bold",
+  },
+  errorText: {
+    textAlign: "center",
+  },
   removeButton: {
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
     marginRight: 15,
-  },
-
-  removeButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-
-  errorText: {
-    textAlign: "center",
   },
 });
