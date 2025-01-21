@@ -12,12 +12,12 @@ import { TextInput } from "react-native-gesture-handler";
 import { CreateNewButton } from "@/components/CreateNewButton";
 import Overlay from "@/components/Overlay";
 import ListCard from "@/components/ListCard";
-import { createList, getListbyListId, getListsByUserId } from "../../api/api";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
+import apiClient from "@/utils/api-client";
 
 type Option = {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   image_url: string;
@@ -39,8 +39,14 @@ const Lists = () => {
   const { user, loadUser } = useUser();
   const { colours } = useTheme();
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | undefined>(undefined);
+  const [isLoadingListCard, setIsLoadingListCard] = useState(false);
+  const [listCardErrMsg, setListCardErrMsg] = useState("");
+
+  const [isPostingList, setIsPostingList] = useState(false);
+  const [listCreationErrMsg, setListCreationErrMsg] = useState("");
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [errMsg, setErrMsg] = useState<string | undefined>(undefined);
 
   const [listData, setListData] = useState<List[]>([]);
 
@@ -58,39 +64,45 @@ const Lists = () => {
   }, []);
 
   useEffect(() => {
-    const fetchLists = async () => {
-      if (!user._id) {
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const lists = await getListsByUserId(user._id);
-        setListData(lists);
-      } catch (err) {
-        setError(`Error getting lists: ${err}`);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLists();
-  }, [user._id]);
+    setIsLoading(true);
+    setErrMsg("");
+    if (!user._id) {
+      setErrMsg("not logged in");
+      return undefined;
+    }
+    apiClient
+      .get(`users/${user._id}/saved_lists`)
+      .then(({ data }) => {
+        setIsLoading(false);
+        setListData(data);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+        setErrMsg("there was an error loading users");
+      });
+  }, [user]);
 
   const handleDetailListModalClose = () => {
     setIsDetailListModalVisible(false);
     setSelectedList(null);
   };
 
-  const handleListCardPress = async (listId: string) => {
-    try {
-      const listDetails = await getListbyListId(listId);
-      setSelectedList(listDetails);
-      setIsDetailListModalVisible(true);
-    } catch (error) {
-      console.log(error);
-    }
+  const handleListCardPress = (listId: string) => {
+    setListCardErrMsg("");
+    setIsLoadingListCard(true);
+    setIsDetailListModalVisible(true);
+    apiClient
+      .get(`lists/${listId}`)
+      .then(({ data }) => {
+        setIsLoadingListCard(false);
+        setSelectedList(data);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoadingListCard(false);
+        setListCardErrMsg("there was an error loading this list");
+      });
   };
 
   const handleCreateListModalClose = () => {
@@ -99,32 +111,38 @@ const Lists = () => {
     setNewListDescription("");
   };
 
-  const handleNewListSubmit = async () => {
-    try {
-      const newList = {
-        title: newListTitle,
-        description: newListDescription,
-        owner: user._id,
-      };
-
-      const newlyCreatedList = await createList(newList);
-      setListData((prev) => [...prev, newlyCreatedList]);
-      handleCreateListModalClose();
-    } catch (err) {
-      setError(`Something went wrong while creating your list: ${err}`);
-    }
+  const handleNewListSubmit = () => {
+    setIsPostingList(true);
+    if (!user._id) setErrMsg("user not logged in");
+    const newList = {
+      title: newListTitle,
+      description: newListDescription,
+      owner: user._id,
+    };
+    apiClient
+      .post("/lists", newList)
+      .then(({ data }) => {
+        setListData((listData) => {
+          return [...listData, data];
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsPostingList(false);
+        setListCreationErrMsg("something went wrong while creating your list");
+      });
   };
 
   const renderLists = () => {
-    if (loading) {
+    if (isLoading) {
       return <ActivityIndicator size="large" color={colours.text.primary} />;
     }
 
-    if (error) {
-      return <Text style={styles.errorText}>{error}</Text>;
+    if (errMsg) {
+      return <Text style={styles.errorText}>{errMsg}</Text>;
     }
 
-    return listData.map((list) => (
+    return listData?.map((list) => (
       <ListCard
         key={list._id}
         id={list._id}
@@ -132,7 +150,7 @@ const Lists = () => {
         description={list.description}
         options={list.options}
         onPress={() => {
-          handleListCardPress(list._id);
+          return handleListCardPress(list._id);
         }}
       />
     ));
@@ -143,13 +161,9 @@ const Lists = () => {
       <Overlay
         isVisible={isDetailListModalVisible}
         onClose={handleDetailListModalClose}
+        scrollable={true}
       >
-        <View
-          style={[
-            styles.modalContainer,
-            { backgroundColor: colours.background },
-          ]}
-        >
+        <View>
           {selectedList ? (
             <View>
               <Text
@@ -168,9 +182,8 @@ const Lists = () => {
                 <View style={styles.modalOptionsList}>
                   {selectedList.options.map((option) => {
                     return (
-                      <View>
+                      <View key={option._id}>
                         <Image
-                          key={option.id}
                           source={{
                             uri: option.image_url,
                           }}
@@ -209,6 +222,7 @@ const Lists = () => {
         isVisible={isCreateListModalVisible}
         onClose={handleCreateListModalClose}
       >
+
         <View
           style={[
             styles.modalContainer,
@@ -246,6 +260,11 @@ const Lists = () => {
       </Overlay>
 
       <ScrollView>
+        {errMsg ? (
+          <Text style={styles.errorText}>{errMsg}</Text>
+        ) : isLoading ? (
+          <Text style={[{ color: colours.text.primary }]}>loading...</Text>
+        ) : null}
         <View style={styles.listsContainer}>
           <Text style={[styles.headerText, { color: colours.text.primary }]}>
             My Lists
@@ -278,14 +297,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   errorText: {
-    textAlign: "center",
+    color: "#FE141D",
+    fontWeight: "bold",
   },
   modalContainer: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
+    ...(Platform.OS === "web" && {
+      flex: 1,
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 10,
+    }),
   },
   modalTitle: {
     fontSize: 24,
