@@ -13,6 +13,7 @@ import { useUser } from "@/contexts/UserContext";
 import { ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface Member {
   _id: string;
@@ -34,6 +35,7 @@ type Props = {
 };
 
 export const CreateGroupFormMobile = ({ setMyGroups }: Props) => {
+  const styles = createStyleSheet(useTheme().colours);
   const router = useRouter();
   const [isPosting, setIsPosting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -141,7 +143,7 @@ export const CreateGroupFormMobile = ({ setMyGroups }: Props) => {
         <View>
           <Text style={styles.title}>CREATE NEW GROUP</Text>
           {errMsg && <Text style={styles.errText}>{errMsg}</Text>}
-          <Text>Enter group name</Text>
+          <Text style={styles.text}>Enter group name</Text>
           <TextInput
             style={styles.input}
             placeholder="Enter group name"
@@ -150,7 +152,7 @@ export const CreateGroupFormMobile = ({ setMyGroups }: Props) => {
               handleGroupInfoTextInput(text, "name");
             }}
           />
-          <Text>Enter group description</Text>
+          <Text style={styles.text}>Enter group description</Text>
           <TextInput
             style={styles.input}
             placeholder="Enter group description"
@@ -159,11 +161,11 @@ export const CreateGroupFormMobile = ({ setMyGroups }: Props) => {
               handleGroupInfoTextInput(text, "description");
             }}
           />
-          <Text>MY NEW GROUP</Text>
+          <Text style={styles.text}>MY NEW GROUP</Text>
           <ScrollView style={styles.scrollView}>
             <View>
               <UserCard user={user}>
-                <Text>OWNER</Text>
+                <Text style={styles.text}>OWNER</Text>
               </UserCard>
               {groupInfoText.members.map((member) => {
                 return (
@@ -188,7 +190,7 @@ export const CreateGroupFormMobile = ({ setMyGroups }: Props) => {
               })}
             </View>
           </ScrollView>
-          <Text>Add members to group</Text>
+          <Text style={styles.text}>Add members to group</Text>
           <View style={styles.rowAlign}>
             <Ionicons name={"search"} color={"black"} size={24} />
             <TextInput
@@ -234,58 +236,69 @@ export const CreateGroupFormMobile = ({ setMyGroups }: Props) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  input: {
-    width: "100%",
-    height: 30,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 5,
-    paddingHorizontal: 10,
-  },
-  scrollView: {
-    maxHeight: 200,
-    borderColor: "lightgray",
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 20,
-    padding: 10,
-  },
-  rowAlign: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  removeButton: {
-    backgroundColor: "#f44336",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
-  addButton: {
-    backgroundColor: "#2DA042",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  errText: {
-    color: "#FE141D",
-    fontWeight: "bold",
-  },
-});
+type colourProps = {
+  text: {
+    primary: string;
+  };
+};
+
+const createStyleSheet = (colours: colourProps) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    text: {
+      color: colours.text.primary,
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: "bold",
+      marginBottom: 10,
+      color: colours.text.primary,
+    },
+    input: {
+      width: "100%",
+      height: 30,
+      borderColor: "gray",
+      borderWidth: 1,
+      borderRadius: 5,
+      marginBottom: 5,
+      paddingHorizontal: 10,
+    },
+    scrollView: {
+      maxHeight: 200,
+      borderColor: "lightgray",
+      borderWidth: 1,
+      borderRadius: 5,
+      marginBottom: 20,
+      padding: 10,
+    },
+    rowAlign: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    removeButton: {
+      backgroundColor: "#f44336",
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      borderRadius: 5,
+    },
+    addButton: {
+      backgroundColor: "#2DA042",
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      borderRadius: 5,
+    },
+    buttonText: {
+      color: "#fff",
+      fontWeight: "bold",
+    },
+    errText: {
+      color: "#FE141D",
+      fontWeight: "bold",
+    },
+  });
