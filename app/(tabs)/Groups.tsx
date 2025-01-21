@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
@@ -34,11 +35,11 @@ export default function Groups() {
   const { user } = useUser();
   const { colours } = useTheme();
 
-  const [myGroups, setMyGroups] = useState<Group[]>([]);
-  const [isLoadingGroups, setIsLoadingGroups] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [isCreateGroupModalVisible, setIsCreateGroupModalVisible] =
     useState(false);
+  const [myGroups, setMyGroups] = useState<Group[]>([]);
 
   const handleCreateGroupModalClose = () => {
     setIsCreateGroupModalVisible(false);
@@ -49,83 +50,100 @@ export default function Groups() {
   };
 
   useEffect(() => {
-    setErrMsg("");
-    setIsLoadingGroups(true);
+    setError("");
+    setLoading(true);
 
     if (user.username !== null) {
       apiClient
         .get(`/users/${user._id}/groups`)
         .then(({ data }) => {
           setMyGroups(data);
-          setIsLoadingGroups(false);
+          setLoading(false);
         })
         .catch((err) => {
-          setIsLoadingGroups(false);
-          setErrMsg("Error loading groups");
+          setLoading(false);
+          setError("Error loading groups");
         });
     } else {
-      setIsLoadingGroups;
-      setErrMsg("Not logged in");
+      setLoading;
+      setError("Not logged in");
     }
   }, [user]);
 
   const groupDataCollapsibles = myGroups.map((group) => {
+    if (loading) {
+      return <ActivityIndicator size="large" color={colours.text.primary} />;
+    }
+
+    if (error) {
+      return <Text style={styles.errorText}>{error}</Text>;
+    }
+
     return (
-      <Collapsible key={group._id} title={group.name}>
-        <Text style={{ color: colours.text.primary }}>{group.description}</Text>
-        {group.members.map((member) => {
-          return (
-            <UserCard key={member._id} user={member}>
-              <TouchableOpacity
-                style={[
-                  styles.removeButton,
-                  { backgroundColor: colours.error },
-                ]}
-                onPress={() => {}}
-              >
-                <Text
+      <View style={styles.contentContainer}>
+        <Collapsible key={group._id} title={group.name}>
+          <Text style={{ color: colours.text.primary }}>
+            {group.description}
+          </Text>
+          {group.members.map((member) => {
+            return (
+              <UserCard key={member._id} user={member}>
+                <TouchableOpacity
                   style={[
-                    styles.removeButtonText,
-                    { color: colours.text.primary },
+                    styles.removeButton,
+                    { backgroundColor: colours.error },
                   ]}
+                  onPress={() => {}}
                 >
-                  Remove
-                </Text>
-              </TouchableOpacity>
-            </UserCard>
-          );
-        })}
-      </Collapsible>
+                  <Text
+                    style={[
+                      styles.removeButtonText,
+                      { color: colours.text.primary },
+                    ]}
+                  >
+                    Remove
+                  </Text>
+                </TouchableOpacity>
+              </UserCard>
+            );
+          })}
+        </Collapsible>
+      </View>
     );
   });
 
   return (
-    <View
-      style={(styles.groupsContainer, { backgroundColor: colours.background })}
-    >
-      <Overlay
-        isVisible={isCreateGroupModalVisible}
-        onClose={handleCreateGroupModalClose}
-        isKeyboardAvoiding={true}
-      >
-        <CreateGroupForm setMyGroups={setMyGroups} />
-      </Overlay>
+    <View style={[styles.container, { backgroundColor: colours.background }]}>
+      <View style={styles.modalContainer}>
+        <Overlay
+          isVisible={isCreateGroupModalVisible}
+          onClose={handleCreateGroupModalClose}
+          isKeyboardAvoiding={true}
+        >
+          <CreateGroupForm setMyGroups={setMyGroups} />
+        </Overlay>
+      </View>
 
-      {errMsg ? (
-        <Text style={{ color: colours.error }}>{errMsg}</Text>
-      ) : isLoadingGroups ? (
-        <Text style={{ color: colours.text.primary }}>Loading groups...</Text>
-      ) : (
-        <ScrollView>
-          <Text style={[styles.headerText, { color: colours.text.primary }]}>
-            My Groups
-          </Text>
-          {groupDataCollapsibles}
-        </ScrollView>
-      )}
-      <View style={styles.createGroupButtonContainer}>
+      <ScrollView
+        style={[
+          styles.contentContainer,
+          { backgroundColor: colours.background },
+        ]}
+      >
+        <Text style={[styles.headerText, { color: colours.text.primary }]}>
+          My Groups
+        </Text>
+        {groupDataCollapsibles}
+      </ScrollView>
+
+      <View
+        style={[
+          styles.buttonContainer,
+          { backgroundColor: colours.background },
+        ]}
+      >
         <CreateNewButton
-          text={"Create New Group"}
+          text={"New Group"}
           onPress={handleCreateNewGroupPress}
         />
       </View>
@@ -137,28 +155,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  createGroupButtonContainer: {
-    justifyContent: "center",
-    marginHorizontal: 15,
+
+  contentContainer: {
+    // flexGrow: 1,
     marginBottom: 5,
-  },
-  groupsContainer: {
-    justifyContent: "center",
     marginHorizontal: 15,
-    marginBottom: 15,
   },
+
+  buttonContainer: {
+    justifyContent: "center",
+    marginBottom: 15,
+    marginHorizontal: 15,
+  },
+
+  modalContainer: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
   headerText: {
     fontSize: 32,
     fontWeight: "bold",
   },
+
   removeButton: {
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
     marginRight: 15,
   },
+
   removeButtonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+
+  errorText: {
+    textAlign: "center",
   },
 });

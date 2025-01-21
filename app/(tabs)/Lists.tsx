@@ -253,9 +253,10 @@ const Lists = () => {
           {renderLists()}
         </View>
       </ScrollView>
+
       <View style={styles.listsContainer}>
         <CreateNewButton
-          text="Create New"
+          text="New List"
           onPress={() => setIsCreateListModalVisible(true)}
         />
       </View>
@@ -311,6 +312,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginVertical: 10,
+  },
+  removeButton: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginRight: 15,
+  },
+  removeButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
 
