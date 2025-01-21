@@ -37,13 +37,13 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({user, onChange, onSave
             <TouchableOpacity
             onPress={onSave}
             style={{
-                backgroundColor: '#8fbc8f',
+                backgroundColor: "#8fbc8f",
                 padding: 10,
                 borderRadius: 5,
                 marginTop: 15 
             }}
             >
-            <Text style={{color: '#000000', textAlign: 'center'}}>Save Changes</Text>
+            <Text style={{color: "#000000", textAlign: "center"}}>Save Changes</Text>
             </TouchableOpacity>
         </View>
     )

@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react"
 import { Text, View, Button, Image } from "react-native";
 import UserInformation from "../components/UserInformation"
-import {TouchableOpacity} from 'react-native' //instead of button for logging out
-import {ActivityIndicator} from 'react-native' // instead of text, spinner to show its loading
-import {useRouter} from 'expo-router'
+import {TouchableOpacity} from 'react-native' 
+import {ActivityIndicator} from "react-native"
+import {useRouter} from "expo-router"
 import { useUser } from "@/contexts/UserContext";
 import EditProfileForm from "../components/EditProfileForm"
 
@@ -19,8 +19,6 @@ export default function User() {
       email: user.email || ""
     })
   
-    
-//   const [error, setError] = useState<string | null>(null)
     const router = useRouter()
 
   useEffect(() => {
@@ -71,9 +69,9 @@ export default function User() {
 
       <TouchableOpacity
       onPress={() => setEditUser(!isEditUser)}
-      style={{backgroundColor: '#a9a9a9', padding: 10, borderRadius: 5, marginTop: 20}}
+      style={{backgroundColor: "#a9a9a9", padding: 10, borderRadius: 5, marginTop: 20}}
       >
-        <Text style={{color: '#E4E4E4', textAlign: 'center'}}>
+        <Text style={{color: "#E4E4E4", textAlign: "center"}}>
           { isEditUser ? "Cancel" : "Edit Profile"} </Text>
         </TouchableOpacity>
 
@@ -84,9 +82,8 @@ export default function User() {
         marginTop: 20,
       }} 
       > 
-      <Text style={{color: '#fff', textAlign: 'center'}}>Log Out</Text>
+      <Text style={{color: "#fff", textAlign: "center"}}>Log Out</Text>
       </TouchableOpacity>
-    {/* //  (<Button title="Log out" onPress={handleLogout} />) */}
 
   </View>
     )
