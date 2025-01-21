@@ -102,7 +102,6 @@ export default function Index() {
 
   const handleDecisionProcessSelect = (decisionProcessId: string) => {
     setSelectedDecisionProcess(decisionProcessId);
-    // state: set button to highlighted?
   };
 
   const postNewDecision = () => {
@@ -129,7 +128,10 @@ export default function Index() {
       .then(({ data }) => {
         setIsLoading(false);
         const newDecisionId = data._id;
-        // TODO: expo router /decisions/:decisionId
+        router.push({
+          pathname: "/Decision",
+          decision_id: newDecisionId,
+        });
       })
       .catch((err) => {
         console.log(err);
