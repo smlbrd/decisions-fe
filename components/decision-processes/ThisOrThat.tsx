@@ -6,6 +6,7 @@ import { useState } from "react";
 import shuffleArray from "../../utils/shuffleArray";
 import getTwoRandomElements from "../../utils/getTwoRandomElements";
 import { ThisOrThatButton } from "../ThisOrThatButton";
+import { useUser } from "@/contexts/UserContext";
 
 type Props = {
   decisionData: DecisionProps;
@@ -17,6 +18,7 @@ type Props = {
 export default function ThisOrThat({ decisionData, setDecisionData }: Props) {
   const [isStartingDecision, setIsStartingDecision] = useState(false);
   const [startDecisionErrMsg, setStartDecisionErrMsg] = useState("");
+  const { user } = useUser();
   const handleStartDecision = () => {
     setIsStartingDecision(true);
     setStartDecisionErrMsg("");
@@ -62,7 +64,7 @@ export default function ThisOrThat({ decisionData, setDecisionData }: Props) {
     );
     const newVoteHistory = [
       ...decisionData.saveData.voteHistory,
-      decisionData.saveData.currentOptions[thisOrThat],
+      decisionData.saveData.currentOptions[flip],
     ];
     const newTurnNumber = decisionData.saveData.turnNumber + 1;
     if (newRemainingOptions.length === 1)
@@ -70,17 +72,17 @@ export default function ThisOrThat({ decisionData, setDecisionData }: Props) {
         .put(`decisions/${decisionData._id}`, {
           votingStatus: "completed",
           saveData: {
+            ...decisionData.saveData,
             turnNumber: null,
-            playerOrder: null,
-            remainingOptions: newRemainingOptions,
+            remainingOptions: null,
             currentOptions: null,
             voteHistory: newVoteHistory,
           },
-          outcome: newRemainingOptions[0],
+          outcome: newRemainingOptions[0]._id,
         })
         .then(({ data }) => {
           console.log(data);
-          setDecisionData(data);
+          setDecisionData({ ...data, outcome: newRemainingOptions[0] });
         })
         .catch((err) => {
           console.log(err);
@@ -90,6 +92,7 @@ export default function ThisOrThat({ decisionData, setDecisionData }: Props) {
       apiClient
         .put(`decisions/${decisionData._id}`, {
           saveData: {
+            ...decisionData.saveData,
             turnNumber: newTurnNumber,
             remainingOptions: newRemainingOptions,
             currentOptions: newCurrentOptions,
@@ -97,7 +100,7 @@ export default function ThisOrThat({ decisionData, setDecisionData }: Props) {
           },
         })
         .then(({ data }) => {
-          setDecisionData(data);
+          setDecisionData({ ...data });
         })
         .catch((err) => {
           console.log(err);
@@ -120,24 +123,74 @@ export default function ThisOrThat({ decisionData, setDecisionData }: Props) {
         </View>
       ) : decisionData.votingStatus === "in progress" ? (
         <View style={styles.decisionProcessContainer}>
-          <Text>CHOOOOOSE</Text>
-          <ThisOrThatButton
-            onPress={handleChoice}
-            thisOrThat={0}
-            text={decisionData.saveData.currentOptions[0].name}
-            image_url={decisionData.saveData.currentOptions[0].image_url}
-          />
-          <ThisOrThatButton
-            onPress={handleChoice}
-            thisOrThat={1}
-            text={decisionData.saveData.currentOptions[1].name}
-            image_url={decisionData.saveData.currentOptions[1].image_url}
-          />
+          {decisionData.saveData.playerOrder[
+            (decisionData.saveData.turnNumber - 1) %
+              decisionData.saveData.playerOrder.length
+          ]._id === user._id ? (
+            <Text>Your turn</Text>
+          ) : (
+            <Text>
+              {decisionData.saveData.playerOrder[
+                (decisionData.saveData.turnNumber - 1) %
+                  decisionData.saveData.playerOrder.length
+              ].name + "'s turn"}
+            </Text>
+          )}
+          <Text>Turn number: {decisionData.saveData.turnNumber}</Text>
+          <Text>
+            Remaining options: {decisionData.saveData.remainingOptions.length}
+          </Text>
+          {decisionData.saveData.playerOrder[
+            (decisionData.saveData.turnNumber - 1) %
+              decisionData.saveData.playerOrder.length
+          ]._id === user._id ? (
+            <View>
+              <ThisOrThatButton
+                onPress={handleChoice}
+                thisOrThat={0}
+                text={decisionData.saveData.currentOptions[0].name}
+                image_url={decisionData.saveData.currentOptions[0].image_url}
+              />
+              <ThisOrThatButton
+                onPress={handleChoice}
+                thisOrThat={1}
+                text={decisionData.saveData.currentOptions[1].name}
+                image_url={decisionData.saveData.currentOptions[1].image_url}
+              />
+            </View>
+          ) : (
+            <View>
+              <ThisOrThatButton
+                onPress={() => {}}
+                thisOrThat={0}
+                text={decisionData.saveData.currentOptions[0].name}
+                image_url={decisionData.saveData.currentOptions[0].image_url}
+              />
+              <ThisOrThatButton
+                onPress={() => {}}
+                thisOrThat={1}
+                text={decisionData.saveData.currentOptions[1].name}
+                image_url={decisionData.saveData.currentOptions[1].image_url}
+              />
+            </View>
+          )}
         </View>
       ) : decisionData.votingStatus === "completed" ? (
         <View>
-          <Text>AND YOUR DECISION IS.........</Text>
-          <Text>{decisionData.saveData.remainingOptions[0].name}</Text>
+          <Text>AND THE DECISION WAS.........</Text>
+          <Text>{decisionData.outcome?.name}</Text>
+          {decisionData.saveData.voteHistory.map((option, index) => {
+            return (
+              <Text key={index}>
+                turn {index + 1}: {option.name} was eliminated by{" "}
+                {
+                  decisionData.saveData.playerOrder[
+                    index % decisionData.saveData.playerOrder.length
+                  ].name
+                }
+              </Text>
+            );
+          })}
         </View>
       ) : null}
     </View>

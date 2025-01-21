@@ -28,7 +28,7 @@ export interface GroupProps {
 }
 export interface SaveDataThisOrThatProps {
   turnNumber: number;
-  turnOrder: UserProps[];
+  playerOrder: UserProps[];
   remainingOptions: OptionProps[];
   currentOptions: [OptionProps, OptionProps];
   voteHistory: OptionProps[];
