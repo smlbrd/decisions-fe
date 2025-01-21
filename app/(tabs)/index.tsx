@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { useUser } from "@/contexts/UserContext";
 import { CreateNewButton } from "@/components/CreateNewButton";
 import Overlay from "@/components/Overlay";
+import { FlatList } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native";
 
 type List = {
   _id: string;
@@ -42,14 +44,32 @@ interface Group {
   members: Member[];
 }
 
+const decisionProcesses = [
+  {
+    id: "1",
+    name: "This or That",
+    description: "Choose your favourite, winner stays on!",
+  },
+  {
+    id: "2",
+    name: "Ranked Elimination",
+    description: "The least popular option is removed in each round.",
+  },
+  {
+    id: "3",
+    name: "Random Selection",
+    description: "Just pick a random option for me!",
+  },
+];
+
 export default function Index() {
-  const [selectedList, setSelectedList] = useState<number | undefined>(
-    undefined
-  );
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [listData, setListData] = useState<List[]>([]);
   const [groupData, setGroupData] = useState<Group[]>([]);
+  const [selectedList, setSelectedList] = useState<number | undefined>(
+    undefined
+  );
   const [selectedGroup, setSelectedGroup] = useState<number | undefined>(
     undefined
   );
@@ -65,8 +85,9 @@ export default function Index() {
     setIsDecisionProcessModalVisible(false);
   };
 
-  const handleGetStarted = () => {
-    setIsDecisionProcessModalVisible(true);
+  const handleDecisionProcessSelect = () => {
+    setIsDecisionProcessModalVisible(false);
+    // POST decision
   };
 
   useEffect(() => {
@@ -120,45 +141,71 @@ export default function Index() {
       <Overlay
         isVisible={isDecisionProcessModalVisible}
         onClose={handleDecisionProcessModalClose}
-        scrollable={true}
+        scrollable={false}
       >
-        <Text>This or That</Text>
+        <View
+          style={[
+            styles.modalContainer,
+            { backgroundColor: colours.background },
+          ]}
+        >
+          <FlatList
+            data={decisionProcesses}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleDecisionProcessSelect()}>
+                <Text style={{ color: colours.text.primary }}>{item.name}</Text>
+                <Text style={{ color: colours.text.primary }}>
+                  {item.description}
+                </Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
       </Overlay>
 
-      <Picker
-        selectedValue={selectedList}
-        onValueChange={(itemValue, itemIndex) => setSelectedList(itemValue)}
-      >
-        <Picker.Item
-          label="Help me decide..."
-          value={"Help me decide..."}
-          enabled={false}
-        />
-        {listData?.map((list: List) => {
-          return (
-            <Picker.Item label={list.title} value={list.title} key={list._id} />
-          );
-        })}
-      </Picker>
-      <Picker
-        selectedValue={selectedGroup}
-        onValueChange={(itemValue, itemIndex) => setSelectedGroup(itemValue)}
-      >
-        <Picker.Item
-          label="Wren & Abby's Group"
-          value={"Wren & Abby's Group"}
-          enabled={false}
-        />
-        {groupData?.map((group: Group) => {
-          return (
-            <Picker.Item
-              label={group.name}
-              value={group.name}
-              key={group._id}
-            />
-          );
-        })}
-      </Picker>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={selectedList}
+          onValueChange={(itemValue) => setSelectedList(itemValue)}
+        >
+          <Picker.Item
+            label="Help me decide..."
+            value={"Help me decide..."}
+            enabled={false}
+          />
+          {listData?.map((list: List) => {
+            return (
+              <Picker.Item
+                label={list.title}
+                value={list.title}
+                key={list._id}
+              />
+            );
+          })}
+        </Picker>
+      </View>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={selectedGroup}
+          onValueChange={(itemValue, itemIndex) => setSelectedGroup(itemValue)}
+        >
+          <Picker.Item
+            label="Choose with..."
+            value={"Choose with..."}
+            enabled={false}
+          />
+          {groupData?.map((group: Group) => {
+            return (
+              <Picker.Item
+                label={group.name}
+                value={group.name}
+                key={group._id}
+              />
+            );
+          })}
+        </Picker>
+      </View>
       <View>
         <CreateNewButton
           text="Get Started"
@@ -175,6 +222,22 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
+    }),
+  },
+  pickerContainer: {
+    ...(Platform.OS === "web" && {
+      flex: 1,
+      justifyContent: "space-around",
+      alignItems: "center",
+    }),
+  },
+  modalContainer: {
+    ...(Platform.OS === "web" && {
+      flex: 1,
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 10,
     }),
   },
   errText: {
