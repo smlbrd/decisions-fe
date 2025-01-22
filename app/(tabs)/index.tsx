@@ -136,6 +136,12 @@ export default function Index() {
       .then(({ data }) => {
         setIsLoading(false);
         const newDecisionId = data._id;
+        data.group.members.forEach((member: string) => {
+          socket.emit("refresh", {
+            room: member,
+            msg: `${user.name} created a new decision with you!`,
+          });
+        });
         router.push({
           pathname: "/Decision",
           params: { decision_id: newDecisionId },
