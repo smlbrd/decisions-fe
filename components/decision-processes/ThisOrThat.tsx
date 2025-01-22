@@ -238,13 +238,13 @@ export default function ThisOrThat({
           {decisionData.saveData.voteHistory.map((option, index) => {
             return (
               <View
+              key={index}
                 style={[
                   styles.decisionHistoryContainer,
                   { backgroundColor: colours.surface.primary },
                 ]}
               >
                 <Text
-                  key={index}
                   style={[styles.statsText, { color: colours.text.primary }]}
                 >
                   Turn {index + 1}:
