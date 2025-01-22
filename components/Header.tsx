@@ -57,92 +57,96 @@ export default function Header() {
             <View style={styles.iconButton}>
               <ToggleTheme />
             </View>
-            <DropdownMenu
-              isVisible={isNotificationDropdownVisible}
-              handleOpen={() => {
-                setIsNotificationDropdownVisible(true);
-              }}
-              handleClose={() => {
-                setIsNotificationDropdownVisible(false);
-              }}
-              trigger={
-                <Ionicons
-                  name={"notifications-outline"}
-                  color={colours.text.primary}
-                  size={35}
-                  style={styles.iconButton}
-                />
-              }
-            >
-              <Notifications
-                setIsNotificationDropdownVisible={
-                  setIsNotificationDropdownVisible
+            <TouchableOpacity>
+              <DropdownMenu
+                isVisible={isNotificationDropdownVisible}
+                handleOpen={() => {
+                  setIsNotificationDropdownVisible(true);
+                }}
+                handleClose={() => {
+                  setIsNotificationDropdownVisible(false);
+                }}
+                trigger={
+                  <Ionicons
+                    name={"notifications-outline"}
+                    color={colours.text.primary}
+                    size={35}
+                    style={styles.iconButton}
+                  />
                 }
-              />
-            </DropdownMenu>
-
-            <DropdownMenu
-              isVisible={isProfileDropdownVisible}
-              handleOpen={() => {
-                setIsProfileDropdownVisible(true);
-              }}
-              handleClose={() => {
-                setIsProfileDropdownVisible(false);
-              }}
-              trigger={
-                <Ionicons
-                  name={"person-circle-outline"}
-                  color={colours.text.primary}
-                  size={35}
-                  style={styles.iconButton}
+              >
+                <Notifications
+                  setIsNotificationDropdownVisible={
+                    setIsNotificationDropdownVisible
+                  }
                 />
-              }
-            >
-              {user.username ? (
-                <>
-                  <MenuOption onSelect={() => {}}>
-                    <Text>Welcome {user.name}!</Text>
-                  </MenuOption>
-                  <MenuOption
-                    onSelect={() => {
-                      setIsProfileDropdownVisible(false);
-                      router.push("/User");
-                    }}
-                  >
-                    <Text>View Profile</Text>
-                  </MenuOption>
-                  <MenuOption
-                    onSelect={() => {
-                      setIsProfileDropdownVisible(false);
-                      router.push("/DecisionHistory");
-                    }}
-                  >
-                    <Text>View Decision History</Text>
-                  </MenuOption>
-                  <MenuOption
-                    onSelect={() => {
-                      removeUser();
-                    }}
-                  >
-                    <Text>Sign Out</Text>
-                  </MenuOption>
-                </>
-              ) : (
-                <>
-                  <MenuOption
-                    onSelect={() => {
-                      setIsProfileDropdownVisible(false);
-                      setIsLoginFormVisible(true);
-                    }}
-                  >
-                    <Text>Log In</Text>
-                  </MenuOption>
-                  <MenuOption onSelect={() => {}}>
-                    <Text>Register</Text>
-                  </MenuOption>
-                </>
-              )}
-            </DropdownMenu>
+              </DropdownMenu>
+            </TouchableOpacity>
+
+            <TouchableOpacity>
+              <DropdownMenu
+                isVisible={isProfileDropdownVisible}
+                handleOpen={() => {
+                  setIsProfileDropdownVisible(true);
+                }}
+                handleClose={() => {
+                  setIsProfileDropdownVisible(false);
+                }}
+                trigger={
+                  <Ionicons
+                    name={"person-circle-outline"}
+                    color={colours.text.primary}
+                    size={35}
+                    style={styles.iconButton}
+                  />
+                }
+              >
+                {user.username ? (
+                  <>
+                    <MenuOption onSelect={() => {}}>
+                      <Text>Welcome {user.name}!</Text>
+                    </MenuOption>
+                    <MenuOption
+                      onSelect={() => {
+                        setIsProfileDropdownVisible(false);
+                        router.push("/User");
+                      }}
+                    >
+                      <Text>View Profile</Text>
+                    </MenuOption>
+                    <MenuOption
+                      onSelect={() => {
+                        setIsProfileDropdownVisible(false);
+                        router.push("/DecisionHistory");
+                      }}
+                    >
+                      <Text>View Decision History</Text>
+                    </MenuOption>
+                    <MenuOption
+                      onSelect={() => {
+                        removeUser();
+                      }}
+                    >
+                      <Text>Sign Out</Text>
+                    </MenuOption>
+                  </>
+                ) : (
+                  <>
+                    <MenuOption
+                      onSelect={() => {
+                        setIsProfileDropdownVisible(false);
+                        setIsLoginFormVisible(true);
+                      }}
+                    >
+                      <Text>Log In</Text>
+                    </MenuOption>
+                    <MenuOption onSelect={() => {}}>
+                      <Text>Register</Text>
+                    </MenuOption>
+                  </>
+                )}
+              </DropdownMenu>
+            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
