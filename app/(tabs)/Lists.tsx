@@ -9,7 +9,6 @@ import {
   Image,
   Platform,
   TouchableOpacity,
-  ViewStyle,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { CreateNewButton } from "@/components/CreateNewButton";
@@ -100,6 +99,7 @@ const Lists = () => {
     setListCardErrMsg("");
     setIsLoadingListCard(true);
     setIsDetailListModalVisible(true);
+
     apiClient
       .get(`lists/${listId}`)
       .then(({ data }) => {
@@ -410,6 +410,13 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 10,
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 16,
   },
   textInput: {
     height: 40,
