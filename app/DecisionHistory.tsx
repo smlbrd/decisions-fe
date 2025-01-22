@@ -1,4 +1,5 @@
 import DecisionCard from "@/components/DecisionCard";
+import Header from "@/components/Header";
 import Overlay from "@/components/Overlay";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
@@ -138,6 +139,7 @@ export default function DecisionHistory() {
   };
   return (
     <View style={[styles.container, { backgroundColor: colours.background }]}>
+      <Header />
       <Overlay
         isVisible={isDetailModalVisible}
         onClose={handleDetailModalClose}
