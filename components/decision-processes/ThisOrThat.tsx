@@ -146,9 +146,9 @@ export default function ThisOrThat({
   };
 
   return isStartingDecision ? (
-    <Text>starting decision...</Text>
+    <Text style={{ color: colours.text.primary }}>Starting decision...</Text>
   ) : startDecisionErrMsg ? (
-    <Text>{startDecisionErrMsg}</Text>
+    <Text style={{ color: colours.text.error }}>{startDecisionErrMsg}</Text>
   ) : (
     <View style={styles.container}>
       {decisionData.votingStatus === "not started" ? (
@@ -161,17 +161,22 @@ export default function ThisOrThat({
             (decisionData.saveData.turnNumber - 1) %
               decisionData.saveData.playerOrder.length
           ]._id === user._id ? (
-            <Text>Your turn</Text>
+            <Text style={[styles.statsText, { color: colours.text.primary }]}>
+              It's your turn!
+            </Text>
           ) : (
-            <Text>
+            <Text style={[styles.statsText, { color: colours.text.primary }]}>
+              It's
               {decisionData.saveData.playerOrder[
                 (decisionData.saveData.turnNumber - 1) %
                   decisionData.saveData.playerOrder.length
               ].name + "'s turn"}
             </Text>
           )}
-          <Text>Turn number: {decisionData.saveData.turnNumber}</Text>
-          <Text>
+          <Text style={[styles.statsText, { color: colours.text.primary }]}>
+            Turn {decisionData.saveData.turnNumber}
+          </Text>
+          <Text style={[styles.statsText, { color: colours.text.primary }]}>
             Remaining options: {decisionData.saveData.remainingOptions.length}
           </Text>
           {decisionData.saveData.playerOrder[
@@ -208,22 +213,43 @@ export default function ThisOrThat({
               />
             </View>
           )}
-          <Text>{decisionMsg}</Text>
+          <Text style={[styles.statsText, { color: colours.text.primary }]}>
+            {decisionMsg}
+          </Text>
         </View>
       ) : decisionData.votingStatus === "completed" ? (
-        <View>
-          <Text>AND THE DECISION WAS.........</Text>
-          <Text>{decisionData.outcome?.name}</Text>
+        <View
+          style={[
+            styles.decisionProcessContainer,
+            { backgroundColor: colours.background },
+          ]}
+        >
+          <Text style={[styles.statsText, { color: colours.text.primary }]}>
+            You decided...
+          </Text>
+          <Text style={[styles.outcomeText, { color: colours.text.primary }]}>
+            {decisionData.outcome?.name}
+          </Text>
           {decisionData.saveData.voteHistory.map((option, index) => {
             return (
-              <Text key={index}>
-                turn {index + 1}: {option.name} was eliminated by{" "}
-                {
-                  decisionData.saveData.playerOrder[
-                    index % decisionData.saveData.playerOrder.length
-                  ].name
-                }
-              </Text>
+              <View style={styles.decisionProcessContainer}>
+                <Text
+                  style={[styles.statsText, { color: colours.text.primary }]}
+                >
+                  Decision History
+                </Text>
+                <Text
+                  key={index}
+                  style={[styles.statsText, { color: colours.text.primary }]}
+                >
+                  Turn {index + 1}: {option.name} eliminated by{" "}
+                  {
+                    decisionData.saveData.playerOrder[
+                      index % decisionData.saveData.playerOrder.length
+                    ].name
+                  }
+                </Text>
+              </View>
             );
           })}
         </View>
@@ -237,13 +263,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   startDecisionContainer: {
+    alignItems: "center",
     justifyContent: "center",
     marginBottom: 15,
     marginHorizontal: 15,
   },
   decisionProcessContainer: {
     justifyContent: "center",
-    marginBottom: 15,
+    alignItems: "center",
+    marginVertical: 15,
     marginHorizontal: 15,
+    borderRadius: 16,
+    paddingVertical: 20,
+  },
+  statsText: {
+    fontSize: 16,
+    margin: 10,
+  },
+  outcomeText: {
+    fontSize: 32,
+    margin: 10,
   },
 });
