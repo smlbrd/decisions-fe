@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
-  Button,
   Platform,
+  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Picker } from "@react-native-picker/picker";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import apiClient from "../../utils/api-client";
 import { useSocket } from "@/contexts/SocketContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -55,17 +55,21 @@ const decisionProcesses = [
   {
     id: "6784d7a5844f23ac9810cf50",
     name: "This or That",
-    description: "Choose your favourite, winner stays on!",
+    description: "Choose your favourite - winner stays on!",
+    isEnabled: true,
   },
   {
     id: "2",
     name: "Ranked Elimination",
-    description: "The least popular option is removed in each round.",
+    description:
+      "COMING SOON! The least popular option is removed in each round.",
+    isEnabled: false,
   },
   {
     id: "3",
     name: "Random Selection",
-    description: "Just pick a random option for me!",
+    description: "COMING SOON! Just pick a random option for me!",
+    isEnabled: false,
   },
 ];
 
@@ -195,7 +199,9 @@ export default function Index() {
   }, [user]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colours.primary }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colours.primary }]}
+    >
       {isLoading ? (
         <Text>loading...</Text>
       ) : errMsg ? (
@@ -306,35 +312,42 @@ export default function Index() {
           onPress={() => setIsDecisionProcessModalVisible(true)}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     ...(Platform.OS === "web" && {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      maxWidth: "100%",
     }),
   },
   pickerContainer: {
+    marginVertical: 10,
+    width: "80%",
+    flex: 1,
+    justifyContent: "center",
+    padding: 10,
+    margin: 10,
     ...(Platform.OS === "web" && {
-      flex: 1,
-      maxWidth: "100%",
-      flexDirection: "column",
-      justifyContent: "space-evenly",
       alignItems: "center",
+      flexDirection: "column",
+      maxWidth: "100%",
       margin: 10,
     }),
   },
   pickerInput: {
+    height: 60,
+    borderWidth: 2,
+    borderRadius: 8,
+    padding: 10,
+    margin: 10,
     ...(Platform.OS === "web" && {
-      fontSize: 24,
       fontWeight: "bold",
-      margin: 10,
-      borderRadius: 8,
-      padding: 10,
+      fontSize: 16,
     }),
   },
   modalContainer: {
