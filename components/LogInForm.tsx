@@ -1,17 +1,22 @@
-import apiClient from "@/utils/api-client";
-import { useUser } from "@/contexts/UserContext";
-import { AxiosError } from "axios";
-import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import { useRouter } from "expo-router";
+import { AxiosError } from "axios";
+import apiClient from "@/utils/api-client";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useUser } from "@/contexts/UserContext";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const LogInForm = () => {
-  const router = useRouter();
+  const { colours } = useTheme();
   const { saveUser } = useUser();
+  const router = useRouter();
+
   const [inputText, setInputText] = useState("");
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
+
   const handleLogin = async () => {
     if (!inputText) {
       setErrMsg("Input a username");
@@ -35,16 +40,16 @@ const LogInForm = () => {
       }
     }
   };
+
   return (
     <View>
       {loginSuccess ? (
-        <Text>Success! Logged In</Text>
+        <Text style={{ color: colours.text.primary }}>Success! Logged In</Text>
       ) : (
         <View>
-          <Text>Enter your username:</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter text"
+            placeholder="Username"
             value={inputText}
             onChangeText={setInputText}
           />
@@ -54,9 +59,21 @@ const LogInForm = () => {
               <Button title="Log In" onPress={handleLogin} />
             </View>
           ) : isLoading ? (
-            <Text>logging in...</Text>
+            <Text style={{ color: colours.text.primary }}>Logging in...</Text>
           ) : (
-            <Button title="Log In" onPress={handleLogin} />
+            <TouchableOpacity
+              style={[
+                styles.button,
+                { backgroundColor: colours.button.primary },
+              ]}
+              onPress={handleLogin}
+            >
+              <Text
+                style={[styles.buttonText, { color: colours.text.primary }]}
+              >
+                Log in
+              </Text>
+            </TouchableOpacity>
           )}
         </View>
       )}
@@ -79,6 +96,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
     paddingHorizontal: 10,
+  },
+  button: {
+    alignItems: "center",
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 16,
   },
 });
 
