@@ -1,5 +1,6 @@
+import { useTheme } from "@/contexts/ThemeContext";
 import React from "react";
-import { Text, View, Image, Button } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 type UserInformationProps = {
   user: {
@@ -13,6 +14,7 @@ type UserInformationProps = {
 
 const UserInformation: React.FC<UserInformationProps> = ({ user }) => {
   const { username, email, savedLists } = user;
+  const { colours } = useTheme();
 
   return (
     <View>
@@ -22,16 +24,50 @@ const UserInformation: React.FC<UserInformationProps> = ({ user }) => {
           style={{ width: 100, height: 100, borderRadius: 50 }}
         />
       )}
-      <Text style={{ fontSize: 20, fontWeight: "bold" }}>{username}</Text>
-      <Text>@{username}</Text>
+      <Text style={[styles.userName, { color: colours.text.primary }]}>
+        {username}
+      </Text>
+      <Text style={[styles.userNameSmall, { color: colours.text.primary }]}>
+        @{username}
+      </Text>
 
-      {email && <Text>Email: {email}</Text>}
+      {email && (
+        <Text style={[styles.userEmail, { color: colours.text.primary }]}>
+          Email: {email}
+        </Text>
+      )}
 
       {savedLists && savedLists.length > 0 && (
-        <Text> Saved Lists here: {savedLists.join(", ")}</Text>
+        <Text style={[styles.normalText, { color: colours.text.secondary }]}>
+          {" "}
+          Saved Lists here: {savedLists.join(", ")}
+        </Text>
       )}
     </View>
   );
 };
+const styles = StyleSheet.create({
+  userName: {
+    textAlign: "left",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 14,
+  },
+  userNameSmall: {
+    textAlign: "left",
+    fontSize: 16,
+    marginTop: 14,
+  },
+  userEmail: {
+    textAlign: "left",
+    fontSize: 16,
+    marginTop: 10,
+  },
+  normalText: {
+    textAlign: "left",
+    fontSize: 16,
+    marginTop: 10,
+  },
+});
 
 export default UserInformation;

@@ -19,6 +19,7 @@ export const Colours = {
     border: "#CCD0DA",
     text: {
       primary: "#54517B",
+      secondary: "#6B7280",
       disabled: "#BCC0CC",
       error: "#382E2E",
       success: "#C6CCDB",
@@ -41,6 +42,7 @@ export const Colours = {
     border: "#414559",
     text: {
       primary: "#C6CCDB",
+      secondary: "#A0A3B1",
       disabled: "#51576D",
       error: "#393939",
       success: "#EFF1F5",
