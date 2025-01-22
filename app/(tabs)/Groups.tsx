@@ -17,6 +17,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
 import apiClient from "@/utils/api-client";
 import { CreateGroupFormMobile } from "@/components/CreateGroupFormMobile";
+import { useSocket } from "@/contexts/SocketContext";
 
 type Member = {
   _id: string;
@@ -34,6 +35,7 @@ type Group = {
 };
 
 export default function Groups() {
+  const socket = useSocket();
   const { user } = useUser();
   const { colours } = useTheme();
 
@@ -43,6 +45,11 @@ export default function Groups() {
     useState(false);
   const [myGroups, setMyGroups] = useState<Group[]>([]);
 
+  const [refreshKey, setRefreshKey] = useState(0);
+  socket.on("refresh", () => {
+    setRefreshKey((refreshKey) => refreshKey + 1);
+  });
+  
   const handleCreateGroupModalClose = () => {
     setIsCreateGroupModalVisible(false);
   };
@@ -70,7 +77,7 @@ export default function Groups() {
       setLoading;
       setError("Not logged in");
     }
-  }, [user]);
+  }, [user, refreshKey]);
 
   const groupDataCollapsibles = myGroups.map((group) => {
     if (loading) {
