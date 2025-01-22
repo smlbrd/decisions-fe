@@ -112,7 +112,7 @@ export default function Notifications({
           </MenuOption>
         );
       })}
-      {/* I think this next bit is omitted until we can redirect to a view of ongoing decisions? */}
+      {/* I think this next bit is omitted until we can redirect it to a view of ongoing decisions? */}
       {/* <Text style={[styles.notificationItem, { color: colours.text.primary }]}>
         {inProgress.length > 0 ? (
           <Text>
