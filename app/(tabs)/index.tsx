@@ -56,20 +56,20 @@ const decisionProcesses = [
     id: "6784d7a5844f23ac9810cf50",
     name: "This or That",
     description: "Choose your favourite - winner stays on!",
-    isEnabled: true,
+    isDisabled: false,
   },
   {
     id: "2",
     name: "Ranked Elimination",
     description:
       "COMING SOON! The least popular option is removed in each round.",
-    isEnabled: false,
+    isDisabled: true,
   },
   {
     id: "3",
     name: "Random Selection",
     description: "COMING SOON! Just pick a random option for me!",
-    isEnabled: false,
+    isDisabled: true,
   },
 ];
 
@@ -229,14 +229,31 @@ export default function Index() {
                   styles.itemContainer,
                   selectedDecisionProcess === item.id && styles.selectedItem,
                   { borderColor: colours.primary },
+                  item.isDisabled && {
+                    backgroundColor: colours.surface.disabled,
+                  },
                 ]}
+                disabled={item.isDisabled}
               >
                 <Text
-                  style={[styles.modalTitle, { color: colours.text.primary }]}
+                  style={[
+                    styles.modalTitle,
+                    !item.isDisabled && { color: colours.text.primary },
+                    item.isDisabled && {
+                      color: colours.text.disabled,
+                    },
+                  ]}
                 >
                   {item.name}
                 </Text>
-                <Text style={{ color: colours.text.primary }}>
+                <Text
+                  style={[
+                    !item.isDisabled && { color: colours.text.primary },
+                    item.isDisabled && {
+                      color: colours.text.disabled,
+                    },
+                  ]}
+                >
                   {item.description}
                 </Text>
               </TouchableOpacity>
@@ -387,9 +404,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   selectedItem: {
-    shadowRadius: 5,
+    shadowRadius: 3,
     shadowColor: "black",
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.5,
     shadowOffset: { width: 2, height: 5 },
   },
   errText: {
