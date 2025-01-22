@@ -78,7 +78,7 @@ export default function User() {
     <Text style={{fontSize: 30, marginBottom: 20}}>My Profile</Text>
 
     {selectedAvatar ? (
-      <Image source={{uri: selectedAvatar}}
+      <Image source={selectedAvatar ? {uri: selectedAvatar} : require("../assets/images/default_avatar.png")}
     style={{width: 100, height: 100, borderRadius: 50}} />
     ) : (
       <Image source={require("../assets/images/default_avatar.png")}
