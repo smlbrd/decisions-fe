@@ -281,7 +281,7 @@ export default function Index() {
             styles.pickerInput,
             {
               color: colours.text.primary,
-              backgroundColor: colours.surface.primary,
+              backgroundColor: colours.primary,
             },
           ]}
         >
@@ -308,7 +308,7 @@ export default function Index() {
             styles.pickerInput,
             {
               color: colours.text.primary,
-              backgroundColor: colours.surface.primary,
+              backgroundColor: colours.primary,
             },
           ]}
         >
