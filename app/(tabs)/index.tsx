@@ -271,7 +271,10 @@ export default function Index() {
       </Overlay>
 
       <View
-        style={[styles.pickerContainer, { backgroundColor: colours.primary }]}
+        style={[
+          styles.pickerContainer,
+          { backgroundColor: colours.background },
+        ]}
       >
         <Picker
           selectedValue={selectedList}
