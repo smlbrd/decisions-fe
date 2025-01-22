@@ -181,10 +181,11 @@ export default function Index() {
   useEffect(() => {
     setIsLoading(true);
     setErrMsg("");
+
     if (!user._id) {
-      setErrMsg("not logged in");
-      return undefined;
+      return;
     }
+
     apiClient
       .get(`users/${user._id}/groups`)
       .then(({ data }) => {
@@ -202,7 +203,7 @@ export default function Index() {
     <SafeAreaView
       style={[styles.container, { backgroundColor: colours.primary }]}
     >
-      {isLoading ? (
+      {isLoading && !user ? (
         <Text>loading...</Text>
       ) : errMsg ? (
         <Text style={styles.errText}>{errMsg}</Text>
