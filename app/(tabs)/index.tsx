@@ -288,6 +288,7 @@ export default function Index() {
             label="Help me decide..."
             value="List Select"
             enabled={false}
+            style={{ color: colours.text.disabled }}
           />
           {listData?.map((list: List) => {
             return (
@@ -397,17 +398,18 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     marginTop: 10,
-    padding: 15,
+    padding: 10,
     borderRadius: 5,
   },
   buttonText: {
     fontSize: 16,
   },
   selectedItem: {
-    shadowRadius: 3,
+    shadowRadius: 10,
     shadowColor: "black",
     shadowOpacity: 0.5,
-    shadowOffset: { width: 2, height: 5 },
+    shadowOffset: { width: 3, height: 3 },
+    elevation: 2,
   },
   errText: {
     fontWeight: "bold",

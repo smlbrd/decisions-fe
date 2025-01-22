@@ -32,12 +32,14 @@ export const BigButton = ({ onPress, text }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
   button: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 2,
     paddingHorizontal: 12,
     paddingVertical: 36,
     borderRadius: 8,
