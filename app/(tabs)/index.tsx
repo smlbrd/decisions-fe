@@ -303,13 +303,13 @@ export default function Index() {
         <Picker
           selectedValue={selectedGroup}
           onValueChange={(itemValue) => setSelectedGroup(itemValue)}
-          style={[
+          /* style={[
             styles.pickerInput,
             {
               color: colours.text.primary,
               backgroundColor: colours.surface.primary,
             },
-          ]}
+          ]} */
         >
           <Picker.Item label="...myself!" value="Group Select" />
           {groupData?.map((group: Group) => {
