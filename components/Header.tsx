@@ -61,7 +61,7 @@ export default function Header() {
             <View style={styles.iconButton}>
               <ToggleTheme />
             </View>
-            <TouchableOpacity>
+            <View>
               <DropdownMenu
                 isVisible={isNotificationDropdownVisible}
                 handleOpen={() => {
@@ -85,9 +85,9 @@ export default function Header() {
                   }
                 />
               </DropdownMenu>
-            </TouchableOpacity>
+            </View>
 
-            <TouchableOpacity>
+            <View>
               <DropdownMenu
                 isVisible={isProfileDropdownVisible}
                 handleOpen={() => {
@@ -150,7 +150,7 @@ export default function Header() {
                   </>
                 )}
               </DropdownMenu>
-            </TouchableOpacity>
+            </View>
           </View>
         </View>
       </SafeAreaView>
