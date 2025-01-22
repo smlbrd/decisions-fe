@@ -1,13 +1,13 @@
-import { DecisionProps } from "@/utils/props";
-import { StyleSheet, Text, View } from "react-native";
-import { StartDecisionButton } from "../StartDecisionButton";
-import apiClient from "@/utils/api-client";
 import { useState } from "react";
-import shuffleArray from "../../utils/shuffleArray";
+import { StyleSheet, Text, View } from "react-native";
+import apiClient from "@/utils/api-client";
 import getTwoRandomElements from "../../utils/getTwoRandomElements";
+import { DecisionProps } from "@/utils/props";
+import shuffleArray from "../../utils/shuffleArray";
+import { StartDecisionButton } from "../StartDecisionButton";
 import { ThisOrThatButton } from "../ThisOrThatButton";
-import { useUser } from "@/contexts/UserContext";
 import { useSocket } from "@/contexts/SocketContext";
+import { useUser } from "@/contexts/UserContext";
 
 type Props = {
   decisionData: DecisionProps;
@@ -112,7 +112,7 @@ export default function ThisOrThat({
             ...decisionData.saveData,
             currentPlayer:
               decisionData.saveData.playerOrder[
-                (decisionData.saveData.turnNumber) %
+                decisionData.saveData.turnNumber %
                   decisionData.saveData.playerOrder.length
               ]._id,
             turnNumber: newTurnNumber,
