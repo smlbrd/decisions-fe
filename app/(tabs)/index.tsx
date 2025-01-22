@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
-  Button,
   Platform,
+  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Picker } from "@react-native-picker/picker";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import apiClient from "../../utils/api-client";
 import { useSocket } from "@/contexts/SocketContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -55,17 +55,21 @@ const decisionProcesses = [
   {
     id: "6784d7a5844f23ac9810cf50",
     name: "This or That",
-    description: "Choose your favourite, winner stays on!",
+    description: "Choose your favourite - winner stays on!",
+    isDisabled: false,
   },
   {
     id: "2",
     name: "Ranked Elimination",
-    description: "The least popular option is removed in each round.",
+    description:
+      "COMING SOON! The least popular option is removed in each round.",
+    isDisabled: true,
   },
   {
     id: "3",
     name: "Random Selection",
-    description: "Just pick a random option for me!",
+    description: "COMING SOON! Just pick a random option for me!",
+    isDisabled: true,
   },
 ];
 
@@ -195,7 +199,9 @@ export default function Index() {
   }, [user]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colours.primary }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colours.primary }]}
+    >
       {isLoading ? (
         <Text>loading...</Text>
       ) : errMsg ? (
@@ -223,14 +229,31 @@ export default function Index() {
                   styles.itemContainer,
                   selectedDecisionProcess === item.id && styles.selectedItem,
                   { borderColor: colours.primary },
+                  item.isDisabled && {
+                    backgroundColor: colours.surface.disabled,
+                  },
                 ]}
+                disabled={item.isDisabled}
               >
                 <Text
-                  style={[styles.modalTitle, { color: colours.text.primary }]}
+                  style={[
+                    styles.modalTitle,
+                    !item.isDisabled && { color: colours.text.primary },
+                    item.isDisabled && {
+                      color: colours.text.disabled,
+                    },
+                  ]}
                 >
                   {item.name}
                 </Text>
-                <Text style={{ color: colours.text.primary }}>
+                <Text
+                  style={[
+                    !item.isDisabled && { color: colours.text.primary },
+                    item.isDisabled && {
+                      color: colours.text.disabled,
+                    },
+                  ]}
+                >
                   {item.description}
                 </Text>
               </TouchableOpacity>
@@ -241,21 +264,30 @@ export default function Index() {
             onPress={handleStartDeciding}
           >
             <Text style={[styles.buttonText, { color: colours.text.primary }]}>
-              Submit
+              Confirm
             </Text>
           </TouchableOpacity>
         </View>
       </Overlay>
 
-      <View style={styles.pickerContainer}>
+      <View
+        style={[styles.pickerContainer, { backgroundColor: colours.primary }]}
+      >
         <Picker
           selectedValue={selectedList}
           onValueChange={(itemValue) => setSelectedList(itemValue)}
+          style={[
+            styles.pickerInput,
+            {
+              color: colours.text.primary,
+              backgroundColor: colours.surface.primary,
+            },
+          ]}
         >
           <Picker.Item
             label="Help me decide..."
             value="List Select"
-            enabled={false}
+            style={{ color: colours.text.disabled }}
           />
           {listData?.map((list: List) => {
             return (
@@ -264,18 +296,21 @@ export default function Index() {
           })}
         </Picker>
       </View>
+
       <View
         style={[styles.pickerContainer, { backgroundColor: colours.primary }]}
       >
         <Picker
           selectedValue={selectedGroup}
           onValueChange={(itemValue) => setSelectedGroup(itemValue)}
+          style={[
+            styles.pickerInput,
+            {
+              color: colours.text.primary,
+              backgroundColor: colours.surface.primary,
+            },
+          ]}
         >
-          <Picker.Item
-            label="Choose with..."
-            value={"Choose with..."}
-            enabled={false}
-          />
           <Picker.Item label="...myself!" value="Group Select" />
           {groupData?.map((group: Group) => {
             return (
@@ -288,30 +323,48 @@ export default function Index() {
           })}
         </Picker>
       </View>
-      <View style={styles.buttonContainer}>
+      <View>
         <BigButton
-          text="Get Started"
+          text="Get Started!"
           onPress={() => setIsDecisionProcessModalVisible(true)}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     ...(Platform.OS === "web" && {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      maxWidth: "100%",
     }),
   },
   pickerContainer: {
+    marginVertical: 10,
+    width: "80%",
+    flex: 1,
+    justifyContent: "center",
+    padding: 10,
+    margin: 10,
     ...(Platform.OS === "web" && {
-      flex: 1,
-      maxWidth: "80%",
-      justifyContent: "space-around",
       alignItems: "center",
+      flexDirection: "column",
+      maxWidth: "100%",
+      margin: 10,
+    }),
+  },
+  pickerInput: {
+    height: 60,
+    borderWidth: 2,
+    borderRadius: 8,
+    padding: 10,
+    margin: 10,
+    ...(Platform.OS === "web" && {
+      fontWeight: "bold",
+      fontSize: 16,
     }),
   },
   modalContainer: {
@@ -344,17 +397,18 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     marginTop: 10,
-    padding: 15,
+    padding: 10,
     borderRadius: 5,
   },
   buttonText: {
     fontSize: 16,
   },
   selectedItem: {
-    shadowRadius: 5,
+    shadowRadius: 10,
     shadowColor: "black",
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 2, height: 5 },
+    shadowOpacity: 0.5,
+    shadowOffset: { width: 3, height: 3 },
+    elevation: 2,
   },
   errText: {
     fontWeight: "bold",

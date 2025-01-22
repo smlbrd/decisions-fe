@@ -15,13 +15,13 @@ export const BigButton = ({ onPress, text }: Props) => {
         style={[
           styles.button,
           {
-            backgroundColor: colours.surface.disabled,
-            borderColor: colours.surface.primary,
+            backgroundColor: colours.button.primary,
+            borderColor: colours.text.primary,
           },
         ]}
         onPress={onPress}
       >
-        <Text style={[styles.text, { color: colours.text.disabled }]}>
+        <Text style={[styles.text, { color: colours.text.primary }]}>
           {text}
         </Text>
       </TouchableOpacity>
@@ -32,12 +32,14 @@ export const BigButton = ({ onPress, text }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
   button: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 2,
     paddingHorizontal: 12,
     paddingVertical: 36,
     borderRadius: 8,
