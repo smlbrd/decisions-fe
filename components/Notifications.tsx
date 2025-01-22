@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet } from "react-native";
-import { MenuOption } from "./DropdownMenu";
-import { useRouter } from "expo-router";
-import { useUser } from "@/contexts/UserContext";
 import { useEffect, useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
 import apiClient from "@/utils/api-client";
+import { MenuOption } from "./DropdownMenu";
 import { DecisionProps } from "@/utils/props";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useUser } from "@/contexts/UserContext";
 
 type Props = {
   setIsNotificationDropdownVisible: React.Dispatch<
@@ -16,6 +17,7 @@ export default function Notifications({
   setIsNotificationDropdownVisible,
 }: Props) {
   const { user } = useUser();
+  const { colours } = useTheme();
   const router = useRouter();
   const [inProgress, setInProgress] = useState<DecisionProps[]>([]);
   const [notStarted, setNotStarted] = useState<DecisionProps[]>([]);
@@ -50,6 +52,12 @@ export default function Notifications({
 
   return (
     <View style={styles.notificationContainer}>
+      <View style={styles.notificationItem}>
+        {inProgress.length === 0 && notStarted.length === 0 ? (
+          <Text>No new messages!</Text>
+        ) : null}
+      </View>
+
       <Text style={[styles.notificationHeader, styles.notificationItem]}>
         {youAreCurrentPlayer.length > 0 ? (
           <Text>
@@ -105,7 +113,7 @@ export default function Notifications({
         );
       })}
       {/* I think this next bit is omitted until we can redirect to a view of ongoing decisions? */}
-      {/* <Text style={[styles.boldText, styles.notificationItem]}>
+      {/* <Text style={[styles.notificationItem, { color: colours.text.primary }]}>
         {inProgress.length > 0 ? (
           <Text>
             {inProgress.length} ongoing decision
