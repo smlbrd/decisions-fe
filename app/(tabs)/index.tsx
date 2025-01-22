@@ -287,7 +287,6 @@ export default function Index() {
           <Picker.Item
             label="Help me decide..."
             value="List Select"
-            enabled={false}
             style={{ color: colours.text.disabled }}
           />
           {listData?.map((list: List) => {
