@@ -247,10 +247,19 @@ export default function Index() {
         </View>
       </Overlay>
 
-      <View style={styles.pickerContainer}>
+      <View
+        style={[styles.pickerContainer, { backgroundColor: colours.primary }]}
+      >
         <Picker
           selectedValue={selectedList}
           onValueChange={(itemValue) => setSelectedList(itemValue)}
+          style={[
+            styles.pickerInput,
+            {
+              color: colours.text.primary,
+              backgroundColor: colours.surface.primary,
+            },
+          ]}
         >
           <Picker.Item
             label="Help me decide..."
@@ -264,18 +273,21 @@ export default function Index() {
           })}
         </Picker>
       </View>
+
       <View
         style={[styles.pickerContainer, { backgroundColor: colours.primary }]}
       >
         <Picker
           selectedValue={selectedGroup}
           onValueChange={(itemValue) => setSelectedGroup(itemValue)}
+          style={[
+            styles.pickerInput,
+            {
+              color: colours.text.primary,
+              backgroundColor: colours.surface.primary,
+            },
+          ]}
         >
-          <Picker.Item
-            label="Choose with..."
-            value={"Choose with..."}
-            enabled={false}
-          />
           <Picker.Item label="...myself!" value="Group Select" />
           {groupData?.map((group: Group) => {
             return (
@@ -309,9 +321,20 @@ const styles = StyleSheet.create({
   pickerContainer: {
     ...(Platform.OS === "web" && {
       flex: 1,
-      maxWidth: "80%",
-      justifyContent: "space-around",
+      maxWidth: "100%",
+      flexDirection: "column",
+      justifyContent: "space-evenly",
       alignItems: "center",
+      margin: 10,
+    }),
+  },
+  pickerInput: {
+    ...(Platform.OS === "web" && {
+      fontSize: 24,
+      fontWeight: "bold",
+      margin: 10,
+      borderRadius: 8,
+      padding: 10,
     }),
   },
   modalContainer: {
