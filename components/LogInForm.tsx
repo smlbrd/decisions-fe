@@ -1,10 +1,10 @@
 import { useState } from "react";
 import {
-  Button,
   Platform,
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { useRouter } from "expo-router";
@@ -12,7 +12,6 @@ import { AxiosError } from "axios";
 import apiClient from "@/utils/api-client";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 const LogInForm = () => {
   const { colours } = useTheme();
@@ -26,7 +25,7 @@ const LogInForm = () => {
 
   const handleLogin = async () => {
     if (!inputText) {
-      setErrMsg("Input a username");
+      setErrMsg("Please enter your username");
       return null;
     }
     try {
@@ -72,7 +71,7 @@ const LogInForm = () => {
           />
           {errMsg ? (
             <View>
-              <Text>{errMsg}</Text>
+              <Text style={{ color: colours.text.primary }}>{errMsg}</Text>
               <TouchableOpacity
                 style={[
                   styles.button,
