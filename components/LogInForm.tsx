@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Button,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { AxiosError } from "axios";
 import apiClient from "@/utils/api-client";
@@ -46,7 +53,7 @@ const LogInForm = () => {
       {loginSuccess ? (
         <Text style={{ color: colours.text.primary }}>Success! Logged In</Text>
       ) : (
-        <View>
+        <View style={styles.textInputContainer}>
           <TextInput
             style={[
               [
@@ -110,22 +117,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
+  textInputContainer: {
+    flexDirection: "column",
+  },
   textInput: {
-    width: "100%",
-    height: 40,
+    height: 60,
     borderWidth: 2,
     borderRadius: 8,
     marginBottom: 20,
-    paddingHorizontal: 10,
+    paddingLeft: 10,
+    ...Platform.select({
+      web: { paddingVertical: 20, paddingHorizontal: 10 },
+    }),
   },
   button: {
+    flexDirection: "column",
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 10,
     padding: 10,
+    marginBottom: 10,
     borderRadius: 5,
   },
   buttonText: {
     fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
