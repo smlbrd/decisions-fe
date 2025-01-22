@@ -10,6 +10,7 @@ import ToggleTheme from "./ToggleTheme";
 import { useRouter } from "expo-router";
 import { useTheme } from "../contexts/ThemeContext";
 import Notifications from "./Notifications";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function Header() {
   const { colours, theme } = useTheme();
@@ -30,6 +31,7 @@ export default function Header() {
       >
         <LogInForm />
       </Overlay>
+
       <SafeAreaView
         style={{ backgroundColor: colours.background }}
         edges={["top", "left", "right"]}
@@ -52,7 +54,9 @@ export default function Header() {
           </Text>
 
           <View style={styles.iconContainer}>
-            <ToggleTheme />
+            <View style={styles.iconButton}>
+              <ToggleTheme />
+            </View>
             <DropdownMenu
               isVisible={isNotificationDropdownVisible}
               handleOpen={() => {
@@ -66,6 +70,7 @@ export default function Header() {
                   name={"notifications-outline"}
                   color={colours.text.primary}
                   size={35}
+                  style={styles.iconButton}
                 />
               }
             >
@@ -89,6 +94,7 @@ export default function Header() {
                   name={"person-circle-outline"}
                   color={colours.text.primary}
                   size={35}
+                  style={styles.iconButton}
                 />
               }
             >
@@ -146,17 +152,23 @@ export default function Header() {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    height: 60,
+    width: "100%",
+    flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 15,
-    flexDirection: "row",
+    paddingVertical: 10,
+    paddingLeft: 20,
+    paddingRight: 10,
   },
   title: {
     fontSize: 20,
   },
   iconContainer: {
     flexDirection: "row",
-    marginRight: Platform.OS === "web" ? -5 : 80,
+    alignItems: "center",
+  },
+  iconButton: {
+    margin: 0,
+    padding: 10,
   },
 });
