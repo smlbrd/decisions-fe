@@ -1,9 +1,9 @@
-import apiClient from "@/utils/api-client";
-import { useLocalSearchParams } from "expo-router";
-import { DecisionProps } from "../utils/props";
 import { useEffect, useState } from "react";
-import ThisOrThat from "@/components/decision-processes/ThisOrThat";
 import { Text } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import apiClient from "@/utils/api-client";
+import { DecisionProps } from "../utils/props";
+import ThisOrThat from "@/components/decision-processes/ThisOrThat";
 import { useSocket } from "@/contexts/SocketContext";
 
 export default function Decision() {
