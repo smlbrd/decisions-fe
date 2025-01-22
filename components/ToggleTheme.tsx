@@ -13,13 +13,13 @@ const ToggleTheme = () => {
           <Ionicons
             name={"sunny-outline"}
             color={colours.text.primary}
-            size={35}
+            size={40}
           />
         ) : (
           <Ionicons
             name={"moon-outline"}
             color={colours.text.primary}
-            size={35}
+            size={40}
           />
         )}
       </TouchableOpacity>
