@@ -8,6 +8,7 @@ import { StartDecisionButton } from "../StartDecisionButton";
 import { ThisOrThatButton } from "../ThisOrThatButton";
 import { useSocket } from "@/contexts/SocketContext";
 import { useUser } from "@/contexts/UserContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type Props = {
   decisionData: DecisionProps;
@@ -22,20 +23,27 @@ export default function ThisOrThat({
   setDecisionData,
   decisionMsg,
 }: Props) {
+  const { user } = useUser();
+  const { colours } = useTheme();
   const socket = useSocket();
+
   const [isStartingDecision, setIsStartingDecision] = useState(false);
   const [startDecisionErrMsg, setStartDecisionErrMsg] = useState("");
-  const { user } = useUser();
+
   const handleStartDecision = () => {
     setIsStartingDecision(true);
     setStartDecisionErrMsg("");
+
     const remainingOptions =
       decisionData.list === null ? null : decisionData.list.options;
+
     const playerOrder =
       decisionData.group === null
         ? null
         : shuffleArray(decisionData.group.members);
+
     const currentOptions = getTwoRandomElements(remainingOptions);
+
     apiClient
       .put(`decisions/${decisionData._id}`, {
         votingStatus: "in progress",
@@ -67,6 +75,7 @@ export default function ThisOrThat({
 
   const handleChoice = (thisOrThat: number) => {
     const flip = thisOrThat === 1 ? 0 : 1;
+
     const newRemainingOptions = decisionData.saveData.remainingOptions.filter(
       (remainingOption) => {
         return (
@@ -74,10 +83,12 @@ export default function ThisOrThat({
         );
       }
     );
+
     const newVoteHistory = [
       ...decisionData.saveData.voteHistory,
       decisionData.saveData.currentOptions[flip],
     ];
+
     const newTurnNumber = decisionData.saveData.turnNumber + 1;
     if (newRemainingOptions.length === 1)
       apiClient
@@ -142,10 +153,7 @@ export default function ThisOrThat({
     <View style={styles.container}>
       {decisionData.votingStatus === "not started" ? (
         <View style={styles.startDecisionContainer}>
-          <StartDecisionButton
-            onPress={handleStartDecision}
-            text="start decision"
-          />
+          <StartDecisionButton onPress={handleStartDecision} text="Start" />
         </View>
       ) : decisionData.votingStatus === "in progress" ? (
         <View style={styles.decisionProcessContainer}>

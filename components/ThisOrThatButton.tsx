@@ -22,8 +22,8 @@ export const ThisOrThatButton = ({
         style={[
           styles.button,
           {
-            backgroundColor: colours.surface.disabled,
-            borderColor: colours.surface.primary,
+            backgroundColor: colours.button.primary,
+            borderColor: colours.text.primary,
           },
         ]}
         onPress={() => {
@@ -36,7 +36,7 @@ export const ThisOrThatButton = ({
           }}
           style={styles.tileImage}
         />
-        <Text style={[styles.text, { color: colours.text.disabled }]}>
+        <Text style={[styles.text, { color: colours.text.primary }]}>
           {text}
         </Text>
       </TouchableOpacity>
@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 2,
     paddingHorizontal: 12,
     paddingVertical: 36,
     borderRadius: 8,
