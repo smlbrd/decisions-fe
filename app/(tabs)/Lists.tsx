@@ -9,6 +9,7 @@ import {
   Image,
   Platform,
   TouchableOpacity,
+  ViewStyle,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { CreateNewButton } from "@/components/CreateNewButton";
@@ -62,9 +63,9 @@ const Lists = () => {
     useState(false);
   const [selectedList, setSelectedList] = useState<List | null>(null);
 
-  // const [newOption, setNewOption] = useState<string>("");
+  const [newOption, setNewOption] = useState<string>("");
 
-  // const [options, setOptions] = useState<string[]>([]);
+  const [options, setOptions] = useState<string[]>([]);
 
   useEffect(() => {
     loadUser();
@@ -163,9 +164,9 @@ const Lists = () => {
     ));
   };
 
-  // const handleAddOption = () => {
-  //   setOptions((previousOptions) => [...previousOptions, ""]);
-  // };
+  const handleAddOption = () => {
+    setOptions((previousOptions) => [...previousOptions, ""]);
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colours.background }]}>
@@ -233,71 +234,41 @@ const Lists = () => {
         isVisible={isCreateListModalVisible}
         onClose={handleCreateListModalClose}
       >
-        <View
-          style={[
-            styles.modalContainer,
-            { backgroundColor: colours.background },
-          ]}
-        >
-          <TextInput
+        <ScrollView contentContainerStyle={styles.scrollableModal}>
+          <View
             style={[
-              styles.textInput,
-              {
-                backgroundColor: colours.surface.primary,
-                borderColor: colours.border,
-              },
+              styles.modalContainer,
+              { backgroundColor: colours.background },
             ]}
-            placeholder="Title"
-            placeholderTextColor={colours.text.disabled}
-            value={newListTitle}
-            onChangeText={setNewListTitle}
-          />
-          <TextInput
-            style={[
-              styles.textInput,
-              {
-                backgroundColor: colours.surface.primary,
-                borderColor: colours.border,
-              },
-            ]}
-            placeholder="Description"
-            placeholderTextColor={colours.text.disabled}
-            value={newListDescription}
-            onChangeText={setNewListDescription}
-          />
-          {/* <TextInput
-            style={[
-              styles.textInput,
-              {
-                backgroundColor: colours.surface.primary,
-                borderColor: colours.border,
-              },
-            ]}
-            placeholder="Add an option"
-            placeholderTextColor={colours.text.disabled}
-            value={newOption}
-            onChangeText={setNewOption}
-          />
-          <View style={styles.container}>
-            <TouchableOpacity
+          >
+            <TextInput
               style={[
-                styles.iconButton,
+                styles.textInput,
                 {
-                  backgroundColor: colours.surface.disabled,
-                  borderColor: colours.surface.primary,
+                  backgroundColor: colours.surface.primary,
+                  borderColor: colours.border,
                 },
               ]}
-              onPress={handleAddOption}
-            >
-              <Ionicons
-                name="add-circle-outline"
-                size={24}
-                color={colours.text.disabled}
-              />
-            </TouchableOpacity>
-            {options.map((_, index) => (
+              placeholder="Title"
+              placeholderTextColor={colours.text.disabled}
+              value={newListTitle}
+              onChangeText={setNewListTitle}
+            />
+            <TextInput
+              style={[
+                styles.textInput,
+                {
+                  backgroundColor: colours.surface.primary,
+                  borderColor: colours.border,
+                },
+              ]}
+              placeholder="Description"
+              placeholderTextColor={colours.text.disabled}
+              value={newListDescription}
+              onChangeText={setNewListDescription}
+            />
+            <View style={styles.optionContainer}>
               <TextInput
-                key={index}
                 style={[
                   styles.textInput,
                   {
@@ -307,17 +278,68 @@ const Lists = () => {
                 ]}
                 placeholder="Add an option"
                 placeholderTextColor={colours.text.disabled}
-                value={options[index]}
-                onChangeText={(text) => {
-                  const newOptions = [...options];
-                  newOptions[index] = text;
-                  setOptions(newOptions);
-                }}
+                value={newOption}
+                onChangeText={setNewOption}
               />
+              <TouchableOpacity
+                style={[
+                  styles.iconButton,
+                  {
+                    backgroundColor: colours.surface.disabled,
+                    borderColor: colours.surface.primary,
+                  },
+                ]}
+                onPress={handleAddOption}
+              >
+                <Ionicons
+                  name="add-circle-outline"
+                  size={24}
+                  color={colours.text.disabled}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {options.map((option, index) => (
+              <View key={index} style={styles.optionContainer}>
+                <TextInput
+                  style={[
+                    styles.textInput,
+                    {
+                      backgroundColor: colours.surface.primary,
+                      borderColor: colours.border,
+                    },
+                  ]}
+                  placeholder="Add an option"
+                  placeholderTextColor={colours.text.disabled}
+                  value={option}
+                  onChangeText={(text) => {
+                    const newOptions = [...options];
+                    newOptions[index] = text;
+                    setOptions(newOptions);
+                  }}
+                />
+                <TouchableOpacity
+                  style={[
+                    styles.iconButton,
+                    {
+                      backgroundColor: colours.surface.disabled,
+                      borderColor: colours.surface.primary,
+                    },
+                  ]}
+                  onPress={handleAddOption}
+                >
+                  <Ionicons
+                    name="add-circle-outline"
+                    size={24}
+                    color={colours.text.disabled}
+                  />
+                </TouchableOpacity>
+              </View>
             ))}
-          </View> */}
-          <Button title="Submit" onPress={handleNewListSubmit} />
-        </View>
+
+            <Button title="Submit" onPress={handleNewListSubmit} />
+          </View>
+        </ScrollView>
       </Overlay>
 
       <ScrollView>
@@ -406,14 +428,25 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  // iconButton: {
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  //   width: 40,
-  //   height: 40,
-  //   borderRadius: 5,
-  //   marginBottom: 5,
-  // },
+  iconButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 40,
+    height: 40,
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  optionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  scrollableModal: {
+    paddingBottom: 20,
+  },
+  overlay: {
+    flex: 1,
+  },
 });
 
 export default Lists;
