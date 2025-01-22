@@ -48,15 +48,37 @@ const LogInForm = () => {
       ) : (
         <View>
           <TextInput
-            style={styles.input}
+            style={[
+              [
+                styles.textInput,
+                {
+                  borderColor: colours.border,
+                  backgroundColor: colours.background,
+                  color: colours.text.primary,
+                },
+              ],
+            ]}
             placeholder="Username"
+            placeholderTextColor={colours.text.disabled}
             value={inputText}
             onChangeText={setInputText}
           />
           {errMsg ? (
             <View>
               <Text>{errMsg}</Text>
-              <Button title="Log In" onPress={handleLogin} />
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  { backgroundColor: colours.button.primary },
+                ]}
+                onPress={handleLogin}
+              >
+                <Text
+                  style={[styles.buttonText, { color: colours.text.primary }]}
+                >
+                  Log in
+                </Text>
+              </TouchableOpacity>
             </View>
           ) : isLoading ? (
             <Text style={{ color: colours.text.primary }}>Logging in...</Text>
@@ -88,12 +110,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
-  input: {
+  textInput: {
     width: "100%",
     height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 5,
+    borderWidth: 2,
+    borderRadius: 8,
     marginBottom: 20,
     paddingHorizontal: 10,
   },
