@@ -47,6 +47,13 @@ const DecisionCard = ({
     return new Date(dateString).toLocaleDateString();
   };
 
+  if (!list) {
+    return (
+      <View style={styles.container}>
+        <Text>Unable to locate List...</Text>
+      </View>
+    );
+  }
   return (
     <TouchableOpacity
       onPress={onPress}
