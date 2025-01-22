@@ -29,6 +29,7 @@ export default function Notifications({
         setInProgress(data);
       })
       .catch((err) => {
+        setInProgress([]);
         console.log(err);
       });
   }, [user]);
@@ -40,6 +41,7 @@ export default function Notifications({
         setNotStarted(data);
       })
       .catch((err) => {
+        setNotStarted([]);
         console.log(err);
       });
   }, [user]);
@@ -53,11 +55,10 @@ export default function Notifications({
   return (
     <View style={styles.notificationContainer}>
       <View style={styles.notificationItem}>
-        {inProgress.length === 0 && notStarted.length === 0 ? (
+        {youAreCurrentPlayer.length === 0 && notStarted.length === 0 ? (
           <Text>No new messages!</Text>
         ) : null}
       </View>
-
       <Text style={[styles.notificationHeader, styles.notificationItem]}>
         {youAreCurrentPlayer.length > 0 ? (
           <Text>
