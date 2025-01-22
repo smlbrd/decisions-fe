@@ -156,7 +156,12 @@ export default function ThisOrThat({
           <StartDecisionButton onPress={handleStartDecision} text="Start" />
         </View>
       ) : decisionData.votingStatus === "in progress" ? (
-        <View style={styles.decisionProcessContainer}>
+        <View
+          style={[
+            styles.decisionProcessContainer,
+            { backgroundColor: colours.surface.primary },
+          ]}
+        >
           {decisionData.saveData.playerOrder[
             (decisionData.saveData.turnNumber - 1) %
               decisionData.saveData.playerOrder.length
@@ -232,17 +237,22 @@ export default function ThisOrThat({
           </Text>
           {decisionData.saveData.voteHistory.map((option, index) => {
             return (
-              <View style={styles.decisionProcessContainer}>
-                <Text
-                  style={[styles.statsText, { color: colours.text.primary }]}
-                >
-                  Decision History
-                </Text>
+              <View
+                style={[
+                  styles.decisionHistoryContainer,
+                  { backgroundColor: colours.surface.primary },
+                ]}
+              >
                 <Text
                   key={index}
                   style={[styles.statsText, { color: colours.text.primary }]}
                 >
-                  Turn {index + 1}: {option.name} eliminated by{" "}
+                  Turn {index + 1}:
+                </Text>
+                <Text
+                  style={[styles.statsText, { color: colours.text.primary }]}
+                >
+                  {option.name} eliminated by{" "}
                   {
                     decisionData.saveData.playerOrder[
                       index % decisionData.saveData.playerOrder.length
@@ -271,10 +281,19 @@ const styles = StyleSheet.create({
   decisionProcessContainer: {
     justifyContent: "center",
     alignItems: "center",
-    marginVertical: 15,
+    marginTop: 15,
     marginHorizontal: 15,
     borderRadius: 16,
     paddingVertical: 20,
+  },
+  decisionHistoryContainer: {
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    marginTop: 15,
+    marginHorizontal: 15,
+    borderRadius: 16,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
   },
   statsText: {
     fontSize: 16,
