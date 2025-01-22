@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import { Text } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import apiClient from "@/utils/api-client";
 import { DecisionProps } from "../utils/props";
 import ThisOrThat from "@/components/decision-processes/ThisOrThat";
 import Header from "@/components/Header";
 import { useSocket } from "@/contexts/SocketContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Decision() {
   const socket = useSocket();
+  const { colours } = useTheme();
 
   const [refreshKey, setRefreshKey] = useState(0);
   const [decisionMsg, setDecisionMsg] = useState("");
@@ -62,17 +64,34 @@ export default function Decision() {
   ) : errMsg ? (
     <Text>{errMsg}</Text>
   ) : processIds[decisionData.decisionsProcess_id] === "ThisOrThat" ? (
-    <>
+    <View style={[styles.container, { backgroundColor: colours.primary }]}>
       <Header />
-      <ThisOrThat
-        decisionData={decisionData}
-        setDecisionData={setDecisionData}
-        decisionMsg={decisionMsg}
-      />
-    </>
+      <View style={styles.content}>
+        <ThisOrThat
+          decisionData={decisionData}
+          setDecisionData={setDecisionData}
+          decisionMsg={decisionMsg}
+        />
+      </View>
+    </View>
   ) : (
     <Text>
       Decision process does not exist yet! Come back for future updates
     </Text>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    ...(Platform.OS === "web" && {
+      maxWidth: "100%",
+    }),
+  },
+});
