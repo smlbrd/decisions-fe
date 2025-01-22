@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
   onPress: () => void;
@@ -11,7 +12,7 @@ export const StartDecisionButton = ({ onPress, text }: Props) => {
   const { colours } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <TouchableOpacity
         style={[
           styles.button,
@@ -22,31 +23,36 @@ export const StartDecisionButton = ({ onPress, text }: Props) => {
         ]}
         onPress={onPress}
       >
-        <Ionicons name="play-outline" size={24} color={colours.text.primary} />
+        <Ionicons
+          name="play-outline"
+          color={colours.text.primary}
+          style={styles.text}
+        />
         <Text style={[styles.text, { color: colours.text.primary }]}>
           {text}
         </Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: "column",
+    marginTop: 200,
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 36,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     borderRadius: 8,
-    marginVertical: 5,
   },
   text: {
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: "bold",
-    marginLeft: 8,
+    padding: 6,
   },
 });

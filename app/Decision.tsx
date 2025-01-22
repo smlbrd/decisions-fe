@@ -60,9 +60,9 @@ export default function Decision() {
   }
 
   return isLoading ? (
-    <Text>"loading decision..."</Text>
+    <Text style={{ color: colours.text.primary }}>Loading decision...</Text>
   ) : errMsg ? (
-    <Text>{errMsg}</Text>
+    <Text style={{ color: colours.text.error }}>{errMsg}</Text>
   ) : processIds[decisionData.decisionsProcess_id] === "ThisOrThat" ? (
     <View style={[styles.container, { backgroundColor: colours.primary }]}>
       <Header />
@@ -75,7 +75,7 @@ export default function Decision() {
       </View>
     </View>
   ) : (
-    <Text>
+    <Text style={{ color: colours.text.primary }}>
       Decision process does not exist yet! Come back for future updates
     </Text>
   );
