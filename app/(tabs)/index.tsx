@@ -358,13 +358,21 @@ const styles = StyleSheet.create({
   },
   pickerInput: {
     height: 60,
-    borderWidth: 2,
-    borderRadius: 8,
-    padding: 10,
-    margin: 10,
-    ...(Platform.OS === "web" && {
-      fontWeight: "bold",
-      fontSize: 16,
+    ...Platform.select({
+      android: {
+        borderWidth: 2,
+        borderRadius: 8,
+        padding: 10,
+        margin: 10,
+      },
+      web: {
+        borderWidth: 2,
+        borderRadius: 8,
+        padding: 10,
+        margin: 10,
+        fontWeight: "bold",
+        fontSize: 16,
+      },
     }),
   },
   modalContainer: {
