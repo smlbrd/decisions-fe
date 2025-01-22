@@ -171,7 +171,7 @@ export default function ThisOrThat({
             </Text>
           ) : (
             <Text style={[styles.statsText, { color: colours.text.primary }]}>
-              It's
+              It's{" "}
               {decisionData.saveData.playerOrder[
                 (decisionData.saveData.turnNumber - 1) %
                   decisionData.saveData.playerOrder.length
