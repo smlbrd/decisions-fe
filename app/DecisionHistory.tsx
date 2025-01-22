@@ -5,6 +5,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
 import apiClient from "@/utils/api-client";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -47,6 +48,7 @@ type Decision = {
 };
 
 export default function DecisionHistory() {
+  const router = useRouter();
   const { user } = useUser();
   const { colours } = useTheme();
 
@@ -84,22 +86,29 @@ export default function DecisionHistory() {
       });
   }, [user]);
 
-  const handleDecisionPress = (decisionId: string) => {
-    setDetailErrMsg("");
-    setIsLoadingDetail(true);
-    setIsDetailModalVisible(true);
+  // const handleDecisionPress = (decisionId: string) => {
+  //   setDetailErrMsg("");
+  //   setIsLoadingDetail(true);
+  //   setIsDetailModalVisible(true);
 
-    apiClient
-      .get(`/decisions/${decisionId}`)
-      .then(({ data }) => {
-        setSelectedDecision(data);
-        setIsLoadingDetail(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setDetailErrMsg("Error loading decision details");
-        setIsLoadingDetail(false);
-      });
+  //   apiClient
+  //     .get(`/decisions/${decisionId}`)
+  //     .then(({ data }) => {
+  //       setSelectedDecision(data);
+  //       setIsLoadingDetail(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setDetailErrMsg("Error loading decision details");
+  //       setIsLoadingDetail(false);
+  //     });
+  // };
+
+  const handleDecisionPress = (decisionId: string) => {
+    router.push({
+      pathname: "/Decision",
+      params: { decision_id: decisionId },
+    });
   };
 
   const handleDetailModalClose = () => {
@@ -140,7 +149,7 @@ export default function DecisionHistory() {
   return (
     <View style={[styles.container, { backgroundColor: colours.background }]}>
       <Header />
-      <Overlay
+      {/* <Overlay
         isVisible={isDetailModalVisible}
         onClose={handleDetailModalClose}
         scrollable={true}
@@ -214,7 +223,7 @@ export default function DecisionHistory() {
             </View>
           ) : null}
         </View>
-      </Overlay>
+      </Overlay> */}
 
       <ScrollView>
         <View style={styles.decisionsContainer}>
