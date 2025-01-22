@@ -12,7 +12,7 @@ export const Colours = {
       disabled: "#E9ECF1",
     },
     button: {
-      primary: "#baa2c8",
+      primary: "#DACEE3",
       hover: "#dddbe7",
       error: "#A30F0A",
     },
@@ -35,7 +35,7 @@ export const Colours = {
       disabled: "#AEAEBC",
     },
     button: {
-      primary: "#8c60a4",
+      primary: "#644375",
       hover: "#3d3651",
       error: "#382E2E",
     },

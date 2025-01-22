@@ -1,4 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
 
 type Props = {
@@ -22,8 +29,8 @@ export const ThisOrThatButton = ({
         style={[
           styles.button,
           {
-            backgroundColor: colours.surface.disabled,
-            borderColor: colours.surface.primary,
+            backgroundColor: colours.button.primary,
+            borderColor: colours.text.primary,
           },
         ]}
         onPress={() => {
@@ -36,7 +43,7 @@ export const ThisOrThatButton = ({
           }}
           style={styles.tileImage}
         />
-        <Text style={[styles.text, { color: colours.text.disabled }]}>
+        <Text style={[styles.text, { color: colours.text.primary }]}>
           {text}
         </Text>
       </TouchableOpacity>
@@ -49,26 +56,31 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   button: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 2,
-    paddingHorizontal: 12,
-    paddingVertical: 36,
-    borderRadius: 8,
-    marginVertical: 5,
+    borderRadius: 16,
+    paddingHorizontal: 40,
+    paddingVertical: 30,
+    marginVertical: 16,
+    ...Platform.select({
+      web: {
+        flex: 1,
+      },
+      android: {
+        paddingHorizontal: 40,
+        paddingVertical: 30,
+      },
+    }),
   },
   text: {
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: "bold",
-    marginLeft: 8,
+    margin: 10,
   },
   tileImage: {
-    marginTop: 10,
-    margin: 10,
-    marginBottom: 0,
-    width: 60,
-    height: 60,
+    width: 200,
+    height: 150,
     borderRadius: 10,
   },
 });
