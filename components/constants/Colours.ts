@@ -12,13 +12,13 @@ export const Colours = {
       disabled: "#E9ECF1",
     },
     button: {
-      primary: "#baa2c8",
+      primary: "#DACEE3",
       hover: "#dddbe7",
       error: "#A30F0A",
     },
     border: "#CCD0DA",
     text: {
-      primary: "#54517B",
+      primary: "#3C3A5A",
       disabled: "#BCC0CC",
       error: "#382E2E",
       success: "#C6CCDB",
@@ -34,13 +34,13 @@ export const Colours = {
       disabled: "#AEAEBC",
     },
     button: {
-      primary: "#8c60a4",
+      primary: "#644375",
       hover: "#3d3651",
       error: "#382E2E",
     },
     border: "#414559",
     text: {
-      primary: "#C6CCDB",
+      primary: "#F0F0F0",
       disabled: "#51576D",
       error: "#393939",
       success: "#EFF1F5",

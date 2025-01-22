@@ -164,9 +164,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 10,
-    paddingLeft: 20,
-    paddingRight: 10,
+    paddingVertical: 12,
+    paddingLeft: 24,
+    paddingRight: 6,
   },
   title: {
     fontSize: 24,
@@ -177,6 +177,6 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     margin: 0,
-    padding: 10,
+    padding: 6,
   },
 });
