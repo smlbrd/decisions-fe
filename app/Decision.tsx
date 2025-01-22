@@ -4,6 +4,7 @@ import { useLocalSearchParams } from "expo-router";
 import apiClient from "@/utils/api-client";
 import { DecisionProps } from "../utils/props";
 import ThisOrThat from "@/components/decision-processes/ThisOrThat";
+import Header from "@/components/Header";
 import { useSocket } from "@/contexts/SocketContext";
 
 export default function Decision() {
@@ -61,11 +62,14 @@ export default function Decision() {
   ) : errMsg ? (
     <Text>{errMsg}</Text>
   ) : processIds[decisionData.decisionsProcess_id] === "ThisOrThat" ? (
-    <ThisOrThat
-      decisionData={decisionData}
-      setDecisionData={setDecisionData}
-      decisionMsg={decisionMsg}
-    />
+    <>
+      <Header />
+      <ThisOrThat
+        decisionData={decisionData}
+        setDecisionData={setDecisionData}
+        decisionMsg={decisionMsg}
+      />
+    </>
   ) : (
     <Text>
       Decision process does not exist yet! Come back for future updates
