@@ -16,6 +16,7 @@ export default function Notifications({
   setIsNotificationDropdownVisible,
 }: Props) {
   const { user } = useUser();
+  const router = useRouter();
   const [inProgress, setInProgress] = useState<DecisionProps[]>([]);
   const [notStarted, setNotStarted] = useState<DecisionProps[]>([]);
 
@@ -29,6 +30,7 @@ export default function Notifications({
         console.log(err);
       });
   }, [user]);
+
   useEffect(() => {
     apiClient
       .get(`/users/${user._id}/decisions?votingStatus=not%20started`)
@@ -39,20 +41,24 @@ export default function Notifications({
         console.log(err);
       });
   }, [user]);
+
   const youAreCurrentPlayer = inProgress.filter((decision: DecisionProps) => {
     if (user._id && decision?.saveData?.currentPlayer)
       return decision.saveData.currentPlayer === user._id;
     else return false;
   });
-  const router = useRouter();
+
   return (
-    <View>
-      <MenuOption onSelect={() => {}}>
-        <Text style={styles.boldText}>
-          You have {inProgress.length} decisions in progress,{" "}
-          {youAreCurrentPlayer.length} of which it is your turn:
-        </Text>
-      </MenuOption>
+    <View style={styles.notificationContainer}>
+      <Text style={[styles.notificationHeader, styles.notificationItem]}>
+        {youAreCurrentPlayer.length > 0 ? (
+          <Text>
+            {youAreCurrentPlayer.length} decision
+            {inProgress.length > 1 ? "s" : ""} waiting for you:
+          </Text>
+        ) : null}
+      </Text>
+
       {youAreCurrentPlayer.map((decision) => {
         return (
           <MenuOption
@@ -66,17 +72,19 @@ export default function Notifications({
             }}
           >
             <Text>
-              It is your turn to make a decision with group{" "}
-              {decision?.group?.name} on list {decision?.list?.title}
+              - Your turn to decide {decision?.list?.title} with{" "}
+              {decision?.group?.name}!
             </Text>
           </MenuOption>
         );
       })}
-      <MenuOption onSelect={() => {}}>
-        <Text style={styles.boldText}>
-          You have {notStarted.length} decisions which have not started yet:
-        </Text>
-      </MenuOption>
+
+      <Text style={[styles.notificationHeader, styles.notificationItem]}>
+        {notStarted.length > 0 ? (
+          <Text>{notStarted.length} decisions waiting to start:</Text>
+        ) : null}
+      </Text>
+
       {notStarted.map((decision) => {
         return (
           <MenuOption
@@ -90,18 +98,35 @@ export default function Notifications({
             }}
           >
             <Text>
-              Click here to start the decision with group{" "}
-              {decision?.group?.name} with list {decision?.list?.title}
+              - {decision?.group?.name} invited you to decide{" "}
+              {decision?.list?.title}
             </Text>
           </MenuOption>
         );
       })}
+      {/* I think this next bit is omitted until we can redirect to a view of ongoing decisions? */}
+      {/* <Text style={[styles.boldText, styles.notificationItem]}>
+        {inProgress.length > 0 ? (
+          <Text>
+            {inProgress.length} ongoing decision
+            {inProgress.length > 1 ? "s" : ""}.
+          </Text>
+        ) : null}
+      </Text> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  boldText: {
+  notificationContainer: {
+    paddingTop: 0,
+    paddingBottom: 10,
+  },
+  notificationHeader: {
+    fontSize: 16,
     fontWeight: "bold",
+  },
+  notificationItem: {
+    margin: 3,
   },
 });
