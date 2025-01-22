@@ -17,6 +17,7 @@ import ListCard from "@/components/ListCard";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
 import apiClient from "@/utils/api-client";
+import { Ionicons } from "@expo/vector-icons";
 
 type Option = {
   _id: string;
@@ -60,6 +61,10 @@ const Lists = () => {
   const [isDetailListModalVisible, setIsDetailListModalVisible] =
     useState(false);
   const [selectedList, setSelectedList] = useState<List | null>(null);
+
+  const [newOption, setNewOption] = useState<string>("");
+
+  const [options, setOptions] = useState<string[]>([]);
 
   useEffect(() => {
     loadUser();
@@ -159,6 +164,10 @@ const Lists = () => {
     ));
   };
 
+  const handleAddOption = () => {
+    setOptions((previousOptions) => [...previousOptions, ""]);
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: colours.background }]}>
       <Overlay
@@ -225,47 +234,112 @@ const Lists = () => {
         isVisible={isCreateListModalVisible}
         onClose={handleCreateListModalClose}
       >
-        <View
-          style={[
-            styles.modalContainer,
-            { backgroundColor: colours.background },
-          ]}
-        >
-          <TextInput
+        <ScrollView contentContainerStyle={styles.scrollableModal}>
+          <View
             style={[
-              styles.textInput,
-              {
-                backgroundColor: colours.surface.primary,
-                borderColor: colours.border,
-              },
+              styles.modalContainer,
+              { backgroundColor: colours.background },
             ]}
-            placeholder="Title"
-            placeholderTextColor={colours.text.disabled}
-            value={newListTitle}
-            onChangeText={setNewListTitle}
-          />
-          <TextInput
-            style={[
-              styles.textInput,
-              {
-                backgroundColor: colours.surface.primary,
-                borderColor: colours.border,
-              },
-            ]}
-            placeholder="Description"
-            placeholderTextColor={colours.text.disabled}
-            value={newListDescription}
-            onChangeText={setNewListDescription}
-          />
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: colours.button.primary }]}
-            onPress={handleNewListSubmit}
           >
-            <Text style={[styles.buttonText, { color: colours.text.primary }]}>
-              Submit
-            </Text>
-          </TouchableOpacity>
-        </View>
+            <TextInput
+              style={[
+                styles.textInput,
+                {
+                  backgroundColor: colours.surface.primary,
+                  borderColor: colours.border,
+                },
+              ]}
+              placeholder="Title"
+              placeholderTextColor={colours.text.disabled}
+              value={newListTitle}
+              onChangeText={setNewListTitle}
+            />
+            <TextInput
+              style={[
+                styles.textInput,
+                {
+                  backgroundColor: colours.surface.primary,
+                  borderColor: colours.border,
+                },
+              ]}
+              placeholder="Description"
+              placeholderTextColor={colours.text.disabled}
+              value={newListDescription}
+              onChangeText={setNewListDescription}
+            />
+            <View style={styles.optionContainer}>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  {
+                    backgroundColor: colours.surface.primary,
+                    borderColor: colours.border,
+                  },
+                ]}
+                placeholder="Add an option"
+                placeholderTextColor={colours.text.disabled}
+                value={newOption}
+                onChangeText={setNewOption}
+              />
+              <TouchableOpacity
+                style={[
+                  styles.iconButton,
+                  {
+                    backgroundColor: colours.surface.disabled,
+                    borderColor: colours.surface.primary,
+                  },
+                ]}
+                onPress={handleAddOption}
+              >
+                <Ionicons
+                  name="add-circle-outline"
+                  size={24}
+                  color={colours.text.disabled}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {options.map((option, index) => (
+              <View key={index} style={styles.optionContainer}>
+                <TextInput
+                  style={[
+                    styles.textInput,
+                    {
+                      backgroundColor: colours.surface.primary,
+                      borderColor: colours.border,
+                    },
+                  ]}
+                  placeholder="Add an option"
+                  placeholderTextColor={colours.text.disabled}
+                  value={option}
+                  onChangeText={(text) => {
+                    const newOptions = [...options];
+                    newOptions[index] = text;
+                    setOptions(newOptions);
+                  }}
+                />
+                <TouchableOpacity
+                  style={[
+                    styles.iconButton,
+                    {
+                      backgroundColor: colours.surface.disabled,
+                      borderColor: colours.surface.primary,
+                    },
+                  ]}
+                  onPress={handleAddOption}
+                >
+                  <Ionicons
+                    name="add-circle-outline"
+                    size={24}
+                    color={colours.text.disabled}
+                  />
+                </TouchableOpacity>
+              </View>
+            ))}
+
+            <Button title="Submit" onPress={handleNewListSubmit} />
+          </View>
+        </ScrollView>
       </Overlay>
 
       <ScrollView>
@@ -360,6 +434,25 @@ const styles = StyleSheet.create({
   removeButtonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  iconButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 40,
+    height: 40,
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  optionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  scrollableModal: {
+    paddingBottom: 20,
+  },
+  overlay: {
+    flex: 1,
   },
 });
 
