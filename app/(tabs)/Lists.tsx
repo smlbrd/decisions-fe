@@ -66,6 +66,14 @@ const Lists = () => {
 
   const [options, setOptions] = useState<string[]>([]);
 
+  const [isEditListModalVisible, setIsEditListModalVisible] = useState(false);
+
+  const [editListId, setEditListId] = useState<string | null>(null);
+
+  const [editListTitle, setEditListTitle] = useState("");
+
+  const [editListDescription, setEditListDescription] = useState("");
+
   useEffect(() => {
     loadUser();
   }, []);
@@ -119,6 +127,45 @@ const Lists = () => {
     setNewListDescription("");
   };
 
+  const handleEditListModalClose = () => {
+    setIsEditListModalVisible(false);
+    setEditListId(null);
+    setEditListTitle("");
+    setEditListDescription("");
+  };
+
+  const handleEditList = (listId: string) => {
+    const listToEdit = listData.find((list) => list._id === listId);
+    if (listToEdit) {
+      setEditListId(listToEdit._id);
+      setEditListTitle(listToEdit.title);
+      setEditListDescription(listToEdit.description);
+      setIsEditListModalVisible(true);
+    }
+  };
+
+  const handleEditListSubmit = () => {
+    if (editListId) {
+      apiClient
+        .put(`/lists/${editListId}`, {
+          title: editListTitle,
+          description: editListDescription,
+        })
+        .then(({ data }) => {
+          setListData((prevData) =>
+            prevData.map((list) =>
+              list._id === data._id ? { ...list, ...data } : list
+            )
+          );
+          handleEditListModalClose();
+        })
+        .catch((err) => {
+          console.log(err);
+          setListCreationErrMsg("Something went wrong while editing your list");
+        });
+    }
+  };
+
   const handleNewListSubmit = () => {
     setIsPostingList(true);
     if (!user._id) setErrMsg("user not logged in");
@@ -151,16 +198,26 @@ const Lists = () => {
     }
 
     return listData?.map((list) => (
-      <ListCard
-        key={list._id}
-        id={list._id}
-        title={list.title}
-        description={list.description}
-        options={list.options}
-        onPress={() => {
-          return handleListCardPress(list._id);
-        }}
-      />
+      <View key={list._id} style={styles.listCardContainer}>
+        <ListCard
+          key={list._id}
+          id={list._id}
+          title={list.title}
+          description={list.description}
+          options={list.options}
+          onPress={() => handleListCardPress(list._id)}
+        />
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => handleEditList(list._id)}
+        >
+          <Ionicons
+            name="create-outline"
+            size={24}
+            color={colours.text.primary}
+          />
+        </TouchableOpacity>
+      </View>
     ));
   };
 
@@ -342,6 +399,48 @@ const Lists = () => {
         </ScrollView>
       </Overlay>
 
+      <Overlay
+        isVisible={isEditListModalVisible}
+        onClose={handleEditListModalClose}
+      >
+        <ScrollView contentContainerStyle={styles.scrollableModal}>
+          <View
+            style={[
+              styles.modalContainer,
+              { backgroundColor: colours.background },
+            ]}
+          >
+            <TextInput
+              style={[
+                styles.textInput,
+                {
+                  backgroundColor: colours.surface.primary,
+                  borderColor: colours.border,
+                },
+              ]}
+              placeholder="Title"
+              placeholderTextColor={colours.text.disabled}
+              value={editListTitle}
+              onChangeText={setEditListTitle}
+            />
+            <TextInput
+              style={[
+                styles.textInput,
+                {
+                  backgroundColor: colours.surface.primary,
+                  borderColor: colours.border,
+                },
+              ]}
+              placeholder="Description"
+              placeholderTextColor={colours.text.disabled}
+              value={editListDescription}
+              onChangeText={setEditListDescription}
+            />
+            <Button title="Save Changes" onPress={handleEditListSubmit} />
+          </View>
+        </ScrollView>
+      </Overlay>
+
       <ScrollView>
         {errMsg ? (
           <Text style={styles.errorText}>{errMsg}</Text>
@@ -374,6 +473,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 15,
     marginHorizontal: 15,
+  },
+  listCardContainer: {
+    position: "relative",
+    marginBottom: 10,
   },
   headerText: {
     fontSize: 32,
@@ -442,6 +545,11 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 5,
     marginBottom: 5,
+  },
+  editButton: {
+    position: "absolute",
+    top: 5,
+    right: 5,
   },
   optionContainer: {
     flexDirection: "row",
