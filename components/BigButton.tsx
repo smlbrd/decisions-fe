@@ -15,13 +15,13 @@ export const BigButton = ({ onPress, text }: Props) => {
         style={[
           styles.button,
           {
-            backgroundColor: colours.surface.disabled,
-            borderColor: colours.surface.primary,
+            backgroundColor: colours.button.primary,
+            borderColor: colours.text.primary,
           },
         ]}
         onPress={onPress}
       >
-        <Text style={[styles.text, { color: colours.text.disabled }]}>
+        <Text style={[styles.text, { color: colours.text.primary }]}>
           {text}
         </Text>
       </TouchableOpacity>

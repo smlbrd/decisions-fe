@@ -264,17 +264,14 @@ export default function Index() {
             onPress={handleStartDeciding}
           >
             <Text style={[styles.buttonText, { color: colours.text.primary }]}>
-              Submit
+              Confirm
             </Text>
           </TouchableOpacity>
         </View>
       </Overlay>
 
       <View
-        style={[
-          styles.pickerContainer,
-          { backgroundColor: colours.background },
-        ]}
+        style={[styles.pickerContainer, { backgroundColor: colours.primary }]}
       >
         <Picker
           selectedValue={selectedList}
@@ -326,9 +323,9 @@ export default function Index() {
           })}
         </Picker>
       </View>
-      <View style={styles.buttonContainer}>
+      <View>
         <BigButton
-          text="Get Started"
+          text="Get Started!"
           onPress={() => setIsDecisionProcessModalVisible(true)}
         />
       </View>
