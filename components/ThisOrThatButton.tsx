@@ -1,4 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
 
 type Props = {
@@ -49,25 +56,31 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   button: {
-    flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: 16,
     paddingHorizontal: 40,
-    paddingVertical: 60,
-    borderRadius: 15,
-    marginVertical: 32,
+    paddingVertical: 30,
+    marginVertical: 16,
+    ...Platform.select({
+      web: {
+        flex: 1,
+      },
+      android: {
+        paddingHorizontal: 40,
+        paddingVertical: 30,
+      },
+    }),
   },
   text: {
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: "bold",
     margin: 10,
-    marginLeft: 8,
   },
   tileImage: {
-    margin: 10,
-    width: 100,
-    height: 100,
+    width: 200,
+    height: 150,
     borderRadius: 10,
   },
 });
