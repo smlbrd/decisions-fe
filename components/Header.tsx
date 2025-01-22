@@ -49,9 +49,11 @@ export default function Header() {
             { backgroundColor: colours.background },
           ]}
         >
-          <Text style={[styles.title, { color: colours.text.primary }]}>
-            Decisions
-          </Text>
+          <TouchableOpacity onPress={() => router.push("/")}>
+            <Text style={[styles.title, { color: colours.text.primary }]}>
+              Decisions
+            </Text>
+          </TouchableOpacity>
 
           <View style={styles.iconContainer}>
             <View style={styles.iconButton}>
