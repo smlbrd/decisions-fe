@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
+import { useSocket } from "./SocketContext";
 
 type Props = {
   children: ReactNode;
@@ -39,11 +40,15 @@ export const UserProvider = ({ children }: Props) => {
     email: null,
     savedLists: null,
   };
+  const socket = useSocket();
 
   const [user, setUser] = useState<userDataProps>(nullUser);
 
   const saveUser = async (userData: userDataProps) => {
-    setUser(userData);
+    setUser(() => {
+      socket.emit("user", userData._id);
+      return userData;
+    });
     if (isWeb) localStorage.setItem("user", JSON.stringify(userData));
     else await AsyncStorage.setItem("user", JSON.stringify(userData));
   };
@@ -58,7 +63,11 @@ export const UserProvider = ({ children }: Props) => {
         ? JSON.parse(storedUser)
         : nullUser;
 
-    if (parsedStoredUser?.username) setUser(parsedStoredUser);
+    if (parsedStoredUser?.username)
+      setUser(() => {
+        socket.emit("user", parsedStoredUser._id);
+        return parsedStoredUser;
+      });
     else setUser(nullUser);
   };
 
@@ -67,8 +76,10 @@ export const UserProvider = ({ children }: Props) => {
   }, []);
 
   const removeUser = async () => {
+    socket.emit("removeUser", user._id);
     setUser(nullUser);
-    await AsyncStorage.setItem("user", JSON.stringify(null));
+    if (isWeb) localStorage.setItem("user", JSON.stringify(null));
+    else await AsyncStorage.setItem("user", JSON.stringify(null));
   };
 
   return (

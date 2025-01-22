@@ -6,8 +6,8 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 
 export default function RootLayout() {
   return (
-    <UserProvider>
-      <SocketProvider>
+    <SocketProvider>
+      <UserProvider>
         <GestureHandlerRootView>
           <ThemeProvider>
             <Stack>
@@ -19,7 +19,7 @@ export default function RootLayout() {
             </Stack>
           </ThemeProvider>
         </GestureHandlerRootView>
-      </SocketProvider>
-    </UserProvider>
+      </UserProvider>
+    </SocketProvider>
   );
 }

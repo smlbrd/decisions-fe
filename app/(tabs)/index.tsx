@@ -94,7 +94,6 @@ export default function Index() {
   const router = useRouter();
 
   const socket = useSocket();
-  socket.emit("hi", "hi");
 
   useEffect(() => {
     apiClient
