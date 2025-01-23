@@ -61,6 +61,7 @@ export default function ThisOrThat({
         socket.emit("refresh", {
           room: decisionData._id,
           msg: `${user.name} started the decision`,
+          decision_id: decisionData._id,
         });
         setDecisionData((decisionData) => {
           if (decisionData) return data;
@@ -174,9 +175,7 @@ export default function ThisOrThat({
               It's your turn!
             </Text>
           ) : (
-            <Text
-              style={[styles.turnText, { color: colours.text.primary }]}
-            >
+            <Text style={[styles.turnText, { color: colours.text.primary }]}>
               It's{" "}
               {decisionData.saveData.playerOrder[
                 (decisionData.saveData.turnNumber - 1) %
