@@ -1,13 +1,15 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Platform } from "react-native";
 import { MenuOption } from "./DropdownMenu";
 import { useRouter } from "expo-router";
 import { useUser } from "@/contexts/UserContext";
 import { useEffect, useState } from "react";
 import apiClient from "@/utils/api-client";
 import { DecisionProps } from "@/utils/props";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type activityProps = {
   msg: string;
+  key: string;
   decision_id?: string;
 };
 
@@ -19,16 +21,51 @@ type Props = {
   setIsBellRed: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+type ActivityLookupProps = {
+  [key: string]: activityProps;
+};
+
 export default function Notifications({
   setIsNotificationDropdownVisible,
   activity,
   setIsBellRed,
 }: Props) {
+  const activityKeyLookup: ActivityLookupProps = {};
+  activity.forEach((notification) => {
+    if (!activityKeyLookup[notification.key])
+      activityKeyLookup[notification.key] = notification;
+  });
   const { user } = useUser();
   const [inProgress, setInProgress] = useState<DecisionProps[]>([]);
   const [notStarted, setNotStarted] = useState<DecisionProps[]>([]);
   const [isInProgressLoading, setIsInProgressLoading] = useState(false);
   const [isNotStartedLoading, setIsNotStartedLoading] = useState(false);
+  const [uniqueNotificationKeys, setUniqueNotificationKeys] = useState<
+    string[]
+  >([]);
+  const [clickedKeys, setClickedKeys] = useState<string[]>([]);
+  const isWeb = Platform.OS === "web";
+  const loadKeys = async () => {
+    const uniqueNotifs = isWeb
+      ? localStorage.getItem("uniqueNotificationKeys")
+      : await AsyncStorage.getItem("uniqueNotificationKeys");
+    setUniqueNotificationKeys(() => {
+      if (uniqueNotifs && uniqueNotifs !== JSON.stringify(null))
+        return JSON.parse(uniqueNotifs);
+      else return [];
+    });
+    const clickedKeys = isWeb
+      ? localStorage.getItem("clickedKeys")
+      : await AsyncStorage.getItem("clickedKeys");
+    setUniqueNotificationKeys(() => {
+      if (clickedKeys && clickedKeys !== JSON.stringify(null))
+        return JSON.parse(clickedKeys);
+      else return [];
+    });
+  };
+  useEffect(() => {
+    loadKeys();
+  }, []);
 
   useEffect(() => {
     setIsInProgressLoading(true);
@@ -120,28 +157,43 @@ export default function Notifications({
           <Text style={styles.boldText}>Activity:</Text>
         </MenuOption>
       ) : null}
-      {activity.map((notification, index) => {
-        if (index % 2 === 0)
+      {Object.keys(activityKeyLookup).map((key, index) => {
+        if (!clickedKeys.includes(key) && /^id/.test(key))
           return (
             <MenuOption
               key={index}
-              onSelect={() => {
+              onSelect={async () => {
                 setIsNotificationDropdownVisible(false);
                 setIsBellRed(false);
-                if (/created a new group/i.test(notification.msg)) {
+                if (isWeb)
+                  localStorage.setItem(
+                    "clickedKeys",
+                    JSON.stringify([...clickedKeys, key])
+                  );
+                else
+                  await AsyncStorage.setItem(
+                    "clickedKeys",
+                    JSON.stringify([...clickedKeys, key])
+                  );
+                setClickedKeys((clickedKeys) => {
+                  return [...clickedKeys, key];
+                });
+                if (/created a new group/i.test(activityKeyLookup[key].msg)) {
                   router.push("/Groups");
                 } else if (
-                  /turn/i.test(notification.msg) ||
-                  /decision/i.test(notification.msg)
+                  /turn/i.test(activityKeyLookup[key].msg) ||
+                  /decision/i.test(activityKeyLookup[key].msg)
                 ) {
                   router.push({
                     pathname: "/Decision",
-                    params: { decision_id: notification.decision_id },
+                    params: { decision_id: activityKeyLookup[key].decision_id },
                   });
                 }
               }}
             >
-              <Text style={{ color: "#FF2370" }}>{notification.msg}</Text>
+              <Text style={{ color: "#FF2370" }}>
+                {activityKeyLookup[key].msg}
+              </Text>
             </MenuOption>
           );
       })}

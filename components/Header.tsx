@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type activityProps = {
   msg: string;
+  key: string;
   decision_id?: string;
 };
 
@@ -38,6 +39,7 @@ export default function Header() {
         : [
             {
               msg: "",
+              key: "",
             },
           ];
     setActivity(parsedStoredActivity);
@@ -45,14 +47,15 @@ export default function Header() {
   useEffect(() => {
     handleSetActivity();
   }, []);
-  console.log(activity);
+  // console.log(activity);
   const socket = useSocket();
-  socket.on("refresh", async (msg, decision_id) => {
+  socket.on("refresh", async (msg, key, decision_id) => {
     setActivity((activity) => {
       return [
         ...activity,
         {
           msg,
+          key,
           decision_id,
         },
       ];
@@ -80,6 +83,22 @@ export default function Header() {
         ])
       );
     setIsBellRed(true);
+    const uniqueNotificationKeys = isWeb
+      ? localStorage.getItem("uniqueNotificationKeys") || "[]"
+      : (await AsyncStorage.getItem("uniqueNotificationKeys")) || "[]";
+    if (isWeb)
+      if (!JSON.parse(uniqueNotificationKeys).includes(key))
+        localStorage.setItem(
+          "uniqueNotificationKeys",
+          JSON.stringify([...JSON.parse(uniqueNotificationKeys), key])
+        );
+      else {
+        if (!JSON.parse(uniqueNotificationKeys).includes(key))
+          await AsyncStorage.setItem(
+            "uniqueNotificationKeys",
+            JSON.stringify([...JSON.parse(uniqueNotificationKeys), key])
+          );
+      }
   });
   const { colours, theme } = useTheme();
   const { user, removeUser } = useUser();
