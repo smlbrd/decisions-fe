@@ -68,7 +68,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       <TouchableOpacity
         onPress={onSave}
         style={{
-          backgroundColor: "#8fbc8f",
+          backgroundColor: colours.success,
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 5,
@@ -77,7 +77,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
           minWidth: 150,
         }}
       >
-        <Text style={[styles.buttonText, { color: colours.text.primary }]}>
+        <Text style={[styles.buttonText, { color: colours.button.primary }]}>
           Save
         </Text>
       </TouchableOpacity>

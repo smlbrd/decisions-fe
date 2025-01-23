@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import UserInformation from "../components/UserInformation";
+import Header from "@/components/Header";
 import SelectAvatar from "@/components/SelectAvatar";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -81,6 +82,7 @@ export default function User() {
 
   return (
     <View style={[styles.container, { backgroundColor: colours.background }]}>
+      <Header />
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <Text style={[styles.headerText, { color: colours.text.primary }]}>
           My Profile

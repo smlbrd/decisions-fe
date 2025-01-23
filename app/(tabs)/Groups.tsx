@@ -146,9 +146,6 @@ export default function Groups() {
           { backgroundColor: colours.background },
         ]}
       >
-        <Text style={[styles.headerText, { color: colours.text.primary }]}>
-          My Groups
-        </Text>
         {groupDataCollapsibles}
       </ScrollView>
 
