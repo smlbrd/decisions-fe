@@ -60,6 +60,19 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="MyDecisions"
+        options={{
+          title: "Decisions",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "file-tray-full-sharp" : "file-tray-full-outline"}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
