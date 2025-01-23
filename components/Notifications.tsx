@@ -3,7 +3,6 @@ import { MenuOption } from "./DropdownMenu";
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import apiClient from "@/utils/api-client";
-import { MenuOption } from "./DropdownMenu";
 import { DecisionProps } from "@/utils/props";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
@@ -73,7 +72,7 @@ export default function Notifications({
 
   useEffect(() => {
     setIsInProgressLoading(true);
-  },[]);
+  }, []);
 
   useEffect(() => {
     apiClient
@@ -86,9 +85,6 @@ export default function Notifications({
         setIsInProgressLoading(false);
         setInProgress([]);
         console.log(err);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   }, [user]);
 
@@ -104,9 +100,6 @@ export default function Notifications({
         setIsNotStartedLoading(false);
         setNotStarted([]);
         console.log(err);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   }, [user]);
 
@@ -116,132 +109,133 @@ export default function Notifications({
     else return false;
   });
 
-  const router = useRouter();
   return isInProgressLoading && isNotStartedLoading ? (
     <Text>loading...</Text>
   ) : (
-
-
+    <View>
       <View style={styles.notificationItem}>
-        {!loading &&
+        {!isInProgressLoading &&
+        !isNotStartedLoading &&
         youAreCurrentPlayer.length === 0 &&
         notStarted.length === 0 ? (
           <Text>No new messages!</Text>
         ) : null}
       </View>
-        
-            <View>
-      <MenuOption onSelect={() => {}}>
-        <Text style={styles.boldText}>
-          You have {inProgress.length} decisions in progress,{" "}
-          {youAreCurrentPlayer.length} of which it is your turn:
-        </Text>
-      </MenuOption>
 
-      <Text style={[styles.notificationHeader, styles.notificationItem]}>
-        {youAreCurrentPlayer.length > 0 ? (
-          <Text>
-            {youAreCurrentPlayer.length} decision
-            {inProgress.length > 1 ? "s" : ""} waiting for you:
+      <View>
+        {/* <MenuOption onSelect={() => {}}>
+          <Text style={styles.boldText}>
+            You have {inProgress.length} decisions in progress,{" "}
+            {youAreCurrentPlayer.length} of which it is your turn:
           </Text>
-        ) : null}
-      </Text>
+        </MenuOption> */}
 
-
-      {youAreCurrentPlayer.map((decision) => {
-        return (
-          <MenuOption
-            key={decision._id}
-            onSelect={() => {
-              setIsNotificationDropdownVisible(false);
-              router.push({
-                pathname: "/Decision",
-                params: { decision_id: decision._id },
-              });
-            }}
-          >
+        <Text style={[styles.notificationHeader, styles.notificationItem]}>
+          {youAreCurrentPlayer.length > 0 ? (
             <Text>
-              - Your turn to decide {decision?.list?.title} with{" "}
-              {decision?.group?.name}!
+              {youAreCurrentPlayer.length} decision
+              {inProgress.length > 1 ? "s" : ""} waiting for you:
             </Text>
-          </MenuOption>
-        );
-      })}
+          ) : null}
+        </Text>
 
-      <Text style={[styles.notificationHeader, styles.notificationItem]}>
-        {notStarted.length > 0 ? (
-          <Text>{notStarted.length} decisions waiting to start:</Text>
-        ) : null}
-      </Text>
-
-      {notStarted.map((decision) => {
-        return (
-          <MenuOption
-            key={decision._id}
-            onSelect={() => {
-              setIsNotificationDropdownVisible(false);
-              router.push({
-                pathname: "/Decision",
-                params: { decision_id: decision._id },
-              });
-            }}
-          >
-            <Text>
-              - {decision?.group?.name} invited you to decide{" "}
-              {decision?.list?.title}
-            </Text>
-          </MenuOption>
-        );
-      })}
-
-      {activity.length ? (
-        <MenuOption onSelect={() => {}}>
-          <Text style={styles.boldText}>Activity:</Text>
-        </MenuOption>
-      ) : null}
-      {Object.keys(activityKeyLookup).map((key, index) => {
-        if (!clickedKeys.includes(key) && /^id/.test(key))
+        {youAreCurrentPlayer.map((decision) => {
           return (
             <MenuOption
-              key={index}
-              onSelect={async () => {
+              key={decision._id}
+              onSelect={() => {
                 setIsNotificationDropdownVisible(false);
-                setIsBellRed(false);
-                if (isWeb)
-                  localStorage.setItem(
-                    "clickedKeys",
-                    JSON.stringify([...clickedKeys, key])
-                  );
-                else
-                  await AsyncStorage.setItem(
-                    "clickedKeys",
-                    JSON.stringify([...clickedKeys, key])
-                  );
-                setClickedKeys((clickedKeys) => {
-                  return [...clickedKeys, key];
+                router.push({
+                  pathname: "/Decision",
+                  params: { decision_id: decision._id },
                 });
-                if (/created a new group/i.test(activityKeyLookup[key].msg)) {
-                  router.push("/Groups");
-                } else if (
-                  /turn/i.test(activityKeyLookup[key].msg) ||
-                  /decision/i.test(activityKeyLookup[key].msg)
-                ) {
-                  router.push({
-                    pathname: "/Decision",
-                    params: { decision_id: activityKeyLookup[key].decision_id },
-                  });
-                }
               }}
             >
-              <Text style={{ color: "#FF2370" }}>
-                {activityKeyLookup[key].msg}
+              <Text>
+                - Your turn to decide {decision?.list?.title} with{" "}
+                {decision?.group?.name}!
               </Text>
             </MenuOption>
           );
-      })}
+        })}
 
-      {/* I think this next bit is omitted until we can redirect it to a view of ongoing decisions? */}
-      {/* <Text style={[styles.notificationItem, { color: colours.text.primary }]}>
+        <Text style={[styles.notificationHeader, styles.notificationItem]}>
+          {notStarted.length > 0 ? (
+            <Text>{notStarted.length} decisions waiting to start:</Text>
+          ) : null}
+        </Text>
+
+        {notStarted.map((decision) => {
+          return (
+            <MenuOption
+              key={decision._id}
+              onSelect={() => {
+                setIsNotificationDropdownVisible(false);
+                router.push({
+                  pathname: "/Decision",
+                  params: { decision_id: decision._id },
+                });
+              }}
+            >
+              <Text>
+                - {decision?.group?.name} invited you to decide{" "}
+                {decision?.list?.title}
+              </Text>
+            </MenuOption>
+          );
+        })}
+
+        {Object.keys(activityKeyLookup).filter((key) => /^id/.test(key))
+          .length ? (
+          <MenuOption onSelect={() => {}}>
+            <Text style={styles.boldText}>Activity:</Text>
+          </MenuOption>
+        ) : null}
+        {Object.keys(activityKeyLookup).map((key, index) => {
+          if (!clickedKeys.includes(key) && /^id/.test(key))
+            return (
+              <MenuOption
+                key={index}
+                onSelect={async () => {
+                  setIsNotificationDropdownVisible(false);
+                  setIsBellRed(false);
+                  if (isWeb)
+                    localStorage.setItem(
+                      "clickedKeys",
+                      JSON.stringify([...clickedKeys, key])
+                    );
+                  else
+                    await AsyncStorage.setItem(
+                      "clickedKeys",
+                      JSON.stringify([...clickedKeys, key])
+                    );
+                  setClickedKeys((clickedKeys) => {
+                    return [...clickedKeys, key];
+                  });
+                  if (/created a new group/i.test(activityKeyLookup[key].msg)) {
+                    router.push("/Groups");
+                  } else if (
+                    /turn/i.test(activityKeyLookup[key].msg) ||
+                    /decision/i.test(activityKeyLookup[key].msg)
+                  ) {
+                    router.push({
+                      pathname: "/Decision",
+                      params: {
+                        decision_id: activityKeyLookup[key].decision_id,
+                      },
+                    });
+                  }
+                }}
+              >
+                <Text style={{ color: "#FF2370" }}>
+                  {activityKeyLookup[key].msg}
+                </Text>
+              </MenuOption>
+            );
+        })}
+
+        {/* I think this next bit is omitted until we can redirect it to a view of ongoing decisions? */}
+        {/* <Text style={[styles.notificationItem, { color: colours.text.primary }]}>
         {inProgress.length > 0 ? (
           <Text>
             {inProgress.length} ongoing decision
@@ -249,11 +243,15 @@ export default function Notifications({
           </Text>
         ) : null}
       </Text> */}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  boldText: {
+    fontWeight: "bold",
+  },
   notificationContainer: {
     paddingTop: 0,
     paddingBottom: 10,

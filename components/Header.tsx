@@ -1,6 +1,12 @@
-
 import React, { useEffect, useState } from "react";
-import { Text, View, StatusBar, StyleSheet, Platform, TouchableOpacity } from "react-native";
+import {
+  Text,
+  View,
+  StatusBar,
+  StyleSheet,
+  Platform,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -149,33 +155,33 @@ export default function Header() {
             <View style={styles.iconButton}>
               <ToggleTheme />
             </View>
-        <TouchableOpacity>
-            <DropdownMenu
-              isVisible={isNotificationDropdownVisible}
-              handleOpen={() => {
-                setIsNotificationDropdownVisible(true);
-              }}
-              handleClose={() => {
-                setIsNotificationDropdownVisible(false);
-              }}
-              trigger={
+            <TouchableOpacity>
+              <DropdownMenu
+                isVisible={isNotificationDropdownVisible}
+                handleOpen={() => {
+                  setIsNotificationDropdownVisible(true);
+                }}
+                handleClose={() => {
+                  setIsNotificationDropdownVisible(false);
+                }}
+                trigger={
                   <Ionicons
                     name={"notifications-outline"}
-                    color={colours.text.primary}
+                    color={isBellRed ? colours.text.primary : "#FF2370"}
                     size={40}
                     style={styles.iconButton}
                   />
                 }
               >
-              <Notifications
-                setIsNotificationDropdownVisible={
-                  setIsNotificationDropdownVisible
-                }
-                activity={activity}
-                setIsBellRed={setIsBellRed}
-              />
-            </DropdownMenu>
-</TouchableOpacity>
+                <Notifications
+                  setIsNotificationDropdownVisible={
+                    setIsNotificationDropdownVisible
+                  }
+                  activity={activity}
+                  setIsBellRed={setIsBellRed}
+                />
+              </DropdownMenu>
+            </TouchableOpacity>
 
             <TouchableOpacity>
               <DropdownMenu
