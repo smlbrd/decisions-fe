@@ -1,12 +1,18 @@
-import React, {useEffect, useState} from "react"
-import { Text, View, Button, Image } from "react-native";
-import UserInformation from "../components/UserInformation"
-import {TouchableOpacity} from 'react-native' 
-import {ActivityIndicator} from "react-native"
-import {useRouter} from "expo-router"
+import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
 import EditProfileForm from "../components/EditProfileForm"
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import UserInformation from "../components/UserInformation";
 import SelectAvatar from "@/components/SelectAvatar";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
 
 const stockAvatars = [
   "https://images.pexels.com/photos/2078478/pexels-photo-2078478.jpeg?",
@@ -16,38 +22,39 @@ const stockAvatars = [
   "https://images.pexels.com/photos/2295744/pexels-photo-2295744.jpeg",
   "https://images.pexels.com/photos/53977/eagle-owl-raptor-falconry-owl-53977.jpeg",
   "https://images.pexels.com/photos/598966/pexels-photo-598966.jpeg",
-
 ]
-export default function User() {
-    const {user, saveUser} = useUser()
-    console.log(user)
-    const [isLoading, setLoading] = useState<boolean>(true)
-    const [isEditUser, setEditUser] = useState<boolean>(false)
-    const [editableUser, setEditableUser] = useState({
-      name: user.name || "",
-      username: user.username || "",
-      email: user.email || ""
-    })
 
-    const [selectedAvatar, setSelectedAvatar] = useState<string | null>(user.avatarImg || null)
-    const router = useRouter()
+
+export default function User() {
+  const { user, saveUser, removeUser } = useUser();
+  const [isLoading, setLoading] = useState<boolean>(true)
+  const [isEditUser, setEditUser] = useState<boolean>(false)
+  const [editableUser, setEditableUser] = useState({
+    name: user.name || "",
+    username: user.username || "",
+    email: user.email || ""
+  })
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(user.avatarImg || null)
+  const router = useRouter()
+  const { colours } = useTheme();
 
   useEffect(() => {
-     if (user._id) {
-      setLoading(false)
-     }
-    }, [user])
+    if (user._id) {
+      setLoading(false);
+    }
+  }, [user]);
 
-    const handleLogout = () => {
-    console.log("Logging Out")
-    router.push("/")
-  }
+  const handleLogout = () => {
+    removeUser()
+    router.push("/");
+  };
 
   const handleEditChange = (field: string, value: string) => {
-    setEditableUser({...editableUser, [field]: value})
-  }
+    setEditableUser({ ...editableUser, [field]: value });
+  };
 
   const handleSaveChanges = async () => {
+
   
       const updatedUser = {
         ...user,
@@ -58,7 +65,8 @@ export default function User() {
       await saveUser(updatedUser)
 
       setEditUser(false)
-    }
+    
+  }
   
 
   const handleAvatarSelect = (avatar: string) => {
@@ -67,15 +75,19 @@ export default function User() {
 
   if (isLoading || !user._id) {
     return (
-    <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-    <ActivityIndicator size="large" color="#0000ff"/>
-    </View>
-    )
+      <View style={[styles.container, { backgroundColor: colours.background }]}>
+        <ActivityIndicator size="large" color={colours.text.primary} />
+      </View>
+    );
   }
 
   return (
-    <View style={{padding: 10}}>
-    <Text style={{fontSize: 30, marginBottom: 20}}>My Profile</Text>
+    <View style={[styles.container, { backgroundColor: colours.background }]}>
+      <ScrollView contentContainerStyle={styles.contentContainer}>
+        <Text style={[styles.headerText, { color: colours.text.primary }]}>
+          My Profile
+        </Text>
+
 
     {selectedAvatar ? (
       <Image source={selectedAvatar ? {uri: selectedAvatar} : require("../assets/images/default_avatar.png")}
@@ -104,25 +116,53 @@ export default function User() {
       <SelectAvatar selectedAvatar={selectedAvatar} onAvatarClick={handleAvatarSelect} avatarOptions={stockAvatars}/>
     )}
 
-      <TouchableOpacity
-      onPress={() => setEditUser(!isEditUser)}
-      style={{backgroundColor: "#a9a9a9", padding: 10, borderRadius: 5, marginTop: 20}}
-      >
-        <Text style={{color: "#E4E4E4", textAlign: "center"}}>
-          { isEditUser ? "Cancel" : "Edit Profile"} </Text>
+        <TouchableOpacity
+          onPress={() => setEditUser(!isEditUser)}
+          style={[
+            styles.actionButton,
+            { backgroundColor: colours.button.primary },
+          ]}
+        >
+          <Text style={[styles.buttonText, { color: colours.text.primary }]}>
+            {isEditUser ? "Cancel" : "Edit Profile"}{" "}
+          </Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={[styles.actionButton, { backgroundColor: colours.error }]}
+        >
+          <Text style={[styles.buttonText, { color: colours.text.primary }]}>
+            Log Out
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
+  );
+}
 
-
-      <TouchableOpacity onPress={handleLogout}
-      style={{backgroundColor: '#ff4d4d',
-        padding: 10,
-        borderRadius:5,
-        marginTop: 20,
-      }} 
-      > 
-      <Text style={{color: "#fff", textAlign: "center"}}>Log Out</Text>
-      </TouchableOpacity>
-
-  </View>
-    )
-  }
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: 15,
+  },
+  headerText: {
+    fontSize: 32,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  actionButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignSelf: "center",
+    marginTop: 20,
+    minWidth: 150,
+  },
+  buttonText: {
+    fontSize: 16,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+});

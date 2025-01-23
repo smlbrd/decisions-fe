@@ -1,24 +1,33 @@
 import React, { useState } from "react";
-import { Text, View, StatusBar, StyleSheet, Platform } from "react-native";
+import {
+  Text,
+  View,
+  StatusBar,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { DropdownMenu, MenuOption } from "./DropdownMenu";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import Overlay from "./Overlay";
-import LogInForm from "./LogInForm";
-import { useUser } from "@/contexts/UserContext";
-import ToggleTheme from "./ToggleTheme";
 import { useRouter } from "expo-router";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useUser } from "@/contexts/UserContext";
 import { useTheme } from "../contexts/ThemeContext";
+import { DropdownMenu, MenuOption } from "./DropdownMenu";
+import LogInForm from "./LogInForm";
+import Notifications from "./Notifications";
+import Overlay from "./Overlay";
+import ToggleTheme from "./ToggleTheme";
 
 export default function Header() {
   const { colours, theme } = useTheme();
   const { user, removeUser } = useUser();
+  const router = useRouter();
+
   const [isProfileDropdownVisible, setIsProfileDropdownVisible] =
     useState(false);
   const [isNotificationDropdownVisible, setIsNotificationDropdownVisible] =
     useState(false);
   const [isLoginFormVisible, setIsLoginFormVisible] = useState(false);
-  const router = useRouter();
+
   return (
     <>
       <Overlay
@@ -29,6 +38,7 @@ export default function Header() {
       >
         <LogInForm />
       </Overlay>
+
       <SafeAreaView
         style={{ backgroundColor: colours.background }}
         edges={["top", "left", "right"]}
@@ -46,89 +56,114 @@ export default function Header() {
             { backgroundColor: colours.background },
           ]}
         >
-          <Text style={[styles.title, { color: colours.text.primary }]}>
-            Decisions
-          </Text>
+          <TouchableOpacity onPress={() => router.push("/")}>
+            <Text style={[styles.title, { color: colours.text.primary }]}>
+              Decisions
+            </Text>
+          </TouchableOpacity>
 
           <View style={styles.iconContainer}>
-            <ToggleTheme />
-            <DropdownMenu
-              isVisible={isNotificationDropdownVisible}
-              handleOpen={() => {
-                setIsNotificationDropdownVisible(true);
-              }}
-              handleClose={() => {
-                setIsNotificationDropdownVisible(false);
-              }}
-              trigger={
-                <Ionicons
-                  name={"notifications-outline"}
-                  color={colours.text.primary}
-                  size={35}
+            <View style={styles.iconButton}>
+              <ToggleTheme />
+            </View>
+            <TouchableOpacity>
+              <DropdownMenu
+                isVisible={isNotificationDropdownVisible}
+                handleOpen={() => {
+                  setIsNotificationDropdownVisible(true);
+                }}
+                handleClose={() => {
+                  setIsNotificationDropdownVisible(false);
+                }}
+                trigger={
+                  <Ionicons
+                    name={"notifications-outline"}
+                    color={colours.text.primary}
+                    size={40}
+                    style={styles.iconButton}
+                  />
+                }
+              >
+                <Notifications
+                  setIsNotificationDropdownVisible={
+                    setIsNotificationDropdownVisible
+                  }
                 />
-              }
-            >
-              <MenuOption onSelect={() => {}}>
-                <Text>Sparkle Unicorn invited you to make a decision</Text>
-              </MenuOption>
-              <MenuOption onSelect={() => {}}>
-                <Text>Decision completed: view decision history</Text>
-              </MenuOption>
-            </DropdownMenu>
+              </DropdownMenu>
+            </TouchableOpacity>
 
-            <DropdownMenu
-              isVisible={isProfileDropdownVisible}
-              handleOpen={() => {
-                setIsProfileDropdownVisible(true);
-              }}
-              handleClose={() => {
-                setIsProfileDropdownVisible(false);
-              }}
-              trigger={
-                <Ionicons
-                  name={"person-circle-outline"}
-                  color={colours.text.primary}
-                  size={35}
-                />
-              }
-            >
-              {user.username ? (
-                <>
-                  <MenuOption onSelect={() => {}}>
-                    <Text>Welcome {user.name}!</Text>
-                  </MenuOption>
-                  <MenuOption
-                    onSelect={() => {
-                      setIsProfileDropdownVisible(false);
-                      router.push("/User");
-                    }}
-                  >
-                    <Text>View Profile</Text>
-                  </MenuOption>
-                  <MenuOption
-                    onSelect={() => {
-                      removeUser();
-                    }}
-                  >
-                    <Text>Sign Out</Text>
-                  </MenuOption>
-                </>
-              ) : (
-                <>
-                  <MenuOption
-                    onSelect={() => {
-                      setIsProfileDropdownVisible(false);
-                      setIsLoginFormVisible(true);
-                    }}
-                  >
-                    <Text>Log In</Text>
-                  </MenuOption>
-                  <MenuOption onSelect={() => {}}>
-                    <Text>Register</Text>
-                  </MenuOption>
-                </>
-              )}
-            </DropdownMenu>
+            <TouchableOpacity>
+              <DropdownMenu
+                isVisible={isProfileDropdownVisible}
+                handleOpen={() => {
+                  setIsProfileDropdownVisible(true);
+                }}
+                handleClose={() => {
+                  setIsProfileDropdownVisible(false);
+                }}
+                trigger={
+                  <Ionicons
+                    name={"person-circle-outline"}
+                    color={colours.text.primary}
+                    size={40}
+                    style={styles.iconButton}
+                  />
+                }
+              >
+                {user.username ? (
+                  <>
+                    <MenuOption onSelect={() => {}}>
+                      <Text>Welcome {user.name}!</Text>
+                    </MenuOption>
+                    <MenuOption
+                      onSelect={() => {
+                        setIsProfileDropdownVisible(false);
+                        router.push("/User");
+                      }}
+                    >
+                      <Text>View Profile</Text>
+                    </MenuOption>
+                    <MenuOption
+                      onSelect={() => {
+                        setIsProfileDropdownVisible(false);
+                        router.push("/ViewDecisions");
+                      }}
+                    >
+                      <Text>View Pending Decisions</Text>
+                    </MenuOption>
+                    <MenuOption
+                      onSelect={() => {
+                        setIsProfileDropdownVisible(false);
+                        router.push("/DecisionHistory");
+                      }}
+                    >
+                      <Text>View Decision History</Text>
+                    </MenuOption>
+                    <MenuOption
+                      onSelect={() => {
+                        removeUser();
+                      }}
+                    >
+                      <Text>Sign Out</Text>
+                    </MenuOption>
+                  </>
+                ) : (
+                  <>
+                    <MenuOption
+                      onSelect={() => {
+                        setIsProfileDropdownVisible(false);
+                        setIsLoginFormVisible(true);
+                      }}
+                    >
+                      <Text>Log In</Text>
+                    </MenuOption>
+                    <MenuOption onSelect={() => {}}>
+                      <Text>Register</Text>
+                    </MenuOption>
+                  </>
+                )}
+              </DropdownMenu>
+            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
@@ -138,17 +173,23 @@ export default function Header() {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    height: 60,
+    width: "100%",
+    flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 15,
-    flexDirection: "row",
+    paddingVertical: 12,
+    paddingLeft: 24,
+    paddingRight: 6,
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
   },
   iconContainer: {
     flexDirection: "row",
-    marginRight: Platform.OS === "web" ? -5 : 80,
+    alignItems: "center",
+  },
+  iconButton: {
+    margin: 0,
+    padding: 6,
   },
 });

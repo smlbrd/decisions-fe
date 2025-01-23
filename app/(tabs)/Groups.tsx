@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -15,6 +16,7 @@ import UserCard from "@/components/UserCard";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
 import apiClient from "@/utils/api-client";
+import { CreateGroupFormMobile } from "@/components/CreateGroupFormMobile";
 
 type Member = {
   _id: string;
@@ -70,17 +72,27 @@ export default function Groups() {
     }
   }, [user]);
 
-  const groupDataCollapsibles = myGroups.map((group) => {
+  const groupDataCollapsibles = myGroups.map((group, index) => {
     if (loading) {
-      return <ActivityIndicator size="large" color={colours.text.primary} />;
+      return (
+        <ActivityIndicator
+          key={group._id}
+          size="large"
+          color={colours.text.primary}
+        />
+      );
     }
 
     if (error) {
-      return <Text style={styles.errorText}>{error}</Text>;
+      return (
+        <Text key={group._id} style={styles.errorText}>
+          {error}
+        </Text>
+      );
     }
 
     return (
-      <View style={styles.contentContainer}>
+      <View key={group._id} style={styles.contentContainer}>
         <Collapsible key={group._id} title={group.name}>
           <Text style={{ color: colours.text.primary }}>
             {group.description}
@@ -120,7 +132,11 @@ export default function Groups() {
           onClose={handleCreateGroupModalClose}
           isKeyboardAvoiding={true}
         >
-          <CreateGroupForm setMyGroups={setMyGroups} />
+          {Platform.OS === "web" ? (
+            <CreateGroupForm setMyGroups={setMyGroups} />
+          ) : (
+            <CreateGroupFormMobile setMyGroups={setMyGroups} />
+          )}
         </Overlay>
       </View>
 
