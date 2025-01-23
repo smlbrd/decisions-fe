@@ -14,6 +14,7 @@ import { ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useSocket } from "@/contexts/SocketContext";
 
 interface Member {
   _id: string;
@@ -35,6 +36,7 @@ type Props = {
 };
 
 export const CreateGroupForm = ({ setMyGroups }: Props) => {
+  const socket = useSocket();
   const router = useRouter();
   const [isPosting, setIsPosting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -123,6 +125,12 @@ export const CreateGroupForm = ({ setMyGroups }: Props) => {
         router.push("/Groups");
         setMyGroups((myGroups) => {
           return [...myGroups, data];
+        });
+        data.members.forEach((member: userDataProps) => {
+          socket.emit("refresh", {
+            room: member._id,
+            msg: `${user.name} just created a new group with you`,
+          });
         });
       })
       .catch((err) => {

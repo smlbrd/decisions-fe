@@ -116,16 +116,17 @@ export default function ThisOrThat({
           console.log(err);
         });
     else {
+      const currentPlayer =
+        decisionData.saveData.playerOrder[
+          decisionData.saveData.turnNumber %
+            decisionData.saveData.playerOrder.length
+        ]._id;
       const newCurrentOptions = getTwoRandomElements(newRemainingOptions);
       apiClient
         .put(`decisions/${decisionData._id}`, {
           saveData: {
             ...decisionData.saveData,
-            currentPlayer:
-              decisionData.saveData.playerOrder[
-                decisionData.saveData.turnNumber %
-                  decisionData.saveData.playerOrder.length
-              ]._id,
+            currentPlayer,
             turnNumber: newTurnNumber,
             remainingOptions: newRemainingOptions,
             currentOptions: newCurrentOptions,
@@ -136,6 +137,11 @@ export default function ThisOrThat({
           socket.emit("refresh", {
             room: decisionData._id,
             msg: `${user.name} made a decision`,
+          });
+          socket.emit("refresh", {
+            room: currentPlayer,
+            msg: `It's your turn to make a decision!`,
+            decision_id: decisionData._id,
           });
           setDecisionData({ ...data });
         })
