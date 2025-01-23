@@ -27,24 +27,32 @@ export default function Notifications({
   const { user } = useUser();
   const [inProgress, setInProgress] = useState<DecisionProps[]>([]);
   const [notStarted, setNotStarted] = useState<DecisionProps[]>([]);
+  const [isInProgressLoading, setIsInProgressLoading] = useState(false);
+  const [isNotStartedLoading, setIsNotStartedLoading] = useState(false);
 
   useEffect(() => {
+    setIsInProgressLoading(true);
     apiClient
       .get(`/users/${user._id}/decisions?votingStatus=in%20progress`)
       .then(({ data }) => {
         setInProgress(data);
+        setIsInProgressLoading(false);
       })
       .catch((err) => {
+        setIsInProgressLoading(false);
         console.log(err);
       });
   }, [user]);
   useEffect(() => {
+    setIsNotStartedLoading(true);
     apiClient
       .get(`/users/${user._id}/decisions?votingStatus=not%20started`)
       .then(({ data }) => {
         setNotStarted(data);
+        setIsNotStartedLoading(false);
       })
       .catch((err) => {
+        setIsNotStartedLoading(false);
         console.log(err);
       });
   }, [user]);
@@ -54,7 +62,9 @@ export default function Notifications({
     else return false;
   });
   const router = useRouter();
-  return (
+  return isInProgressLoading && isNotStartedLoading ? (
+    <Text>loading...</Text>
+  ) : (
     <View>
       <MenuOption onSelect={() => {}}>
         <Text style={styles.boldText}>
