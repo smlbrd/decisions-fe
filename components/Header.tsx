@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, StatusBar, StyleSheet, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DropdownMenu, MenuOption } from "./DropdownMenu";
@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { useTheme } from "../contexts/ThemeContext";
 import Notifications from "./Notifications";
 import { useSocket } from "@/contexts/SocketContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type activityProps = {
   msg: string;
@@ -18,11 +19,35 @@ type activityProps = {
 };
 
 export default function Header() {
+  const isWeb = Platform.OS === "web";
   const [activity, setActivity] = useState<activityProps[]>([]);
   const [isBellRed, setIsBellRed] = useState(false);
 
+  const handleSetActivity = async () => {
+    let storedActivity;
+    if (isWeb) {
+      if (localStorage.getItem("activity"))
+        storedActivity = localStorage.getItem("activity");
+    } else {
+      if (await AsyncStorage.getItem("activity"))
+        storedActivity = await AsyncStorage.getItem("activity");
+    }
+    const parsedStoredActivity =
+      storedActivity && storedActivity !== JSON.stringify(null)
+        ? JSON.parse(storedActivity)
+        : [
+            {
+              msg: "",
+            },
+          ];
+    setActivity(parsedStoredActivity);
+  };
+  useEffect(() => {
+    handleSetActivity();
+  }, []);
+  console.log(activity);
   const socket = useSocket();
-  socket.on("refresh", (msg, decision_id) => {
+  socket.on("refresh", async (msg, decision_id) => {
     setActivity((activity) => {
       return [
         ...activity,
@@ -32,6 +57,28 @@ export default function Header() {
         },
       ];
     });
+    if (isWeb)
+      localStorage.setItem(
+        "activity",
+        JSON.stringify([
+          ...activity,
+          {
+            msg,
+            decision_id,
+          },
+        ])
+      );
+    else
+      await AsyncStorage.setItem(
+        "activity",
+        JSON.stringify([
+          ...activity,
+          {
+            msg,
+            decision_id,
+          },
+        ])
+      );
     setIsBellRed(true);
   });
   const { colours, theme } = useTheme();
