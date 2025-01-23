@@ -6,14 +6,23 @@ import { useEffect, useState } from "react";
 import apiClient from "@/utils/api-client";
 import { DecisionProps } from "@/utils/props";
 
+type activityProps = {
+  msg: string;
+  decision_id?: string;
+};
+
 type Props = {
   setIsNotificationDropdownVisible: React.Dispatch<
     React.SetStateAction<boolean>
   >;
+  activity: activityProps[];
+  setIsBellRed: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function Notifications({
   setIsNotificationDropdownVisible,
+  activity,
+  setIsBellRed,
 }: Props) {
   const { user } = useUser();
   const [inProgress, setInProgress] = useState<DecisionProps[]>([]);
@@ -95,6 +104,36 @@ export default function Notifications({
             </Text>
           </MenuOption>
         );
+      })}
+      {activity.length ? (
+        <MenuOption onSelect={() => {}}>
+          <Text style={styles.boldText}>Activity:</Text>
+        </MenuOption>
+      ) : null}
+      {activity.map((notification, index) => {
+        if (index % 2 === 0)
+          return (
+            <MenuOption
+              key={index}
+              onSelect={() => {
+                setIsNotificationDropdownVisible(false);
+                setIsBellRed(false);
+                if (/created a new group/i.test(notification.msg)) {
+                  router.push("/Groups");
+                } else if (
+                  /turn/i.test(notification.msg) ||
+                  /decision/i.test(notification.msg)
+                ) {
+                  router.push({
+                    pathname: "/Decision",
+                    params: { decision_id: notification.decision_id },
+                  });
+                }
+              }}
+            >
+              <Text style={{ color: "#FF2370" }}>{notification.msg}</Text>
+            </MenuOption>
+          );
       })}
     </View>
   );

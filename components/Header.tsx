@@ -10,8 +10,30 @@ import ToggleTheme from "./ToggleTheme";
 import { useRouter } from "expo-router";
 import { useTheme } from "../contexts/ThemeContext";
 import Notifications from "./Notifications";
+import { useSocket } from "@/contexts/SocketContext";
+
+type activityProps = {
+  msg: string;
+  decision_id?: string;
+};
 
 export default function Header() {
+  const [activity, setActivity] = useState<activityProps[]>([]);
+  const [isBellRed, setIsBellRed] = useState(false);
+
+  const socket = useSocket();
+  socket.on("refresh", (msg, decision_id) => {
+    setActivity((activity) => {
+      return [
+        ...activity,
+        {
+          msg,
+          decision_id,
+        },
+      ];
+    });
+    setIsBellRed(true);
+  });
   const { colours, theme } = useTheme();
   const { user, removeUser } = useUser();
   const [isProfileDropdownVisible, setIsProfileDropdownVisible] =
@@ -64,7 +86,7 @@ export default function Header() {
               trigger={
                 <Ionicons
                   name={"notifications-outline"}
-                  color={colours.text.primary}
+                  color={isBellRed ? "#FF2370" : colours.text.primary}
                   size={35}
                 />
               }
@@ -73,6 +95,8 @@ export default function Header() {
                 setIsNotificationDropdownVisible={
                   setIsNotificationDropdownVisible
                 }
+                activity={activity}
+                setIsBellRed={setIsBellRed}
               />
             </DropdownMenu>
 
