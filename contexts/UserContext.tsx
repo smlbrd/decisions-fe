@@ -80,6 +80,15 @@ export const UserProvider = ({ children }: Props) => {
     setUser(nullUser);
     if (isWeb) localStorage.setItem("user", JSON.stringify(null));
     else await AsyncStorage.setItem("user", JSON.stringify(null));
+    if (isWeb) localStorage.setItem("clickedKeys", JSON.stringify(null));
+    else await AsyncStorage.setItem("clickedKeys", JSON.stringify(null));
+    if (isWeb)
+      localStorage.setItem("uniqueNotificationKeys", JSON.stringify(null));
+    else
+      await AsyncStorage.setItem(
+        "uniqueNotificationKeys",
+        JSON.stringify(null)
+      );
   };
 
   return (
