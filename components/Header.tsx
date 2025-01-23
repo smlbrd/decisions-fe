@@ -94,13 +94,13 @@ export default function Header() {
       ? localStorage.getItem("uniqueNotificationKeys") || "[]"
       : (await AsyncStorage.getItem("uniqueNotificationKeys")) || "[]";
     if (isWeb)
-      if (!JSON.parse(uniqueNotificationKeys).includes(key))
+      if (JSON.parse(uniqueNotificationKeys) && !JSON.parse(uniqueNotificationKeys).includes(key))
         localStorage.setItem(
           "uniqueNotificationKeys",
           JSON.stringify([...JSON.parse(uniqueNotificationKeys), key])
         );
       else {
-        if (!JSON.parse(uniqueNotificationKeys).includes(key))
+        if (JSON.parse(uniqueNotificationKeys) && !JSON.parse(uniqueNotificationKeys).includes(key))
           await AsyncStorage.setItem(
             "uniqueNotificationKeys",
             JSON.stringify([...JSON.parse(uniqueNotificationKeys), key])
@@ -167,7 +167,7 @@ export default function Header() {
                 trigger={
                   <Ionicons
                     name={"notifications-outline"}
-                    color={isBellRed ? colours.text.primary : "#FF2370"}
+                    color={isBellRed ? "#FF2370" : colours.text.primary}
                     size={40}
                     style={styles.iconButton}
                   />
