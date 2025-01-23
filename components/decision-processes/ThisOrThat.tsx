@@ -169,7 +169,7 @@ export default function ThisOrThat({
             </Text>
           ) : (
             <Text
-              style={[styles.playerTurnText, { color: colours.text.primary }]}
+              style={[styles.turnText, { color: colours.text.primary }]}
             >
               It's{" "}
               {decisionData.saveData.playerOrder[
@@ -290,17 +290,25 @@ const styles = StyleSheet.create({
     }),
   },
   decisionProcessContainer: {
-    width: "100%",
-    marginTop: 10,
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    marginHorizontal: 30,
     borderRadius: 16,
-    paddingVertical: 15,
+    paddingVertical: 20,
     paddingHorizontal: 15,
-    ...Platform.select({
-      ios: {
-        paddingVertical: 0,
-        marginTop: 0,
-      },
-    }),
+    // backgroundColor: Platform.select({
+    //   ios: "rgba(255, 255, 255, 0.1)",
+    //   android: "rgba(255, 255, 255, 0.1)",
+    //   default: "rgba(255, 255, 255, 0.1)",
+    // }),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    width: "90%",
+    alignSelf: "center",
   },
   decisionHistoryContainer: {
     width: "100%",
@@ -316,11 +324,6 @@ const styles = StyleSheet.create({
   turnText: {
     fontSize: 16,
     fontWeight: "bold",
-  },
-  playerTurnText: {
-    fontSize: 30,
-    fontWeight: "bold",
-    paddingVertical: "5%",
   },
   startDecisionContainer: {
     flex: 1,
