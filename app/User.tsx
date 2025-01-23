@@ -1,22 +1,33 @@
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
-import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import EditProfileForm from "../components/EditProfileForm";
 import {
   ActivityIndicator,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import EditProfileForm from "../components/EditProfileForm";
 import UserInformation from "../components/UserInformation";
 import Header from "@/components/Header";
+import SelectAvatar from "@/components/SelectAvatar";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+
+const stockAvatars = [
+  "https://images.pexels.com/photos/2078478/pexels-photo-2078478.jpeg?",
+  "https://images.pexels.com/photos/802112/pexels-photo-802112.jpeg",
+  "https://images.pexels.com/photos/2610309/pexels-photo-2610309.jpeg?",
+  "https://images.pexels.com/photos/1618606/pexels-photo-1618606.jpeg",
+  "https://images.pexels.com/photos/2295744/pexels-photo-2295744.jpeg",
+  "https://images.pexels.com/photos/53977/eagle-owl-raptor-falconry-owl-53977.jpeg",
+  "https://images.pexels.com/photos/598966/pexels-photo-598966.jpeg",
+];
 
 export default function User() {
   const { user, saveUser, removeUser } = useUser();
-  const { colours } = useTheme();
   const [isLoading, setLoading] = useState<boolean>(true);
   const [isEditUser, setEditUser] = useState<boolean>(false);
   const [editableUser, setEditableUser] = useState({
@@ -24,8 +35,11 @@ export default function User() {
     username: user.username || "",
     email: user.email || "",
   });
-
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(
+    user.avatarImg || null
+  );
   const router = useRouter();
+  const { colours } = useTheme();
 
   useEffect(() => {
     if (user._id) {
@@ -43,11 +57,19 @@ export default function User() {
   };
 
   const handleSaveChanges = async () => {
-    await saveUser({
+    const updatedUser = {
       ...user,
       ...editableUser,
-    });
+      avatarImg: selectedAvatar || user.avatarImg,
+    };
+
+    await saveUser(updatedUser);
+
     setEditUser(false);
+  };
+
+  const handleAvatarSelect = (avatar: string) => {
+    setSelectedAvatar(avatar);
   };
 
   if (isLoading || !user._id) {
@@ -62,13 +84,47 @@ export default function User() {
     <View style={[styles.container, { backgroundColor: colours.background }]}>
       <Header />
       <ScrollView contentContainerStyle={styles.contentContainer}>
+        <Text style={[styles.headerText, { color: colours.text.primary }]}>
+          My Profile
+        </Text>
+
+        {selectedAvatar ? (
+          <Image
+            source={
+              selectedAvatar
+                ? { uri: selectedAvatar }
+                : require("../assets/images/default_avatar.png")
+            }
+            style={{ width: 100, height: 100, borderRadius: 50 }}
+          />
+        ) : (
+          <Image
+            source={require("../assets/images/default_avatar.png")}
+            style={{ width: 100, height: 100, borderRadius: 50 }}
+          />
+        )}
+
         {!isEditUser ? (
-          <UserInformation user={user} />
+          <View>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              {user.username}
+            </Text>
+            <Text>@{user.username}</Text>
+            {user.email && <Text>Email: {user.email}</Text>}
+          </View>
         ) : (
           <EditProfileForm
             user={editableUser}
             onChange={handleEditChange}
             onSave={handleSaveChanges}
+          />
+        )}
+
+        {isEditUser && (
+          <SelectAvatar
+            selectedAvatar={selectedAvatar}
+            onAvatarClick={handleAvatarSelect}
+            avatarOptions={stockAvatars}
           />
         )}
 
@@ -83,7 +139,6 @@ export default function User() {
             {isEditUser ? "Cancel" : "Edit Profile"}{" "}
           </Text>
         </TouchableOpacity>
-
         <TouchableOpacity
           onPress={handleLogout}
           style={[styles.actionButton, { backgroundColor: colours.error }]}
@@ -96,6 +151,7 @@ export default function User() {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
