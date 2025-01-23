@@ -156,12 +156,10 @@ export default function ThisOrThat({
           <StartDecisionButton onPress={handleStartDecision} text="Start" />
         </View>
       ) : decisionData.votingStatus === "in progress" ? (
-        <View
-          style={[
-            styles.decisionProcessContainer,
-            { backgroundColor: colours.surface.primary },
-          ]}
-        >
+        <View style={[styles.decisionProcessContainer]}>
+          <Text style={[styles.turnText, { color: colours.text.primary }]}>
+            Turn {decisionData.saveData.turnNumber}
+          </Text>
           {decisionData.saveData.playerOrder[
             (decisionData.saveData.turnNumber - 1) %
               decisionData.saveData.playerOrder.length
@@ -170,7 +168,9 @@ export default function ThisOrThat({
               It's your turn!
             </Text>
           ) : (
-            <Text style={[styles.statsText, { color: colours.text.primary }]}>
+            <Text
+              style={[styles.playerTurnText, { color: colours.text.primary }]}
+            >
               It's{" "}
               {decisionData.saveData.playerOrder[
                 (decisionData.saveData.turnNumber - 1) %
@@ -178,9 +178,7 @@ export default function ThisOrThat({
               ].name + "'s turn"}
             </Text>
           )}
-          <Text style={[styles.statsText, { color: colours.text.primary }]}>
-            Turn {decisionData.saveData.turnNumber}
-          </Text>
+
           <Text style={[styles.statsText, { color: colours.text.primary }]}>
             Remaining options: {decisionData.saveData.remainingOptions.length}
           </Text>
@@ -292,25 +290,18 @@ const styles = StyleSheet.create({
     }),
   },
   decisionProcessContainer: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    marginHorizontal: 30,
+    width: "100%",
+    marginTop: 10,
     borderRadius: 16,
-    paddingVertical: 20,
+    paddingVertical: 15,
     paddingHorizontal: 15,
-    backgroundColor: Platform.select({
-      ios: "rgba(255, 255, 255, 0.1)",
-      android: "rgba(255, 255, 255, 0.1)",
-      default: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    ...Platform.select({
+      ios: {
+        paddingVertical: 0,
+        marginTop: 0,
+      },
     }),
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    width: "90%",
-    alignSelf: "center",
   },
   decisionHistoryContainer: {
     width: "100%",
@@ -326,6 +317,11 @@ const styles = StyleSheet.create({
   turnText: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+  playerTurnText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    paddingVertical: "5%",
   },
   startDecisionContainer: {
     flex: 1,

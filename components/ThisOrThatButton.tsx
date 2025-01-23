@@ -67,9 +67,9 @@ const styles = StyleSheet.create({
       web: {
         flex: 1,
       },
-      android: {
-        paddingHorizontal: 40,
-        paddingVertical: 30,
+      ios: {
+        paddingHorizontal: "10%",
+        paddingVertical: "10%",
       },
     }),
   },
@@ -79,8 +79,14 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   tileImage: {
-    width: 200,
-    height: 150,
+    width: 150,
+    height: 100,
     borderRadius: 10,
+    ...Platform.select({
+      ios: {
+        width: "10%",
+        height: "0%",
+      },
+    }),
   },
 });
