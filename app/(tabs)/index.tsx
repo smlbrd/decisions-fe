@@ -323,13 +323,13 @@ export default function Index() {
           }}
         >
           <Picker.Item
-            label="With..."
+            label="Invite..."
             value="Group Select"
             style={{ color: colours.text.primary, fontWeight: "bold" }}
             enabled={false}
           />
           <Picker.Item
-            label="Myself!"
+            label="Nobody!"
             value="Group Select"
             style={{ color: colours.text.primary, fontWeight: "bold" }}
             enabled={false}
