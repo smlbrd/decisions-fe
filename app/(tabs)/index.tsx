@@ -213,6 +213,7 @@ export default function Index() {
         isVisible={isDecisionProcessModalVisible}
         onClose={handleDecisionProcessModalClose}
         scrollable={false}
+        backgroundColour={colours.background}
       >
         <View
           style={[
@@ -284,6 +285,10 @@ export default function Index() {
               backgroundColor: colours.primary,
             },
           ]}
+          itemStyle={{
+            color: colours.text.primary,
+            backgroundColor: colours.primary,
+          }}
         >
           <Picker.Item
             label="Help me decide..."
@@ -304,15 +309,17 @@ export default function Index() {
         <Picker
           selectedValue={selectedGroup}
           onValueChange={(itemValue) => setSelectedGroup(itemValue)}
-          style={[
-            styles.pickerInput,
-            {
-              color: colours.text.primary,
-              backgroundColor: colours.primary,
-            },
-          ]}
+          itemStyle={{
+            color: colours.text.primary,
+            backgroundColor: colours.primary,
+          }}
+          style={[styles.pickerInput]}
         >
-          <Picker.Item label="...myself!" value="Group Select" />
+          <Picker.Item
+            label="...myself!"
+            value="Group Select"
+            style={{ color: colours.text.primary }}
+          />
           {groupData?.map((group: Group) => {
             return (
               <Picker.Item
@@ -348,13 +355,18 @@ const styles = StyleSheet.create({
     width: "80%",
     flex: 1,
     justifyContent: "center",
-    padding: 10,
-    margin: 10,
-    ...(Platform.OS === "web" && {
-      alignItems: "center",
-      flexDirection: "column",
-      maxWidth: "100%",
-      margin: 10,
+    ...Platform.select({
+      ios: {
+        marginVertical: "10%",
+        width: "100%",
+        marginBottom: "50%",
+      },
+      web: {
+        alignItems: "center",
+        flexDirection: "column",
+        maxWidth: "100%",
+        margin: 10,
+      },
     }),
   },
   pickerInput: {
@@ -377,12 +389,14 @@ const styles = StyleSheet.create({
     }),
   },
   modalContainer: {
-    ...(Platform.OS === "web" && {
-      flex: 1,
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      padding: 10,
+    ...Platform.select({
+      web: {
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 10,
+      },
     }),
   },
   modalTitle: {
@@ -397,6 +411,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 5,
     marginHorizontal: 10,
+    ...Platform.select({
+      ios: {},
+    }),
   },
   buttonContainer: {
     justifyContent: "center",

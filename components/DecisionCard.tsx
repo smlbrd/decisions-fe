@@ -67,8 +67,26 @@ const DecisionCard = ({
           >
             {list.title}
           </Text>
-          <View style={[styles.statusBadge, { backgroundColor: "#4CAF50" }]}>
-            <Text style={styles.statusText}>{votingStatus}</Text>
+          <View
+            style={
+              votingStatus === "completed"
+                ? [styles.statusBadge, { backgroundColor: "#4CAF50" }]
+                : votingStatus === "in progress"
+                ? [styles.statusBadge, { backgroundColor: "#FF8630" }]
+                : [styles.statusBadge, { backgroundColor: "#FF1D1F" }]
+            }
+          >
+            <Text
+              style={
+                votingStatus === "completed"
+                  ? styles.statusCompletedText
+                  : votingStatus === "in progress"
+                  ? styles.statusInProgressText
+                  : styles.statusNotStartedText
+              }
+            >
+              {votingStatus}
+            </Text>
           </View>
         </View>
 
@@ -143,7 +161,19 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
   },
-  statusText: {
+  statusCompletedText: {
+    fontSize: 12,
+    fontWeight: "500",
+    textTransform: "capitalize",
+    color: "#FFFFFF",
+  },
+  statusInProgressText: {
+    fontSize: 12,
+    fontWeight: "500",
+    textTransform: "capitalize",
+    color: "#FFFFFF",
+  },
+  statusNotStartedText: {
     fontSize: 12,
     fontWeight: "500",
     textTransform: "capitalize",

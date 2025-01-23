@@ -126,6 +126,14 @@ export default function Header() {
                     <MenuOption
                       onSelect={() => {
                         setIsProfileDropdownVisible(false);
+                        router.push("/ViewDecisions");
+                      }}
+                    >
+                      <Text>View Decisions</Text>
+                    </MenuOption>
+                    <MenuOption
+                      onSelect={() => {
+                        setIsProfileDropdownVisible(false);
                         router.push("/DecisionHistory");
                       }}
                     >

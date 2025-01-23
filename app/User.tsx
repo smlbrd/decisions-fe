@@ -14,7 +14,7 @@ import EditProfileForm from "../components/EditProfileForm";
 import UserInformation from "../components/UserInformation";
 
 export default function User() {
-  const { user, saveUser } = useUser();
+  const { user, saveUser, removeUser } = useUser();
   const { colours } = useTheme();
   const [isLoading, setLoading] = useState<boolean>(true);
   const [isEditUser, setEditUser] = useState<boolean>(false);
@@ -33,7 +33,7 @@ export default function User() {
   }, [user]);
 
   const handleLogout = () => {
-    console.log("Logging Out");
+    removeUser()
     router.push("/");
   };
 

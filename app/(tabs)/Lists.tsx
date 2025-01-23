@@ -231,6 +231,7 @@ const Lists = () => {
         isVisible={isDetailListModalVisible}
         onClose={handleDetailListModalClose}
         scrollable={true}
+        backgroundColour={colours.background}
       >
         <View>
           {selectedList ? (
@@ -290,6 +291,7 @@ const Lists = () => {
       <Overlay
         isVisible={isCreateListModalVisible}
         onClose={handleCreateListModalClose}
+        backgroundColour={colours.background}
       >
         <ScrollView contentContainerStyle={styles.scrollableModal}>
           <View
@@ -402,6 +404,7 @@ const Lists = () => {
       <Overlay
         isVisible={isEditListModalVisible}
         onClose={handleEditListModalClose}
+        backgroundColour={colours.background}
       >
         <ScrollView contentContainerStyle={styles.scrollableModal}>
           <View

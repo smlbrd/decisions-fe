@@ -18,6 +18,10 @@ export default function RootLayout() {
                 name="DecisionHistory"
                 options={{ headerShown: false }}
               />
+              <Stack.Screen
+                name="ViewDecisions"
+                options={{ headerShown: false }}
+              />
               <Stack.Screen name="+not-found" />
             </Stack>
           </ThemeProvider>
