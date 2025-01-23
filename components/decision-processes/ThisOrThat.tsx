@@ -295,7 +295,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 15,
     paddingHorizontal: 15,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
     ...Platform.select({
       ios: {
         paddingVertical: 0,
