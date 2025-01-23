@@ -17,36 +17,64 @@ const UserInformation: React.FC<UserInformationProps> = ({ user }) => {
   const { colours } = useTheme();
 
   return (
-    <View>
+    <View style={styles.container}>
       {user._id && (
         <Image
           source={require("../assets/images/sparkly_unicorn.png")}
           style={{ width: 100, height: 100, borderRadius: 50 }}
         />
       )}
-      <Text style={[styles.userName, { color: colours.text.primary }]}>
+      <Text
+        style={[
+          styles.userName,
+          styles.infoContainer,
+          { color: colours.text.primary },
+        ]}
+      >
         {username}
       </Text>
-      <Text style={[styles.userNameSmall, { color: colours.text.primary }]}>
+      <Text
+        style={[
+          styles.userNameSmall,
+          styles.infoContainer,
+          { color: colours.text.primary },
+        ]}
+      >
         @{username}
       </Text>
 
       {email && (
-        <Text style={[styles.userEmail, { color: colours.text.primary }]}>
-          Email: {email}
+        <Text
+          style={[
+            styles.userEmail,
+            styles.infoContainer,
+            { color: colours.text.primary },
+          ]}
+        >
+          {email}
         </Text>
       )}
 
-      {savedLists && savedLists.length > 0 && (
+      {/* {savedLists && savedLists.length > 0 && (
         <Text style={[styles.normalText, { color: colours.text.secondary }]}>
           {" "}
           Saved Lists here: {savedLists.join(", ")}
         </Text>
-      )}
+      )} */}
     </View>
   );
 };
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  infoContainer: {
+    margin: 10,
+  },
   userName: {
     textAlign: "left",
     fontSize: 20,
