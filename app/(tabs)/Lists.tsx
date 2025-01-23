@@ -450,12 +450,7 @@ const Lists = () => {
         ) : isLoading ? (
           <Text style={[{ color: colours.text.primary }]}>loading...</Text>
         ) : null}
-        <View style={styles.listsContainer}>
-          <Text style={[styles.headerText, { color: colours.text.primary }]}>
-            My Lists
-          </Text>
-          {renderLists()}
-        </View>
+        <View style={styles.listsContainer}>{renderLists()}</View>
       </ScrollView>
 
       <View style={styles.listsContainer}>

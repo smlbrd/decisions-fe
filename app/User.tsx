@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import EditProfileForm from "../components/EditProfileForm";
 import UserInformation from "../components/UserInformation";
+import Header from "@/components/Header";
 
 export default function User() {
   const { user, saveUser, removeUser } = useUser();
@@ -33,7 +34,7 @@ export default function User() {
   }, [user]);
 
   const handleLogout = () => {
-    removeUser()
+    removeUser();
     router.push("/");
   };
 
@@ -59,11 +60,8 @@ export default function User() {
 
   return (
     <View style={[styles.container, { backgroundColor: colours.background }]}>
+      <Header />
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={[styles.headerText, { color: colours.text.primary }]}>
-          My Profile
-        </Text>
-
         {!isEditUser ? (
           <UserInformation user={user} />
         ) : (

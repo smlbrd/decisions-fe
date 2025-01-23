@@ -12,7 +12,7 @@ export default function RootLayout() {
           <ThemeProvider>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="User" />
+              <Stack.Screen name="User" options={{ headerShown: false }} />
               <Stack.Screen name="Decision" options={{ headerShown: false }} />
               <Stack.Screen
                 name="DecisionHistory"
