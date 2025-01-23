@@ -18,6 +18,7 @@ type Props = {
   children: ReactNode;
   isKeyboardAvoiding?: boolean;
   scrollable?: boolean;
+  backgroundColour?: string | null;
 };
 
 const Overlay = ({
@@ -26,9 +27,10 @@ const Overlay = ({
   children,
   isKeyboardAvoiding,
   scrollable = false,
+  backgroundColour = null,
 }: Props) => {
   const isWeb = Platform.OS === "web";
-  const styles = createStyles(useTheme().colours);
+  const styles = createStyles(useTheme().colours, backgroundColour);
   return (
     <Modal
       visible={isVisible}
@@ -77,7 +79,10 @@ const Overlay = ({
   );
 };
 
-const createStyles = (colours: { primary: string }) =>
+const createStyles = (
+  colours: { primary: string },
+  backgroundColour: string | null
+) =>
   StyleSheet.create({
     overlayContainer: {
       flex: 1,
@@ -107,7 +112,7 @@ const createStyles = (colours: { primary: string }) =>
       width: "80%",
       maxWidth: 400,
       padding: 20,
-      backgroundColor: colours.primary,
+      backgroundColor: backgroundColour ? backgroundColour : colours.primary,
       borderRadius: 10,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },

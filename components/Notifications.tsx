@@ -1,10 +1,12 @@
 import { View, Text, StyleSheet, Platform } from "react-native";
 import { MenuOption } from "./DropdownMenu";
-import { useRouter } from "expo-router";
-import { useUser } from "@/contexts/UserContext";
 import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
 import apiClient from "@/utils/api-client";
+import { MenuOption } from "./DropdownMenu";
 import { DecisionProps } from "@/utils/props";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useUser } from "@/contexts/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type activityProps = {
@@ -36,6 +38,8 @@ export default function Notifications({
       activityKeyLookup[notification.key] = notification;
   });
   const { user } = useUser();
+  const { colours } = useTheme();
+  const router = useRouter();
   const [inProgress, setInProgress] = useState<DecisionProps[]>([]);
   const [notStarted, setNotStarted] = useState<DecisionProps[]>([]);
   const [isInProgressLoading, setIsInProgressLoading] = useState(false);
@@ -69,6 +73,9 @@ export default function Notifications({
 
   useEffect(() => {
     setIsInProgressLoading(true);
+  },[]);
+
+  useEffect(() => {
     apiClient
       .get(`/users/${user._id}/decisions?votingStatus=in%20progress`)
       .then(({ data }) => {
@@ -77,9 +84,14 @@ export default function Notifications({
       })
       .catch((err) => {
         setIsInProgressLoading(false);
+        setInProgress([]);
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [user]);
+
   useEffect(() => {
     setIsNotStartedLoading(true);
     apiClient
@@ -90,25 +102,52 @@ export default function Notifications({
       })
       .catch((err) => {
         setIsNotStartedLoading(false);
+        setNotStarted([]);
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [user]);
+
   const youAreCurrentPlayer = inProgress.filter((decision: DecisionProps) => {
     if (user._id && decision?.saveData?.currentPlayer)
       return decision.saveData.currentPlayer === user._id;
     else return false;
   });
+
   const router = useRouter();
   return isInProgressLoading && isNotStartedLoading ? (
     <Text>loading...</Text>
   ) : (
-    <View>
+
+
+      <View style={styles.notificationItem}>
+        {!loading &&
+        youAreCurrentPlayer.length === 0 &&
+        notStarted.length === 0 ? (
+          <Text>No new messages!</Text>
+        ) : null}
+      </View>
+        
+            <View>
       <MenuOption onSelect={() => {}}>
         <Text style={styles.boldText}>
           You have {inProgress.length} decisions in progress,{" "}
           {youAreCurrentPlayer.length} of which it is your turn:
         </Text>
       </MenuOption>
+
+      <Text style={[styles.notificationHeader, styles.notificationItem]}>
+        {youAreCurrentPlayer.length > 0 ? (
+          <Text>
+            {youAreCurrentPlayer.length} decision
+            {inProgress.length > 1 ? "s" : ""} waiting for you:
+          </Text>
+        ) : null}
+      </Text>
+
+
       {youAreCurrentPlayer.map((decision) => {
         return (
           <MenuOption
@@ -122,17 +161,19 @@ export default function Notifications({
             }}
           >
             <Text>
-              It is your turn to make a decision with group{" "}
-              {decision?.group?.name} on list {decision?.list?.title}
+              - Your turn to decide {decision?.list?.title} with{" "}
+              {decision?.group?.name}!
             </Text>
           </MenuOption>
         );
       })}
-      <MenuOption onSelect={() => {}}>
-        <Text style={styles.boldText}>
-          You have {notStarted.length} decisions which have not started yet:
-        </Text>
-      </MenuOption>
+
+      <Text style={[styles.notificationHeader, styles.notificationItem]}>
+        {notStarted.length > 0 ? (
+          <Text>{notStarted.length} decisions waiting to start:</Text>
+        ) : null}
+      </Text>
+
       {notStarted.map((decision) => {
         return (
           <MenuOption
@@ -146,12 +187,13 @@ export default function Notifications({
             }}
           >
             <Text>
-              Click here to start the decision with group{" "}
-              {decision?.group?.name} with list {decision?.list?.title}
+              - {decision?.group?.name} invited you to decide{" "}
+              {decision?.list?.title}
             </Text>
           </MenuOption>
         );
       })}
+
       {activity.length ? (
         <MenuOption onSelect={() => {}}>
           <Text style={styles.boldText}>Activity:</Text>
@@ -197,12 +239,30 @@ export default function Notifications({
             </MenuOption>
           );
       })}
+
+      {/* I think this next bit is omitted until we can redirect it to a view of ongoing decisions? */}
+      {/* <Text style={[styles.notificationItem, { color: colours.text.primary }]}>
+        {inProgress.length > 0 ? (
+          <Text>
+            {inProgress.length} ongoing decision
+            {inProgress.length > 1 ? "s" : ""}.
+          </Text>
+        ) : null}
+      </Text> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  boldText: {
+  notificationContainer: {
+    paddingTop: 0,
+    paddingBottom: 10,
+  },
+  notificationHeader: {
+    fontSize: 16,
     fontWeight: "bold",
+  },
+  notificationItem: {
+    margin: 3,
   },
 });

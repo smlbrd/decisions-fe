@@ -12,9 +12,16 @@ export default function RootLayout() {
           <ThemeProvider>
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="User" />
-              <Stack.Screen name="Decision" />
-              <Stack.Screen name="DecisionHistory" />
+              <Stack.Screen name="User" options={{ headerShown: false }} />
+              <Stack.Screen name="Decision" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="DecisionHistory"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="ViewDecisions"
+                options={{ headerShown: false }}
+              />
               <Stack.Screen name="+not-found" />
             </Stack>
           </ThemeProvider>

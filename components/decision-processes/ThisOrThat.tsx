@@ -1,13 +1,14 @@
-import { DecisionProps } from "@/utils/props";
-import { StyleSheet, Text, View } from "react-native";
-import { StartDecisionButton } from "../StartDecisionButton";
-import apiClient from "@/utils/api-client";
 import { useState } from "react";
-import shuffleArray from "../../utils/shuffleArray";
+import { Platform, StyleSheet, Text, View, ScrollView } from "react-native";
+import apiClient from "@/utils/api-client";
 import getTwoRandomElements from "../../utils/getTwoRandomElements";
+import { DecisionProps } from "@/utils/props";
+import shuffleArray from "../../utils/shuffleArray";
+import { StartDecisionButton } from "../StartDecisionButton";
 import { ThisOrThatButton } from "../ThisOrThatButton";
-import { useUser } from "@/contexts/UserContext";
 import { useSocket } from "@/contexts/SocketContext";
+import { useUser } from "@/contexts/UserContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type Props = {
   decisionData: DecisionProps;
@@ -22,20 +23,27 @@ export default function ThisOrThat({
   setDecisionData,
   decisionMsg,
 }: Props) {
+  const { user } = useUser();
+  const { colours } = useTheme();
   const socket = useSocket();
+
   const [isStartingDecision, setIsStartingDecision] = useState(false);
   const [startDecisionErrMsg, setStartDecisionErrMsg] = useState("");
-  const { user } = useUser();
+
   const handleStartDecision = () => {
     setIsStartingDecision(true);
     setStartDecisionErrMsg("");
+
     const remainingOptions =
       decisionData.list === null ? null : decisionData.list.options;
+
     const playerOrder =
       decisionData.group === null
         ? null
         : shuffleArray(decisionData.group.members);
+
     const currentOptions = getTwoRandomElements(remainingOptions);
+
     apiClient
       .put(`decisions/${decisionData._id}`, {
         votingStatus: "in progress",
@@ -67,6 +75,7 @@ export default function ThisOrThat({
 
   const handleChoice = (thisOrThat: number) => {
     const flip = thisOrThat === 1 ? 0 : 1;
+
     const newRemainingOptions = decisionData.saveData.remainingOptions.filter(
       (remainingOption) => {
         return (
@@ -74,10 +83,12 @@ export default function ThisOrThat({
         );
       }
     );
+
     const newVoteHistory = [
       ...decisionData.saveData.voteHistory,
       decisionData.saveData.currentOptions[flip],
     ];
+
     const newTurnNumber = decisionData.saveData.turnNumber + 1;
     if (newRemainingOptions.length === 1)
       apiClient
@@ -94,7 +105,7 @@ export default function ThisOrThat({
         })
         .then(({ data }) => {
           console.log(data);
-          // Emit to the server with the room ID and message
+
           socket.emit("refresh", {
             room: decisionData._id,
             msg: `${user.name} made the final decision`,
@@ -141,35 +152,40 @@ export default function ThisOrThat({
   };
 
   return isStartingDecision ? (
-    <Text>starting decision...</Text>
+    <Text style={{ color: colours.text.primary }}>Starting decision...</Text>
   ) : startDecisionErrMsg ? (
-    <Text>{startDecisionErrMsg}</Text>
+    <Text style={{ color: colours.text.error }}>{startDecisionErrMsg}</Text>
   ) : (
     <View style={styles.container}>
       {decisionData.votingStatus === "not started" ? (
         <View style={styles.startDecisionContainer}>
-          <StartDecisionButton
-            onPress={handleStartDecision}
-            text="start decision"
-          />
+          <StartDecisionButton onPress={handleStartDecision} text="Start" />
         </View>
       ) : decisionData.votingStatus === "in progress" ? (
-        <View style={styles.decisionProcessContainer}>
+        <View style={[styles.decisionProcessContainer]}>
+          <Text style={[styles.turnText, { color: colours.text.primary }]}>
+            Turn {decisionData.saveData.turnNumber}
+          </Text>
           {decisionData.saveData.playerOrder[
             (decisionData.saveData.turnNumber - 1) %
               decisionData.saveData.playerOrder.length
           ]._id === user._id ? (
-            <Text>Your turn</Text>
+            <Text style={[styles.statsText, { color: colours.text.primary }]}>
+              It's your turn!
+            </Text>
           ) : (
-            <Text>
+            <Text
+              style={[styles.turnText, { color: colours.text.primary }]}
+            >
+              It's{" "}
               {decisionData.saveData.playerOrder[
                 (decisionData.saveData.turnNumber - 1) %
                   decisionData.saveData.playerOrder.length
               ].name + "'s turn"}
             </Text>
           )}
-          <Text>Turn number: {decisionData.saveData.turnNumber}</Text>
-          <Text>
+
+          <Text style={[styles.statsText, { color: colours.text.primary }]}>
             Remaining options: {decisionData.saveData.remainingOptions.length}
           </Text>
           {decisionData.saveData.playerOrder[
@@ -206,42 +222,121 @@ export default function ThisOrThat({
               />
             </View>
           )}
-          <Text>{decisionMsg}</Text>
+          <Text style={[styles.statsText, { color: colours.text.primary }]}>
+            {decisionMsg}
+          </Text>
         </View>
       ) : decisionData.votingStatus === "completed" ? (
-        <View>
-          <Text>AND THE DECISION WAS.........</Text>
-          <Text>{decisionData.outcome?.name}</Text>
-          {decisionData.saveData.voteHistory.map((option, index) => {
-            return (
-              <Text key={index}>
-                turn {index + 1}: {option.name} was eliminated by{" "}
-                {
-                  decisionData.saveData.playerOrder[
-                    index % decisionData.saveData.playerOrder.length
-                  ].name
-                }
-              </Text>
-            );
-          })}
-        </View>
+        <ScrollView>
+          <View
+            style={[
+              styles.decisionProcessContainer,
+              styles.scrollContainer,
+              { backgroundColor: colours.background },
+            ]}
+          >
+            <Text style={[styles.statsText, { color: colours.text.primary }]}>
+              You decided...
+            </Text>
+            <Text style={[styles.outcomeText, { color: colours.text.primary }]}>
+              {decisionData.outcome?.name}
+            </Text>
+            {decisionData.saveData.voteHistory.map((option, index) => {
+              return (
+                <View
+                  key={index}
+                  style={[
+                    styles.decisionHistoryContainer,
+                    { backgroundColor: colours.surface.primary },
+                  ]}
+                >
+                  <Text
+                    style={[styles.turnText, { color: colours.text.primary }]}
+                  >
+                    Turn {index + 1}:
+                  </Text>
+                  <Text
+                    style={[styles.statsText, { color: colours.text.primary }]}
+                  >
+                    {option.name} was eliminated by{" "}
+                    {
+                      decisionData.saveData.playerOrder[
+                        index % decisionData.saveData.playerOrder.length
+                      ].name
+                    }
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        </ScrollView>
       ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "flex-start",
+    paddingBottom: 20,
+  },
   container: {
     flex: 1,
+    marginVertical: "10%",
   },
-  startDecisionContainer: {
-    justifyContent: "center",
-    marginBottom: 15,
-    marginHorizontal: 15,
+  outcomeText: {
+    fontSize: 50,
+    marginBottom: 5,
+    fontWeight: "bold",
+    color: Platform.select({
+      ios: "#ffffff",
+      android: "#f0f0f0",
+      default: "#ffffff",
+    }),
   },
   decisionProcessContainer: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    marginHorizontal: 30,
+    borderRadius: 16,
+    paddingVertical: 20,
+    paddingHorizontal: 15,
+    // backgroundColor: Platform.select({
+    //   ios: "rgba(255, 255, 255, 0.1)",
+    //   android: "rgba(255, 255, 255, 0.1)",
+    //   default: "rgba(255, 255, 255, 0.1)",
+    // }),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    width: "90%",
+    alignSelf: "center",
+  },
+  decisionHistoryContainer: {
+    width: "100%",
+    marginTop: 10,
+    borderRadius: 16,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+  statsText: {
+    fontSize: 16,
+  },
+  turnText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  startDecisionContainer: {
+    flex: 1,
+    alignItems: "center",
     justifyContent: "center",
     marginBottom: 15,
     marginHorizontal: 15,
+    paddingHorizontal: 15,
   },
 });

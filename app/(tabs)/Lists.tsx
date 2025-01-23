@@ -17,6 +17,7 @@ import ListCard from "@/components/ListCard";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
 import apiClient from "@/utils/api-client";
+import { Ionicons } from "@expo/vector-icons";
 
 type Option = {
   _id: string;
@@ -60,6 +61,18 @@ const Lists = () => {
   const [isDetailListModalVisible, setIsDetailListModalVisible] =
     useState(false);
   const [selectedList, setSelectedList] = useState<List | null>(null);
+
+  const [newOption, setNewOption] = useState<string>("");
+
+  const [options, setOptions] = useState<string[]>([]);
+
+  const [isEditListModalVisible, setIsEditListModalVisible] = useState(false);
+
+  const [editListId, setEditListId] = useState<string | null>(null);
+
+  const [editListTitle, setEditListTitle] = useState("");
+
+  const [editListDescription, setEditListDescription] = useState("");
 
   useEffect(() => {
     loadUser();
@@ -114,6 +127,45 @@ const Lists = () => {
     setNewListDescription("");
   };
 
+  const handleEditListModalClose = () => {
+    setIsEditListModalVisible(false);
+    setEditListId(null);
+    setEditListTitle("");
+    setEditListDescription("");
+  };
+
+  const handleEditList = (listId: string) => {
+    const listToEdit = listData.find((list) => list._id === listId);
+    if (listToEdit) {
+      setEditListId(listToEdit._id);
+      setEditListTitle(listToEdit.title);
+      setEditListDescription(listToEdit.description);
+      setIsEditListModalVisible(true);
+    }
+  };
+
+  const handleEditListSubmit = () => {
+    if (editListId) {
+      apiClient
+        .put(`/lists/${editListId}`, {
+          title: editListTitle,
+          description: editListDescription,
+        })
+        .then(({ data }) => {
+          setListData((prevData) =>
+            prevData.map((list) =>
+              list._id === data._id ? { ...list, ...data } : list
+            )
+          );
+          handleEditListModalClose();
+        })
+        .catch((err) => {
+          console.log(err);
+          setListCreationErrMsg("Something went wrong while editing your list");
+        });
+    }
+  };
+
   const handleNewListSubmit = () => {
     setIsPostingList(true);
     if (!user._id) setErrMsg("user not logged in");
@@ -146,17 +198,31 @@ const Lists = () => {
     }
 
     return listData?.map((list) => (
-      <ListCard
-        key={list._id}
-        id={list._id}
-        title={list.title}
-        description={list.description}
-        options={list.options}
-        onPress={() => {
-          return handleListCardPress(list._id);
-        }}
-      />
+      <View key={list._id} style={styles.listCardContainer}>
+        <ListCard
+          key={list._id}
+          id={list._id}
+          title={list.title}
+          description={list.description}
+          options={list.options}
+          onPress={() => handleListCardPress(list._id)}
+        />
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => handleEditList(list._id)}
+        >
+          <Ionicons
+            name="create-outline"
+            size={24}
+            color={colours.text.primary}
+          />
+        </TouchableOpacity>
+      </View>
     ));
+  };
+
+  const handleAddOption = () => {
+    setOptions((previousOptions) => [...previousOptions, ""]);
   };
 
   return (
@@ -165,6 +231,7 @@ const Lists = () => {
         isVisible={isDetailListModalVisible}
         onClose={handleDetailListModalClose}
         scrollable={true}
+        backgroundColour={colours.background}
       >
         <View>
           {selectedList ? (
@@ -224,48 +291,157 @@ const Lists = () => {
       <Overlay
         isVisible={isCreateListModalVisible}
         onClose={handleCreateListModalClose}
+        backgroundColour={colours.background}
       >
-        <View
-          style={[
-            styles.modalContainer,
-            { backgroundColor: colours.background },
-          ]}
-        >
-          <TextInput
+        <ScrollView contentContainerStyle={styles.scrollableModal}>
+          <View
             style={[
-              styles.textInput,
-              {
-                backgroundColor: colours.surface.primary,
-                borderColor: colours.border,
-              },
+              styles.modalContainer,
+              { backgroundColor: colours.background },
             ]}
-            placeholder="Title"
-            placeholderTextColor={colours.text.disabled}
-            value={newListTitle}
-            onChangeText={setNewListTitle}
-          />
-          <TextInput
-            style={[
-              styles.textInput,
-              {
-                backgroundColor: colours.surface.primary,
-                borderColor: colours.border,
-              },
-            ]}
-            placeholder="Description"
-            placeholderTextColor={colours.text.disabled}
-            value={newListDescription}
-            onChangeText={setNewListDescription}
-          />
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: colours.button.primary }]}
-            onPress={handleNewListSubmit}
           >
-            <Text style={[styles.buttonText, { color: colours.text.primary }]}>
-              Submit
-            </Text>
-          </TouchableOpacity>
-        </View>
+            <TextInput
+              style={[
+                styles.textInput,
+                {
+                  backgroundColor: colours.surface.primary,
+                  borderColor: colours.border,
+                },
+              ]}
+              placeholder="Title"
+              placeholderTextColor={colours.text.disabled}
+              value={newListTitle}
+              onChangeText={setNewListTitle}
+            />
+            <TextInput
+              style={[
+                styles.textInput,
+                {
+                  backgroundColor: colours.surface.primary,
+                  borderColor: colours.border,
+                },
+              ]}
+              placeholder="Description"
+              placeholderTextColor={colours.text.disabled}
+              value={newListDescription}
+              onChangeText={setNewListDescription}
+            />
+            <View style={styles.optionContainer}>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  {
+                    backgroundColor: colours.surface.primary,
+                    borderColor: colours.border,
+                  },
+                ]}
+                placeholder="Add an option"
+                placeholderTextColor={colours.text.disabled}
+                value={newOption}
+                onChangeText={setNewOption}
+              />
+              <TouchableOpacity
+                style={[
+                  styles.iconButton,
+                  {
+                    backgroundColor: colours.surface.disabled,
+                    borderColor: colours.surface.primary,
+                  },
+                ]}
+                onPress={handleAddOption}
+              >
+                <Ionicons
+                  name="add-circle-outline"
+                  size={24}
+                  color={colours.text.disabled}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {options.map((option, index) => (
+              <View key={index} style={styles.optionContainer}>
+                <TextInput
+                  style={[
+                    styles.textInput,
+                    {
+                      backgroundColor: colours.surface.primary,
+                      borderColor: colours.border,
+                    },
+                  ]}
+                  placeholder="Add an option"
+                  placeholderTextColor={colours.text.disabled}
+                  value={option}
+                  onChangeText={(text) => {
+                    const newOptions = [...options];
+                    newOptions[index] = text;
+                    setOptions(newOptions);
+                  }}
+                />
+                <TouchableOpacity
+                  style={[
+                    styles.iconButton,
+                    {
+                      backgroundColor: colours.surface.disabled,
+                      borderColor: colours.surface.primary,
+                    },
+                  ]}
+                  onPress={handleAddOption}
+                >
+                  <Ionicons
+                    name="add-circle-outline"
+                    size={24}
+                    color={colours.text.disabled}
+                  />
+                </TouchableOpacity>
+              </View>
+            ))}
+
+            <Button title="Submit" onPress={handleNewListSubmit} />
+          </View>
+        </ScrollView>
+      </Overlay>
+
+      <Overlay
+        isVisible={isEditListModalVisible}
+        onClose={handleEditListModalClose}
+        backgroundColour={colours.background}
+      >
+        <ScrollView contentContainerStyle={styles.scrollableModal}>
+          <View
+            style={[
+              styles.modalContainer,
+              { backgroundColor: colours.background },
+            ]}
+          >
+            <TextInput
+              style={[
+                styles.textInput,
+                {
+                  backgroundColor: colours.surface.primary,
+                  borderColor: colours.border,
+                },
+              ]}
+              placeholder="Title"
+              placeholderTextColor={colours.text.disabled}
+              value={editListTitle}
+              onChangeText={setEditListTitle}
+            />
+            <TextInput
+              style={[
+                styles.textInput,
+                {
+                  backgroundColor: colours.surface.primary,
+                  borderColor: colours.border,
+                },
+              ]}
+              placeholder="Description"
+              placeholderTextColor={colours.text.disabled}
+              value={editListDescription}
+              onChangeText={setEditListDescription}
+            />
+            <Button title="Save Changes" onPress={handleEditListSubmit} />
+          </View>
+        </ScrollView>
       </Overlay>
 
       <ScrollView>
@@ -274,12 +450,7 @@ const Lists = () => {
         ) : isLoading ? (
           <Text style={[{ color: colours.text.primary }]}>loading...</Text>
         ) : null}
-        <View style={styles.listsContainer}>
-          <Text style={[styles.headerText, { color: colours.text.primary }]}>
-            My Lists
-          </Text>
-          {renderLists()}
-        </View>
+        <View style={styles.listsContainer}>{renderLists()}</View>
       </ScrollView>
 
       <View style={styles.listsContainer}>
@@ -300,6 +471,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 15,
     marginHorizontal: 15,
+  },
+  listCardContainer: {
+    position: "relative",
+    marginBottom: 10,
   },
   headerText: {
     fontSize: 32,
@@ -360,6 +535,30 @@ const styles = StyleSheet.create({
   removeButtonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  iconButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 40,
+    height: 40,
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  editButton: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+  },
+  optionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  scrollableModal: {
+    paddingBottom: 20,
+  },
+  overlay: {
+    flex: 1,
   },
 });
 

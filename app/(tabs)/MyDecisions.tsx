@@ -47,7 +47,7 @@ type Decision = {
   completedAt?: string;
 };
 
-export default function DecisionHistory() {
+export default function MyDecisions() {
   const router = useRouter();
   const { user } = useUser();
   const { colours } = useTheme();
@@ -74,7 +74,7 @@ export default function DecisionHistory() {
     }
 
     apiClient
-      .get(`/users/${user._id}/decisions?votingStatus=completed`)
+      .get(`/users/${user._id}/decisions`)
       .then(({ data }) => {
         setDecisions(data);
         setIsLoading(false);
@@ -128,7 +128,7 @@ export default function DecisionHistory() {
     if (!decisions.length) {
       return (
         <Text style={[styles.noDecisionsText, { color: colours.text.primary }]}>
-          No completed decisions found
+          No decisions found
         </Text>
       );
     }
@@ -148,7 +148,6 @@ export default function DecisionHistory() {
   };
   return (
     <View style={[styles.container, { backgroundColor: colours.background }]}>
-      <Header />
       {/* <Overlay
         isVisible={isDetailModalVisible}
         onClose={handleDetailModalClose}
@@ -227,9 +226,9 @@ export default function DecisionHistory() {
 
       <ScrollView>
         <View style={styles.decisionsContainer}>
-          <Text style={[styles.headerText, { color: colours.text.primary }]}>
-            Decision History
-          </Text>
+          {/* <Text style={[styles.headerText, { color: colours.text.primary }]}>
+            View Decisions
+          </Text> */}
           {renderDecisions()}
         </View>
       </ScrollView>

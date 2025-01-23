@@ -79,17 +79,27 @@ export default function Groups() {
     }
   }, [user, refreshKey]);
 
-  const groupDataCollapsibles = myGroups.map((group) => {
+  const groupDataCollapsibles = myGroups.map((group, index) => {
     if (loading) {
-      return <ActivityIndicator size="large" color={colours.text.primary} />;
+      return (
+        <ActivityIndicator
+          key={group._id}
+          size="large"
+          color={colours.text.primary}
+        />
+      );
     }
 
     if (error) {
-      return <Text style={styles.errorText}>{error}</Text>;
+      return (
+        <Text key={group._id} style={styles.errorText}>
+          {error}
+        </Text>
+      );
     }
 
     return (
-      <View style={styles.contentContainer}>
+      <View key={group._id} style={styles.contentContainer}>
         <Collapsible key={group._id} title={group.name}>
           <Text style={{ color: colours.text.primary }}>
             {group.description}
@@ -143,9 +153,6 @@ export default function Groups() {
           { backgroundColor: colours.background },
         ]}
       >
-        <Text style={[styles.headerText, { color: colours.text.primary }]}>
-          My Groups
-        </Text>
         {groupDataCollapsibles}
       </ScrollView>
 
