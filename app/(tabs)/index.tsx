@@ -329,7 +329,7 @@ export default function Index() {
             enabled={false}
           />
           <Picker.Item
-            label="Nobody!"
+            label="Nobody! (Coming Soon)"
             value="Group Select"
             style={{ color: colours.text.primary, fontWeight: "bold" }}
             enabled={false}

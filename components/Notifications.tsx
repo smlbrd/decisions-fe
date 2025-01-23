@@ -21,8 +21,11 @@ export default function Notifications({
   const router = useRouter();
   const [inProgress, setInProgress] = useState<DecisionProps[]>([]);
   const [notStarted, setNotStarted] = useState<DecisionProps[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
+
     apiClient
       .get(`/users/${user._id}/decisions?votingStatus=in%20progress`)
       .then(({ data }) => {
@@ -31,10 +34,15 @@ export default function Notifications({
       .catch((err) => {
         setInProgress([]);
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [user]);
 
   useEffect(() => {
+    setLoading(true);
+
     apiClient
       .get(`/users/${user._id}/decisions?votingStatus=not%20started`)
       .then(({ data }) => {
@@ -43,6 +51,9 @@ export default function Notifications({
       .catch((err) => {
         setNotStarted([]);
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [user]);
 
@@ -55,10 +66,17 @@ export default function Notifications({
   return (
     <View style={styles.notificationContainer}>
       <View style={styles.notificationItem}>
-        {youAreCurrentPlayer.length === 0 && notStarted.length === 0 ? (
+        {loading ? <Text>Loading...</Text> : null}
+      </View>
+
+      <View style={styles.notificationItem}>
+        {!loading &&
+        youAreCurrentPlayer.length === 0 &&
+        notStarted.length === 0 ? (
           <Text>No new messages!</Text>
         ) : null}
       </View>
+
       <Text style={[styles.notificationHeader, styles.notificationItem]}>
         {youAreCurrentPlayer.length > 0 ? (
           <Text>
