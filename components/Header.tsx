@@ -129,7 +129,7 @@ export default function Header() {
                         router.push("/ViewDecisions");
                       }}
                     >
-                      <Text>View Pending Decisions</Text>
+                      <Text>Pending Decisions</Text>
                     </MenuOption>
                     <MenuOption
                       onSelect={() => {
@@ -137,7 +137,7 @@ export default function Header() {
                         router.push("/DecisionHistory");
                       }}
                     >
-                      <Text>View Decision History</Text>
+                      <Text>Decision History</Text>
                     </MenuOption>
                     <MenuOption
                       onSelect={() => {

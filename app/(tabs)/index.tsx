@@ -291,9 +291,10 @@ export default function Index() {
           }}
         >
           <Picker.Item
-            label="Help me decide from list..."
+            label="Help me decide..."
             value="List Select"
             style={{ color: colours.text.primary, fontWeight: "bold" }}
+            enabled={false}
           />
           {listData?.map((list: List) => {
             return (
@@ -309,16 +310,29 @@ export default function Index() {
         <Picker
           selectedValue={selectedGroup}
           onValueChange={(itemValue) => setSelectedGroup(itemValue)}
+          style={[
+            styles.pickerInput,
+            {
+              color: colours.text.primary,
+              backgroundColor: colours.primary,
+            },
+          ]}
           itemStyle={{
             color: colours.text.primary,
             backgroundColor: colours.primary,
           }}
-          style={[styles.pickerInput]}
         >
           <Picker.Item
-            label="With group..."
+            label="With..."
             value="Group Select"
             style={{ color: colours.text.primary, fontWeight: "bold" }}
+            enabled={false}
+          />
+          <Picker.Item
+            label="Myself!"
+            value="Group Select"
+            style={{ color: colours.text.primary, fontWeight: "bold" }}
+            enabled={false}
           />
           {groupData?.map((group: Group) => {
             return (
