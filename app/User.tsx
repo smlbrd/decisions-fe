@@ -1,8 +1,9 @@
 import { useTheme } from "@/contexts/ThemeContext";
 import { useUser } from "@/contexts/UserContext";
-import EditProfileForm from "../components/EditProfileForm"
+import EditProfileForm from "../components/EditProfileForm";
 import {
   ActivityIndicator,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -22,20 +23,21 @@ const stockAvatars = [
   "https://images.pexels.com/photos/2295744/pexels-photo-2295744.jpeg",
   "https://images.pexels.com/photos/53977/eagle-owl-raptor-falconry-owl-53977.jpeg",
   "https://images.pexels.com/photos/598966/pexels-photo-598966.jpeg",
-]
-
+];
 
 export default function User() {
   const { user, saveUser, removeUser } = useUser();
-  const [isLoading, setLoading] = useState<boolean>(true)
-  const [isEditUser, setEditUser] = useState<boolean>(false)
+  const [isLoading, setLoading] = useState<boolean>(true);
+  const [isEditUser, setEditUser] = useState<boolean>(false);
   const [editableUser, setEditableUser] = useState({
     name: user.name || "",
     username: user.username || "",
-    email: user.email || ""
-  })
-  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(user.avatarImg || null)
-  const router = useRouter()
+    email: user.email || "",
+  });
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(
+    user.avatarImg || null
+  );
+  const router = useRouter();
   const { colours } = useTheme();
 
   useEffect(() => {
@@ -45,7 +47,7 @@ export default function User() {
   }, [user]);
 
   const handleLogout = () => {
-    removeUser()
+    removeUser();
     router.push("/");
   };
 
@@ -54,24 +56,20 @@ export default function User() {
   };
 
   const handleSaveChanges = async () => {
+    const updatedUser = {
+      ...user,
+      ...editableUser,
+      avatarImg: selectedAvatar || user.avatarImg,
+    };
 
-  
-      const updatedUser = {
-        ...user,
-        ...editableUser,
-        avatarImg: selectedAvatar || user.avatarImg,
-      }
+    await saveUser(updatedUser);
 
-      await saveUser(updatedUser)
-
-      setEditUser(false)
-    
-  }
-  
+    setEditUser(false);
+  };
 
   const handleAvatarSelect = (avatar: string) => {
-    setSelectedAvatar(avatar)
-  }
+    setSelectedAvatar(avatar);
+  };
 
   if (isLoading || !user._id) {
     return (
@@ -88,33 +86,45 @@ export default function User() {
           My Profile
         </Text>
 
+        {selectedAvatar ? (
+          <Image
+            source={
+              selectedAvatar
+                ? { uri: selectedAvatar }
+                : require("../assets/images/default_avatar.png")
+            }
+            style={{ width: 100, height: 100, borderRadius: 50 }}
+          />
+        ) : (
+          <Image
+            source={require("../assets/images/default_avatar.png")}
+            style={{ width: 100, height: 100, borderRadius: 50 }}
+          />
+        )}
 
-    {selectedAvatar ? (
-      <Image source={selectedAvatar ? {uri: selectedAvatar} : require("../assets/images/default_avatar.png")}
-    style={{width: 100, height: 100, borderRadius: 50}} />
-    ) : (
-      <Image source={require("../assets/images/default_avatar.png")}
-      style={{width: 100, height: 100, borderRadius: 50}} />
-    )}
+        {!isEditUser ? (
+          <View>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              {user.username}
+            </Text>
+            <Text>@{user.username}</Text>
+            {user.email && <Text>Email: {user.email}</Text>}
+          </View>
+        ) : (
+          <EditProfileForm
+            user={editableUser}
+            onChange={handleEditChange}
+            onSave={handleSaveChanges}
+          />
+        )}
 
-
-    {!isEditUser ? (
-      <View>
-        <Text style={{fontSize: 20, fontWeight: "bold"}}>{user.username}</Text>
-        <Text>@{user.username}</Text>
-        {user.email && <Text>Email: {user.email}</Text>}
-        </View>
-    ) : (
-      <EditProfileForm
-      user={editableUser}
-      onChange={handleEditChange}
-      onSave={handleSaveChanges}
-      />
-    )}
-    
-    {isEditUser && (
-      <SelectAvatar selectedAvatar={selectedAvatar} onAvatarClick={handleAvatarSelect} avatarOptions={stockAvatars}/>
-    )}
+        {isEditUser && (
+          <SelectAvatar
+            selectedAvatar={selectedAvatar}
+            onAvatarClick={handleAvatarSelect}
+            avatarOptions={stockAvatars}
+          />
+        )}
 
         <TouchableOpacity
           onPress={() => setEditUser(!isEditUser)}
